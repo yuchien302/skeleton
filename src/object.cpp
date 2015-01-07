@@ -17,7 +17,7 @@ rigidhdl::~rigidhdl()
  */
 void rigidhdl::draw(canvashdl *canvas)
 {
-	canvas->draw_triangles(geometry, indices);
+	// TODO Assignment 1: Send the rigid body geometry to the renderer
 }
 
 objecthdl::objecthdl()
@@ -40,20 +40,7 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(canvashdl *canvas)
 {
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
-
-	for (int i = 0; i < rigid.size(); i++)
-		rigid[i].draw(canvas);
-
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
 }
 
 /* draw_bound
@@ -63,38 +50,9 @@ void objecthdl::draw(canvashdl *canvas)
  */
 void objecthdl::draw_bound(canvashdl *canvas)
 {
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
-	vector<vec8f> bound_geometry;
-	vector<int> bound_indices;
-	bound_geometry.reserve(8);
-	bound_geometry.push_back(vec8f(bound[0], bound[2], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[1], bound[2], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[1], bound[3], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[0], bound[3], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[0], bound[2], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[1], bound[2], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[1], bound[3], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_geometry.push_back(vec8f(bound[0], bound[3], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
-	bound_indices.reserve(24);
-	for (int i = 0; i < 4; i++)
-	{
-		bound_indices.push_back(i);
-		bound_indices.push_back((i+1)%4);
-		bound_indices.push_back(4+i);
-		bound_indices.push_back(4+(i+1)%4);
-		bound_indices.push_back(i);
-		bound_indices.push_back(4+i);
-	}
-	canvas->draw_lines(bound_geometry, bound_indices);
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+	/* TODO Assignment 1: Generate the geometry for the bounding box and send the necessary
+	 * transformations and geometry to the renderer
+	 */
 }
 
 /* draw_normals
@@ -105,60 +63,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
  */
 void objecthdl::draw_normals(canvashdl *canvas, bool face)
 {
-	float radius = 0.0;
-	for (int i = 0; i < 6; i++)
-		if (abs(bound[i]) > radius)
-			radius = abs(bound[i]);
-
-	vector<vec8f> normal_geometry;
-	vector<int> normal_indices;
-
-	canvas->translate(position);
-	canvas->rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->scale(vec3f(scale, scale, scale));
-	for (int i = 0; i < rigid.size(); i++)
-	{
-		if (!face)
-		{
-			for (int j = 0; j < rigid[i].geometry.size(); j++)
-			{
-				normal_indices.push_back(normal_geometry.size());
-				normal_geometry.push_back(rigid[i].geometry[j]);
-				normal_geometry.back().set(3,6,vec3f(0.0, 0.0, 0.0));
-				normal_indices.push_back(normal_geometry.size());
-				normal_geometry.push_back(rigid[i].geometry[j]);
-				normal_geometry.back().set(0,3,(vec3f)(normal_geometry.back()(0,3) + radius*0.1f*normal_geometry.back()(3,6)));
-				normal_geometry.back().set(3,6,vec3f(0.0, 0.0, 0.0));
-			}
-		}
-		else
-		{
-			for (int j = 0; j < rigid[i].indices.size(); j+=3)
-			{
-				vec3f normal = norm((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](3,6) +
-									(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](3,6) +
-									(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](3,6));
-				vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
-								(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
-								(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3))/3.0f;
-				normal_indices.push_back(normal_geometry.size());
-				normal_geometry.push_back(center);
-				normal_geometry.back().set(3,8,vec5f(0.0, 0.0, 0.0, 0.0, 0.0));
-				normal_indices.push_back(normal_geometry.size());
-				normal_geometry.push_back(center + radius*0.1f*normal);
-				normal_geometry.back().set(3,8,vec5f(0.0, 0.0, 0.0, 0.0, 0.0));
-			}
-		}
-
-		canvas->draw_lines(normal_geometry, normal_indices);
-		normal_geometry.clear();
-		normal_indices.clear();
-	}
-	canvas->scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-	canvas->rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas->rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas->rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas->translate(-position);
+	/* TODO Assignment 1: Generate the geometry to display the normals and send the necessary
+	 * transformations and geometry to the renderer
+	 */
 }
