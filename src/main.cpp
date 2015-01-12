@@ -7,6 +7,8 @@
 #include "primitive.h"
 #include "tinyfiledialogs.h"
 
+// This is just a test
+
 int window_id;
 
 canvashdl canvas(750, 750);
