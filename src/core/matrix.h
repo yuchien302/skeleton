@@ -262,11 +262,10 @@ struct mat
 	mat<t, v-1, h-1> remove(int y, int x)
 	{
 		mat<t, v-1, h-1> result;
-		int i, j, a, b;
 
-		for (i = 0, a = 0; i < v; i == y ? i+=2 : i++, a++)
-			for (j = 0, b = 0; j < h; j == x ? j+=2 : i++, b++)
-				result[a][b] = data[i][j];
+		for (int i = 0; i < v-1; i++)
+			for (int j = 0; j < h-1; j++)
+				result[i][j] = data[i + (i >= y)][j + (j >= x)];
 
 		return result;
 	}

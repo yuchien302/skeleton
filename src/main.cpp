@@ -7,8 +7,6 @@
 #include "primitive.h"
 #include "tinyfiledialogs.h"
 
-// This is just a test
-
 int window_id;
 
 canvashdl canvas(750, 750);
@@ -90,11 +88,6 @@ void pmotionfunc(int x, int y)
 			glutWarpPointer(mousex, mousey);
 
 		// TODO Assignment 1: Use the mouse delta to change the orientation of the active camera
-		if (scene.active_camera_valid())
-		{
-			scene.cameras[scene.active_camera]->orientation[1] -= (float)deltax/500.0;
-			scene.cameras[scene.active_camera]->orientation[0] -= (float)deltay/500.0;
-		}
 
 		glutPostRedisplay();
 	}
