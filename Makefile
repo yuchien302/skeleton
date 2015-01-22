@@ -16,8 +16,19 @@ else
         LDFLAGS += -lglut -lGL -lGLU -lGLEW
     endif
     ifeq ($(UNAME),Darwin)
-        CXXFLAGS += -D OSX -Wno-deprecated -I/usr/X11/include
-        LDFLAGS += -L/usr/X11/lib -lglut -lGL -lGLU -lGLEW
+        ifeq ($(env),core3)
+            CXXFLAGS += -D OSX_CORE3 -Wno-deprecated
+            LDFLAGS += -framework GLUT -framework OpenGL
+        else ifeq ($(env),x11)
+            CXXFLAGS += -D OSX_X11 -Wno-deprecated -I/usr/X11/include
+            LDFLAGS += -L/usr/X11/lib -lglut -lGL -lGLU -lGLEW
+        else ifeq ($(env),xquartz)
+            CXXFLAGS += -D OSX_XQUARTZ -Wno-deprecated -I/opt/X11/include
+            LDFLAGS += -L/opt/X11/lib -lglut -lGL -lGLU -lGLEW
+        else # default to the frameworks for version 2.1 because they are something everyone has
+            CXXFLAGS += -D OSX_CORE2 -Wno-deprecated
+            LDFLAGS += -framework GLUT -framework OpenGL
+        endif
     endif
 endif
 

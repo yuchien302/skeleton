@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "C52433101A70B74D00AC3E18"
+               BlueprintIdentifier = "C5EE0A251A71506700FAF23F"
                BuildableName = "assignment"
                BlueprintName = "assignment"
                ReferencedContainer = "container:assignment.xcodeproj">
@@ -29,49 +29,54 @@
       buildConfiguration = "Debug">
       <Testables>
       </Testables>
-   </TestAction>
-   <LaunchAction
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "0"
-      useCustomWorkingDirectory = "NO"
-      buildConfiguration = "Debug"
-      ignoresPersistentStateOnLaunch = "NO"
-      debugDocumentVersioning = "YES"
-      allowLocationSimulation = "YES">
-      <PathRunnable
-         FilePath = "/Users/oliviaortega/Desktop/skeleton/assignment.exe">
-      </PathRunnable>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C52433101A70B74D00AC3E18"
+            BlueprintIdentifier = "C5EE0A251A71506700FAF23F"
             BuildableName = "assignment"
             BlueprintName = "assignment"
             ReferencedContainer = "container:assignment.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
+   </TestAction>
+   <LaunchAction
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "$PROJECT_DIR"
+      buildConfiguration = "Debug"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "C5EE0A251A71506700FAF23F"
+            BuildableName = "assignment"
+            BlueprintName = "assignment"
+            ReferencedContainer = "container:assignment.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
-      useCustomWorkingDirectory = "NO"
+      useCustomWorkingDirectory = "YES"
+      customWorkingDirectory = "$PROJECT_DIR"
       buildConfiguration = "Release"
       debugDocumentVersioning = "YES">
-      <PathRunnable
-         FilePath = "/Users/oliviaortega/Desktop/skeleton/assignment.exe">
-      </PathRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "C52433101A70B74D00AC3E18"
+            BlueprintIdentifier = "C5EE0A251A71506700FAF23F"
             BuildableName = "assignment"
             BlueprintName = "assignment"
             ReferencedContainer = "container:assignment.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

@@ -1,11 +1,15 @@
 #ifndef opengl_h
 #define opengl_h
 
-#include <GL/glew.h>
-#include <GL/glut.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
+#if defined(OSX_CORE3) || defined(OSX_CORE2) || defined(__APPLE__)
+    #include <GLUT/glut.h>
+#else
+    #include <GL/glew.h>
+    #include <GL/glut.h>
+    #include <GL/gl.h>
+    #include <GL/glu.h>
+    #include <GL/glext.h>
+#endif
 
 #include "standard.h"
 
