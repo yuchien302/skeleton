@@ -225,9 +225,10 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << endl;
-	cout << "Status: Using OpenGL " << glGetString(GL_VERSION) << endl;
+    cout << "Status: Using OpenGL " << glGetString(GL_VERSION) << endl;
 	cout << "Status: Using GLSL " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
+    
 	init();
 	create_menu();
 

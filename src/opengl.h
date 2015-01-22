@@ -6,6 +6,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <GL/glext.h>
+
 #include "standard.h"
 
 GLuint load_shader_file(string filename, GLenum type);
