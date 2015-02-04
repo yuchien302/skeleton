@@ -84,6 +84,7 @@ void canvashdl::set_matrix(matrix_id matid)
 /* load_identity
  *
  * Set the active matrix to the identity matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glLoadIdentity.xml
  */
 void canvashdl::load_identity()
 {
@@ -93,6 +94,7 @@ void canvashdl::load_identity()
 /* rotate
  *
  * Multiply the active matrix by a rotation matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glRotate.xml
  */
 void canvashdl::rotate(float angle, vec3f axis)
 {
@@ -102,6 +104,7 @@ void canvashdl::rotate(float angle, vec3f axis)
 /* translate
  *
  * Multiply the active matrix by a translation matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glTranslate.xml
  */
 void canvashdl::translate(vec3f direction)
 {
@@ -111,6 +114,7 @@ void canvashdl::translate(vec3f direction)
 /* scale
  *
  * Multiply the active matrix by a scaling matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glScale.xml
  */
 void canvashdl::scale(vec3f size)
 {
@@ -120,6 +124,7 @@ void canvashdl::scale(vec3f size)
 /* perspective
  *
  * Multiply the active matrix by a perspective projection matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/gluPerspective.xml
  */
 void canvashdl::perspective(float fovy, float aspect, float n, float f)
 {
@@ -129,6 +134,7 @@ void canvashdl::perspective(float fovy, float aspect, float n, float f)
 /* frustum
  *
  * Multiply the active matrix by a frustum projection matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glFrustum.xml
  */
 void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 {
@@ -138,12 +144,19 @@ void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 /* ortho
  *
  * Multiply the active matrix by an orthographic projection matrix.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/glOrtho.xml
  */
 void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 {
 	// TODO Assignment 1: Multiply the active matrix by an orthographic projection matrix.
 }
 
+/* look_at
+ *
+ * Move and orient the modelview so the camera is at the 'at' position focused on the 'eye'
+ * position and rotated so the 'up' vector is up
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/gluLookAt.xml
+ */
 void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 {
 	// TODO Assignment 1: Emulate the functionality of gluLookAt
@@ -164,6 +177,7 @@ vec3f canvashdl::to_window(vec2i pixel)
 /* unproject
  *
  * Unproject a window coordinate into world coordinates.
+ * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/gluUnProject.xml
  */
 vec3f canvashdl::unproject(vec3f window)
 {
