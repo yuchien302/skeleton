@@ -188,6 +188,13 @@ vec3f canvashdl::unproject(vec3f window)
 /* shade_vertex
  *
  * This is the vertex shader.
+ * v[0] to v[2] is position
+ * v[3] to v[5] is normal
+ * v[7] to v[8] is texture coordinates
+ * The result from this function is interpolated and passed on to the fragment shader
+ * (its also used to draw the geometry during rasterization)
+ * Note that the only requirements for the returned values are that the first 3 components
+ * be a projected position. The rest are yours to decide what to do with.
  */
 vec8f canvashdl::shade_vertex(vec8f v)
 {
@@ -200,6 +207,7 @@ vec8f canvashdl::shade_vertex(vec8f v)
 /* shade_fragment
  *
  * This is the fragment shader. The pixel color is determined here.
+ * the values for v are the interpolated result of whatever you returned from the vertex shader
  */
 vec3f canvashdl::shade_fragment(vec8f v)
 {
