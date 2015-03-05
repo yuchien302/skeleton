@@ -9,6 +9,8 @@ boxhdl::boxhdl(float width, float height, float depth)
 	/* TODO Assignment 1: Generate the geometry and indices required to make a box.
 	 * Calculate its bounding box.
 	 */
+
+	// TODO Assignment 2: Set up the material properties for this object
 }
 
 boxhdl::~boxhdl()
@@ -64,6 +66,8 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 	}
 
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
+
+	// TODO Assignment 2: Set up the material properties for this object
 }
 
 spherehdl::~spherehdl()
@@ -80,6 +84,8 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 	/* TODO Assignment 1: Generate the geometry and indices required to make a cylinder.
 	 * Calculate its bounding box.
 	 */
+
+	// TODO Assignment 2: Set up the material properties for this object
 }
 
 cylinderhdl::~cylinderhdl()
@@ -96,6 +102,8 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	/* TODO Assignment 1: Generate the geometry and indices required to make a pyramid.
 	 * Calculate its bounding box.
 	 */
+
+	// TODO Assignment 2: Set up the material properties for this object
 }
 
 pyramidhdl::~pyramidhdl()

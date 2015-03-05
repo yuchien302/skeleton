@@ -1,6 +1,8 @@
 #include "core/geometry.h"
 #include "standard.h"
 
+#include "material.h"
+
 using namespace core;
 
 #ifndef object_h
@@ -22,7 +24,7 @@ struct rigidhdl
 
 	vector<vec8f> geometry;
 	vector<int> indices;
-	// TODO Assignment 2: Add a material name here
+	string material;
 
 	void draw(canvashdl *canvas);
 };
@@ -30,10 +32,11 @@ struct rigidhdl
 struct objecthdl
 {
 	objecthdl();
+	objecthdl(const objecthdl &o);
 	virtual ~objecthdl();
 
 	vector<rigidhdl> rigid;
-	// TODO Assignment 2: Add a list of materials indexed by name
+	map<string, materialhdl*> material;
 
 	vec3f position;
 	vec3f orientation;

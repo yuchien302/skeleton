@@ -4,6 +4,7 @@
 #define scene_h
 
 struct objecthdl;
+struct lighthdl;
 struct camerahdl;
 
 struct scenehdl
@@ -12,6 +13,7 @@ struct scenehdl
 	~scenehdl();
 
 	vector<objecthdl*> objects;
+	vector<lighthdl*> lights;
 	vector<camerahdl*> cameras;
 	canvashdl *canvas;
 
@@ -27,6 +29,7 @@ struct scenehdl
 	} render_normals;
 
 	// Whether or not to render the lights or the cameras or both
+	bool render_lights;
 	bool render_cameras;
 
 	void draw();
