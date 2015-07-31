@@ -1,3 +1,10 @@
+/*
+ * material.h
+ *
+ *  Created on: Dec 18, 2014
+ *      Author: nbingham
+ */
+
 #include "core/geometry.h"
 #include "standard.h"
 

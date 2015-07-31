@@ -1,3 +1,10 @@
+/*
+ * camera.cpp
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "camera.h"
 #include "object.h"
 

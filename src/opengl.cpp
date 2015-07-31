@@ -1,3 +1,10 @@
+/*
+ * opengl.cpp
+ *
+ *  Created on: Jan 5, 2015
+ *      Author: nbingham
+ */
+
 #include "opengl.h"
 
 GLuint load_shader_file(string filename, GLuint type)

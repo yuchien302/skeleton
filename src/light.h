@@ -1,3 +1,10 @@
+/*
+ * light.h
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "core/geometry.h"
 #include "core/color.h"
 #include "standard.h"

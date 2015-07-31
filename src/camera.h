@@ -1,3 +1,10 @@
+/*
+ * camera.h
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "core/geometry.h"
 #include "canvas.h"
 

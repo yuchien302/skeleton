@@ -1,3 +1,10 @@
+/*
+ * model.h
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "standard.h"
 #include "scene.h"
 #include "object.h"

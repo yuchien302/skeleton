@@ -1,3 +1,10 @@
+/*
+ * primitive.h
+ *
+ *  Created on: Dec 21, 2014
+ *      Author: nbingham
+ */
+
 #include "object.h"
 
 #ifndef primitive_h

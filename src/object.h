@@ -1,3 +1,10 @@
+/*
+ * object.h
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "core/geometry.h"
 #include "standard.h"
 

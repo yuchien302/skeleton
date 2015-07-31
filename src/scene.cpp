@@ -1,3 +1,10 @@
+/*
+ * scene.cpp
+ *
+ *  Created on: Dec 3, 2014
+ *      Author: nbingham
+ */
+
 #include "scene.h"
 #include "camera.h"
 #include "object.h"
@@ -32,10 +39,10 @@ void scenehdl::draw()
 	 * if enabled, draw the normals and the cameras.
 	 */
 
-	/* TODO Assignment 2: Clear the uniform variables and pass the vector of
+	/* TODO Assignment 3: Clear the uniform variables and pass the vector of
 	 * lights into the renderer as a uniform variable.
-	 * TODO Assignment 2: Update the light positions and directions
-	 * TODO Assignment 2: Render the lights
+	 * TODO Assignment 3: Update the light positions and directions
+	 * TODO Assignment 3: Render the lights
 	 */
 }
 

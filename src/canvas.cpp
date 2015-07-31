@@ -1,3 +1,10 @@
+/*
+ * canvas.cpp
+ *
+ *  Created on: Dec 2, 2014
+ *      Author: nbingham
+ */
+
 #include "canvas.h"
 #include "core/geometry.h"
 #include "light.h"
@@ -192,12 +199,13 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 
 void canvashdl::update_normal_matrix()
 {
-	// TODO Assignment 2: calculate the normal matrix
+	// TODO Assignment 3: calculate the normal matrix
 }
 
 /* to_window
  *
- * Pixel coordinates to window coordinates.
+ * Given a pixel coordinate (x from 0 to width and y from 0 to height),
+ * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
  */
 vec3f canvashdl::to_window(vec2i pixel)
 {
@@ -233,7 +241,7 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 {
 	// TODO Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
 
-	/* TODO Assignment 2: Get the material from the list of uniform variables and
+	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
 	return vec3f();
@@ -248,7 +256,7 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 {
 	// TODO Assignment 1: Pick a color, any color (as long as it is distinguishable from the background color).
 
-	/* TODO Assignment 2: Get the material from the list of uniform variables and
+	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
 	 */
 	return vec3f();
@@ -262,7 +270,7 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
 	// TODO Assignment 1: Plot a pixel, calling the fragment shader.
 
-	/* TODO Assignment 2: Compare the z value against the depth buffer and
+	/* TODO Assignment 3: Compare the z value against the depth buffer and
 	 * only render if its less. Then set the depth buffer.
 	 */
 }
@@ -278,12 +286,14 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
 
 /* plot_line
  *
- * Plot a line defined by two points in window coordinates.
+ * Plot a line defined by two points in window coordinates. Use Bresenham's
+ * Algorithm for this. Don't forget to interpolate the normals and texture
+ * coordinates as well.
  */
 void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying)
 {
 	// TODO Assignment 1: Implement Bresenham's Algorithm.
-	// TODO Assignment 2: Interpolate the varying values before passing them into plot.
+	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 
 /* plot_half_triangle
@@ -295,13 +305,16 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
  */
 void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying)
 {
-	// TODO Assignment 2: Implement Bresenham's half triangle fill algorithm
-	// TODO Assignment 2: Interpolate the varying values before passing them into plot.
+	// TODO Assignment 3: Implement Bresenham's half triangle fill algorithm
+	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 
 /* plot_triangle
  *
- * Plot a triangle. (v1, v2, v3) are given in window coordinates.
+ * Use the above functions to plot a whole triangle. Don't forget to
+ * take into account the polygon mode. You should be able to render the
+ * triangle as 3 points, 3 lines, or a filled in triangle. (v1, v2, v3)
+ * are given in window coordinates.
  */
 void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying)
 {
@@ -309,30 +322,40 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
-	// TODO Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
+	// TODO Assignment 3: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
 }
 
 /* draw_points
  *
  * Draw a set of 3D points on the canvas. Each point in geometry is
- * formatted (vx, vy, vz, nx, ny, nz, s, t).
+ * formatted (vx, vy, vz, nx, ny, nz, s, t). Don't forget to test the
+ * points against the clipping plains of the projection. If you don't
+ * you'll get weird behavior (especially when objects behind the camera
+ * are being rendered).
  */
 void canvashdl::draw_points(const vector<vec8f> &geometry)
 {
 	// TODO Assignment 1: Clip the points against the frustum, call the vertex shader, and then draw them.
-	// TODO Assignment 2: Update the normal matrix
+	// TODO Assignment 3: Update the normal matrix
 }
 
-/* Draw a set of 3D lines on the canvas. Each point in geometry
- * is formatted (vx, vy, vz, nx, ny, nz, s, t).
+/* draw_lines
+ *
+ * Draw a set of 3D lines on the canvas. Each point in geometry
+ * is formatted (vx, vy, vz, nx, ny, nz, s, t). Don't forget to clip
+ * the lines against the clipping planes of the projection. You can't
+ * just not render them because you'll get some weird popping at the
+ * edge of the view.
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
 	// TODO Assignment 1: Clip the lines against the frustum, call the vertex shader, and then draw them.
-	// TODO Assignment 2: Update the normal matrix
+	// TODO Assignment 3: Update the normal matrix
 }
 
-/* Draw a set of 3D triangles on the canvas. Each point in geometry is
+/* draw_triangles
+ * 
+ * Draw a set of 3D triangles on the canvas. Each point in geometry is
  * formatted (vx, vy, vz, nx, ny, nz, s, t). Don't forget to clip the
  * triangles against the clipping planes of the projection. You can't
  * just not render them because you'll get some weird popping at the
@@ -344,7 +367,7 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 	 * break the resulting polygons back into triangles, implement front and back face
 	 * culling, and then draw the remaining triangles.
 	 */
-	// TODO Assignment 2: Update the normal matrix.
+	// TODO Assignment 3: Update the normal matrix.
 }
 
 
