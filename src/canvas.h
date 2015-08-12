@@ -89,6 +89,8 @@ public:
 	void look_at(vec3f eye, vec3f at, vec3f up);
 	void viewport(int left, int bottom, int right, int top);
 	void update_normal_matrix();
+
+
 	vec3f to_window(vec2i pixel);
 	vec3f unproject(vec3f window);
 
@@ -102,10 +104,8 @@ public:
 
 	enum
 	{
-		none = 0,
-		flat = 1,
-		gouraud = 2,
-		phong = 3
+		flat = 0,
+		smooth = 1
 	} shade_model;
 
 	enum

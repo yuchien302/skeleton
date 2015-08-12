@@ -38,7 +38,7 @@ canvashdl::canvashdl(int w, int h)
 		matrices[i] = identity<float, 4, 4>();
 
 	polygon_mode = line;
-	shade_model = none;
+	shade_model = smooth;
 	culling = backface;
 }
 
@@ -305,7 +305,8 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
  */
 void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying)
 {
-	// TODO Assignment 3: Implement Bresenham's half triangle fill algorithm
+	// TODO Assignment 2: Implement Bresenham's half triangle fill algorithm
+
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 
@@ -322,7 +323,7 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
-	// TODO Assignment 3: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
+	// TODO Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
 }
 
 /* draw_points
@@ -335,8 +336,9 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
  */
 void canvashdl::draw_points(const vector<vec8f> &geometry)
 {
-	// TODO Assignment 1: Clip the points against the frustum, call the vertex shader, and then draw them.
-	// TODO Assignment 3: Update the normal matrix
+	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
+	// TODO Assignment 2: Implement frustum clipping and back-face culling
+	// TODO Assignment 3: Update the normal matrix.
 }
 
 /* draw_lines
@@ -349,8 +351,9 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
-	// TODO Assignment 1: Clip the lines against the frustum, call the vertex shader, and then draw them.
-	// TODO Assignment 3: Update the normal matrix
+	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
+	// TODO Assignment 2: Implement frustum clipping and back-face culling
+	// TODO Assignment 3: Update the normal matrix.
 }
 
 /* draw_triangles
@@ -363,10 +366,8 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
  */
 void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> &indices)
 {
-	/* TODO Assignment 1: Clip the triangles against the frustum, call the vertex shader,
-	 * break the resulting polygons back into triangles, implement front and back face
-	 * culling, and then draw the remaining triangles.
-	 */
+	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
+	// TODO Assignment 2: Implement frustum clipping and back-face culling
 	// TODO Assignment 3: Update the normal matrix.
 }
 
