@@ -269,6 +269,13 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
 	// TODO Assignment 1: Plot a pixel, calling the fragment shader.
+	int x = xyz.data[0];
+	int y = xyz.data[1];
+	int index = (width*y + x)*3;
+
+	color_buffer[index] = 255;
+	color_buffer[index+1] = 0;
+	color_buffer[index+2] = 0;
 
 	/* TODO Assignment 3: Compare the z value against the depth buffer and
 	 * only render if its less. Then set the depth buffer.
