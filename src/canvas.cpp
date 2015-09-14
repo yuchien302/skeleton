@@ -103,7 +103,8 @@ void canvashdl::reallocate(int w, int h)
  */
 void canvashdl::set_matrix(matrix_id matid)
 {
-	// TODO Assignment 1: Change which matrix is active.
+	// DONE Assignment 1: Change which matrix is active.
+	active_matrix = matid;
 }
 
 /* load_identity
