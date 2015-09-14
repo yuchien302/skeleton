@@ -288,7 +288,11 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
  */
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
-	// TODO Assignment 1: Plot a point given in window coordinates.
+	// Done Assignment 1: Plot a point given in window coordinates.
+	int x = v.data[0] * width;
+	int y = v.data[1] * height;
+	plot(vec3i(x, y, 0), varying);
+
 }
 
 /* plot_line
