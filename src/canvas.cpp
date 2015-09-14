@@ -114,7 +114,8 @@ void canvashdl::set_matrix(matrix_id matid)
  */
 void canvashdl::load_identity()
 {
-	// TODO Assignment 1: Set the active matrix to the identity matrix.
+	// DONE Assignment 1: Set the active matrix to the identity matrix.
+	matrices[active_matrix] = identity<float, 4, 4> ();
 }
 
 /* rotate
