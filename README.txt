@@ -2,6 +2,7 @@ The controls are as follows:
 
 m - bind/unbind mouse
 esc - quit
+123123
 
 When the mouse is bound, then it is not visible and you may move the current camera around in first person or orbit using the following controls:
 w - move forward
