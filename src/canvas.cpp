@@ -268,7 +268,7 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
  */
 void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
-	// TODO Assignment 1: Plot a pixel, calling the fragment shader.
+	// Done Assignment 1: Plot a pixel, calling the fragment shader.
 	int x = xyz.data[0];
 	int y = xyz.data[1];
 	int index = (width*y + x)*3;
