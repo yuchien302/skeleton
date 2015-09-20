@@ -51,7 +51,8 @@ private:
 	void plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying);
 	void plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying);
 	void plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying);
-
+	vec2i beforeBreseham (int octant, int x, int y);
+	vec2i afterBreseham(int octnat, int x, int y);
 public:
 	canvashdl(int w, int h);
 	~canvashdl();

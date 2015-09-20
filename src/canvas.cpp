@@ -366,7 +366,32 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 	// TODO Assignment 1: Implement Bresenham's Algorithm.
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
-
+vec2i canvashdl::beforeBreseham (int octant, int x, int y){
+	switch(octant){
+		case 0: return vec2i(x, y);
+		case 1: return vec2i(y, x);
+		case 2: return vec2i(y, -x);
+		case 3: return vec2i(-x, y);
+		case 4: return vec2i(-x, -y);
+		case 5: return vec2i(-y, -x);
+		case 6: return vec2i(-y, x);
+		case 7: return vec2i(x, -y);
+		default: return vec2i(x, y);
+	}
+}
+vec2i canvashdl::afterBreseham(int octant, int x, int y){
+	switch(octant){
+		case 0: return vec2i(x, y);
+		case 1: return vec2i(y, x);
+		case 2: return vec2i(-y, x);
+		case 3: return vec2i(-x, y);
+		case 4: return vec2i(-x, -y);
+		case 5: return vec2i(-y, -x);
+		case 6: return vec2i(y, -x);
+		case 7: return vec2i(x, -y);
+		default: return vec2i(x, y);
+	}
+}
 /* plot_half_triangle
  *
  * Plot half of a triangle defined by three points in window coordinates (v1, v2, v3).
