@@ -334,11 +334,13 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 vec3f canvashdl::shade_fragment(vector<float> varying)
 {
 	// Done Assignment 1: Pick a color, any color (as long as it is distinguishable from the background color).
-	return vec3f(255, 0, 0);
+	return vec3f(1.0, 1.0, 1.0);
 
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
 	 */
+
+
 
 }
 
@@ -351,11 +353,11 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 	// Done Assignment 1: Plot a pixel, calling the fragment shader.
 	int x = xyz.data[0];
 	int y = xyz.data[1];
-	int index = (width*y + x)*3;
+	int z = xyz.data[2];
 
-	color_buffer[index] = 255;
-	color_buffer[index+1] = 0;
-	color_buffer[index+2] = 0;
+	color_buffer[ 3* (width*y + x)] = 255 * shade_fragment(varying).data[0];
+	color_buffer[ 3* (width*y + x) + 1] = 255 * shade_fragment(varying).data[1];
+	color_buffer[ 3* (width*y + x) + 2] = 255* shade_fragment(varying).data[2];
 
 	/* TODO Assignment 3: Compare the z value against the depth buffer and
 	 * only render if its less. Then set the depth buffer.
@@ -368,6 +370,7 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
  */
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
+
 	// Done Assignment 1: Plot a point given in window coordinates.
 	int x = (v.data[0]+1.0) / 2.0 * width;
 	int y = (v.data[1]+1.0) / 2.0 * height;
@@ -383,10 +386,92 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
  */
 void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying)
 {
+	int xmin, xmax;
+	int ymin, ymax;
+	int octant;
+	//decide octant
+
+	float slope = (v2.data[1] - v1.data[1])/ (v2.data[0] - v1.data[0]);
+	int v1x = v1.data[0] * width;
+	int v1y = v1.data[1] * height;
+	int v2x = v2.data[0] * width;
+	int v2y = v2.data[1] * height;
+	//int e = 2*() -1;
+	if (v1x < v2x){
+		//xmin = width * v1.data[0];
+		//xmax = width * v2.data[0];
+		if (slope > 1) octant = 1;
+		else if (slope < -1) octant = 6;
+		else if (slope > 0) octant = 0;
+		else octant = 7;
+
+	}
+	else{
+		//xmin = width * v2.data[0];
+		//xmax = width * v1.data[0];
+		if (slope > 1) octant = 5;
+		else if (slope < -1) octant = 2;
+		else if (slope > 0) octant = 4;
+		else octant = 3;
+	}
+
+	vec2i v1_t = beforeBreseham(octant, v1x, v1y);
+	vec2i v2_t = beforeBreseham(octant, v2x, v2y);
+	if(v1_t.data[0] < v2_t.data[0]) {xmin = v1_t.data[0]; xmax = v2_t.data[0];}
+	else {xmin = v2_t.data[0]; xmax = v1_t.data[0];}
+	if(v1_t.data[1] < v2_t.data[1]) {ymin = v1_t.data[1]; ymax = v2_t.data[1];}
+	else {ymin = v2_t.data[1]; ymax = v1_t.data[1];}
+	cout<<xmin << "min" <<xmax<<" "<<slope<<endl;
+	cout<<ymin << "max" <<ymax<<endl;
+	cout<<v1x << " " <<v1y<<endl;
+	cout<<v2x << " " <<v2y<<endl;
+	fflush(stdout);
+	int x_plot, y_plot;
+	int delta_y = ymax - ymin;
+	int delta_x = xmax - xmin;
+	int y = ymin;
+	int d = 2*delta_y - delta_x;
+	for(int x = xmin; x <= xmax; x++){
+		if (d < 0)
+			d += 2*delta_y;
+		else{
+			y++;
+			d += 2*delta_y - 2*delta_x;
+		}
+		vec2i xy_plot = afterBreseham(octant, x, y);
+		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], width* v1.data[2]);
+		//cout<<xy_plot.data[0]<<"plot"<<xy_plot.data[1]<<"d"<<d<<endl;
+		plot(xyz, v1_varying);
+	}
 	// TODO Assignment 1: Implement Bresenham's Algorithm.
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
-
+vec2i canvashdl::beforeBreseham (int octant, int x, int y){
+	switch(octant){
+		case 0: return vec2i(x, y);
+		case 1: return vec2i(y, x);
+		case 2: return vec2i(y, -x);
+		case 3: return vec2i(-x, y);
+		case 4: return vec2i(-x, -y);
+		case 5: return vec2i(-y, -x);
+		case 6: return vec2i(-y, x);
+		case 7: return vec2i(x, -y);
+		default: return vec2i(x, y);
+	}
+}
+vec2i canvashdl::afterBreseham(int octant, int x, int y){
+	switch(octant){
+		case 0: return vec2i(x, y);
+		case 1: return vec2i(y, x);
+		case 2: return vec2i(-y, x);
+		case 3: return vec2i(-x, y);
+		case 4: return vec2i(-x, -y);
+		case 5: return vec2i(-y, -x);
+		case 6: return vec2i(y, -x);
+		case 7: return vec2i(x, -y);
+		default: return vec2i(x, y);
+	}
+}
 /* plot_half_triangle
  *
  * Plot half of a triangle defined by three points in window coordinates (v1, v2, v3).
