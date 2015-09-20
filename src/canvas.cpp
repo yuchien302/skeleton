@@ -9,6 +9,7 @@
 #include "core/geometry.h"
 #include "light.h"
 #include "material.h"
+//#include "matrix.h"
 
 canvashdl::canvashdl(int w, int h)
 {
@@ -291,8 +292,8 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
 	// Done Assignment 1: Plot a point given in window coordinates.
-	int x = v.data[0] * width;
-	int y = v.data[1] * height;
+	int x = (v.data[0]+1.0) / 2.0 * width;
+	int y = (v.data[1]+1.0) / 2.0 * height;
 	plot(vec3i(x, y, 0), varying);
 
 }
