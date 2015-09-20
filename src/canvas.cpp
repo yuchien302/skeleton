@@ -103,7 +103,8 @@ void canvashdl::reallocate(int w, int h)
  */
 void canvashdl::set_matrix(matrix_id matid)
 {
-	// TODO Assignment 1: Change which matrix is active.
+	// DONE Assignment 1: Change which matrix is active.
+	active_matrix = matid;
 }
 
 /* load_identity
@@ -113,7 +114,8 @@ void canvashdl::set_matrix(matrix_id matid)
  */
 void canvashdl::load_identity()
 {
-	// TODO Assignment 1: Set the active matrix to the identity matrix.
+	// DONE Assignment 1: Set the active matrix to the identity matrix.
+	matrices[active_matrix] = identity<float, 4, 4> ();
 }
 
 /* rotate
@@ -268,7 +270,7 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
  */
 void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
-	// TODO Assignment 1: Plot a pixel, calling the fragment shader.
+	// Done Assignment 1: Plot a pixel, calling the fragment shader.
 	int x = xyz.data[0];
 	int y = xyz.data[1];
 	int z = xyz.data[2];
@@ -288,9 +290,12 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
  */
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
-	vec3i xyz = vec3i(width* v.data[0], height* v.data[1], width* v.data[2]);
-	plot(xyz, varying);
-	// TODO Assignment 1: Plot a point given in window coordinates.
+
+	// Done Assignment 1: Plot a point given in window coordinates.
+	int x = v.data[0] * width;
+	int y = v.data[1] * height;
+	plot(vec3i(x, y, 0), varying);
+
 }
 
 /* plot_line
