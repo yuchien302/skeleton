@@ -260,12 +260,13 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
  */
 vec3f canvashdl::shade_fragment(vector<float> varying)
 {
-	// TODO Assignment 1: Pick a color, any color (as long as it is distinguishable from the background color).
+	// Done Assignment 1: Pick a color, any color (as long as it is distinguishable from the background color).
+	return vec3f(255, 0, 0);
 
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
 	 */
-	return vec3f();
+
 }
 
 /* plot
