@@ -9,7 +9,7 @@
 #include "core/geometry.h"
 #include "light.h"
 #include "material.h"
-//#include "matrix.h"
+#include "assert.h"
 
 canvashdl::canvashdl(int w, int h)
 {
@@ -190,7 +190,15 @@ void canvashdl::scale(vec3f size)
  */
 void canvashdl::perspective(float fovy, float aspect, float n, float f)
 {
-	// TODO Assignment 1: Multiply the active matrix by a perspective projection matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by a perspective projection matrix.
+	float fc = 1.0 / tan(fovy/2.0);
+
+	mat4f perspective_mat = mat4f( fc/aspect, 0,   0,			  0,
+							  0, 	     fc,  0,			  0,
+							  0, 		 0,   (f+n)/(n-f), (2*f*n)/(n-f),
+							  0, 		 0,   -1, 		  0);
+
+	matrices[active_matrix] = perspective_mat * matrices[active_matrix];
 }
 
 /* frustum
@@ -200,7 +208,23 @@ void canvashdl::perspective(float fovy, float aspect, float n, float f)
  */
 void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 {
-	// TODO Assignment 1: Multiply the active matrix by a frustum projection matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by a frustum projection matrix.
+	assert(r>l);
+	assert(t>b);
+	assert(f>n);
+
+	float A = (r+l)/(r-l);
+	float B = (t+b)/(t-b);
+	float C = - (f+n)/(f-n);
+	float D = - 2*f*n / (f-n);
+
+
+	mat4f frustum_mat = mat4f( 2.0*n / (r-l), 0, A, 0,
+							   0, 2.0*n/(t-b), B, 0,
+							   0, 0, C, D,
+							   0, 0, -1, 0);
+
+	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
 }
 
 /* ortho
@@ -210,7 +234,22 @@ void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
  */
 void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 {
-	// TODO Assignment 1: Multiply the active matrix by an orthographic projection matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by an orthographic projection matrix.
+	assert(r>l);
+	assert(t>b);
+	assert(f>n);
+
+	float tx = - (r+l)/(r-l);
+	float ty = - (t+b)/(t-b);
+	float tz = - (f+n)/(f-n);
+
+
+	mat4f frustum_mat = mat4f( 2.0 / (r-l), 0, 0, tx,
+							   0, 2.0 / (t-b), 0, ty,
+							   0, 0, -2.0 / (f-n), tz,
+							   0, 0, 0, 1);
+
+	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
 }
 
 void canvashdl::viewport(int left, int bottom, int right, int top)
