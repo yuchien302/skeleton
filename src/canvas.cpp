@@ -126,7 +126,20 @@ void canvashdl::load_identity()
  */
 void canvashdl::rotate(float angle, vec3f axis)
 {
-	// TODO Assignment 1: Multiply the active matrix by a rotation matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by a rotation matrix.
+	// angel: degree
+	float c = cos(angle);
+	float s = sin(angle);
+	float x = axis.data[0];
+	float y = axis.data[1];
+	float z = axis.data[2];
+
+	mat4f rotate_mat = mat4f( x*x*(1.0-c)+c,   x*y*(1.0-c)-z*s, x*z*(1.0-c)+y*s, 0,
+							  y*x*(1.0-c)+z*s, y*y*(1.0-c)+c,   y*z*(1.0-c)-x*s, 0,
+							  x*z*(1.0-c)-y*s, y*z*(1.0-c)+x*s, z*z*(1.0-c)+c,   0,
+							  0, 			   0, 				0,               1);
+
+	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
 }
 
 /* translate
@@ -136,7 +149,17 @@ void canvashdl::rotate(float angle, vec3f axis)
  */
 void canvashdl::translate(vec3f direction)
 {
-	// TODO Assignment 1: Multiply the active matrix by a translation matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by a translation matrix.
+	float x = direction.data[0];
+	float y = direction.data[1];
+	float z = direction.data[2];
+
+	mat4f rotate_mat = mat4f( 1, 0, 0, x,
+							  0, 1, 0, y,
+							  0, 0, 1, z,
+							  0, 0, 0, 1);
+
+	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
 }
 
 /* scale
@@ -146,7 +169,18 @@ void canvashdl::translate(vec3f direction)
  */
 void canvashdl::scale(vec3f size)
 {
-	// TODO Assignment 1: Multiply the active matrix by a scaling matrix.
+	// (untested) Done Assignment 1: Multiply the active matrix by a scaling matrix.
+
+	float x = size.data[0];
+	float y = size.data[1];
+	float z = size.data[2];
+
+	mat4f rotate_mat = mat4f( x, 0, 0, 0,
+							  0, y, 0, 0,
+							  0, 0, z, 0,
+							  0, 0, 0, 1);
+
+	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
 }
 
 /* perspective
