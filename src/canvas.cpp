@@ -290,7 +290,7 @@ vec3f canvashdl::to_window(vec2i pixel)
 	 */
 
 	float x = (pixel.data[0] / (float) width - 0.5 ) * 2.0;
-	float y = (pixel.data[0] / (float) height - 0.5 ) * 2.0;
+	float y = (pixel.data[1] / (float) height - 0.5 ) * 2.0;
 	return vec3f(x, y, 0.0);
 }
 
