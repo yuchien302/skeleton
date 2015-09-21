@@ -93,6 +93,7 @@ public:
 
 
 	vec3f to_window(vec2i pixel);
+	vec2i to_pixel(vec3f window_corndinate);
 	vec3f unproject(vec3f window);
 
 	// Drawing and Shading

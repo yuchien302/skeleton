@@ -294,6 +294,17 @@ vec3f canvashdl::to_window(vec2i pixel)
 	return vec3f(x, y, 0.0);
 }
 
+vec2i canvashdl::to_pixel(vec3f window_cordinate)
+{
+	/* (untested) Done Assignment 1: Given a pixel coordinate (x from 0 to width and y from 0 to height),
+	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
+	 */
+
+	int x = ((window_cordinate.data[0] / 2) + 0.5) * width;
+	int y = ((window_cordinate.data[1] / 2) + 0.5) * height;
+	return vec2i(x, y, 0.0);
+}
+
 /* unproject
  *
  * Unproject a window coordinate into world coordinates.
@@ -392,14 +403,11 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 	//decide octant
 
 	float slope = (v2.data[1] - v1.data[1])/ (v2.data[0] - v1.data[0]);
-	int v1x = v1.data[0] * width;
-	int v1y = v1.data[1] * height;
-	int v2x = v2.data[0] * width;
-	int v2y = v2.data[1] * height;
-	//int e = 2*() -1;
-	if (v1x < v2x){
-		//xmin = width * v1.data[0];
-		//xmax = width * v2.data[0];
+	vec2i v1_pixel = to_pixel(v1);
+	vec2i v2_pixel = to_pixel(v2);
+
+	// compare v1x and v2x and then decide the octant the point belongs to
+	if (v1_pixel.data[0] < v2_pixel.data[0]){
 		if (slope > 1) octant = 1;
 		else if (slope < -1) octant = 6;
 		else if (slope > 0) octant = 0;
@@ -407,25 +415,23 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 
 	}
 	else{
-		//xmin = width * v2.data[0];
-		//xmax = width * v1.data[0];
 		if (slope > 1) octant = 5;
 		else if (slope < -1) octant = 2;
 		else if (slope > 0) octant = 4;
 		else octant = 3;
 	}
 
-	vec2i v1_t = beforeBreseham(octant, v1x, v1y);
-	vec2i v2_t = beforeBreseham(octant, v2x, v2y);
+	// tranform the points to the 1st octant. (0 <slope < 1, x,y>= 0)
+	vec2i v1_t = beforeBreseham(octant, v1_pixel.data[0], v1_pixel.data[1]);
+	vec2i v2_t = beforeBreseham(octant, v2_pixel.data[0], v2_pixel.data[1]);
+
+	// find the start and end (x,y)
 	if(v1_t.data[0] < v2_t.data[0]) {xmin = v1_t.data[0]; xmax = v2_t.data[0];}
 	else {xmin = v2_t.data[0]; xmax = v1_t.data[0];}
 	if(v1_t.data[1] < v2_t.data[1]) {ymin = v1_t.data[1]; ymax = v2_t.data[1];}
 	else {ymin = v2_t.data[1]; ymax = v1_t.data[1];}
-	cout<<xmin << "min" <<xmax<<" "<<slope<<endl;
-	cout<<ymin << "max" <<ymax<<endl;
-	cout<<v1x << " " <<v1y<<endl;
-	cout<<v2x << " " <<v2y<<endl;
-	fflush(stdout);
+
+	//Breseham's algorithm for plot line
 	int x_plot, y_plot;
 	int delta_y = ymax - ymin;
 	int delta_x = xmax - xmin;
@@ -438,9 +444,11 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 			y++;
 			d += 2*delta_y - 2*delta_x;
 		}
+
+		// tranform the cordinate back to original octant
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], width* v1.data[2]);
-		//cout<<xy_plot.data[0]<<"plot"<<xy_plot.data[1]<<"d"<<d<<endl;
+		// use plot method
 		plot(xyz, v1_varying);
 	}
 	// TODO Assignment 1: Implement Bresenham's Algorithm.
