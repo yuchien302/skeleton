@@ -520,7 +520,13 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
  */
 void canvashdl::draw_points(const vector<vec8f> &geometry)
 {
-	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
+	// (untested) Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
+	vector<float> varying = vector<float>();
+	for(int i=0; i<geometry.size(); i++){
+		vec3f point = shade_vertex( geometry[i], varying );
+		plot_point(point, varying);
+	}
+
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
 	// TODO Assignment 3: Update the normal matrix.
 }
