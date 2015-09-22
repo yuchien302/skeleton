@@ -50,13 +50,13 @@ private:
 	void plot_point(vec3f v, vector<float> varying);
 	void plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying);
 	void plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying);
-	void plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying);
+
 	vec2i beforeBreseham (int octant, int x, int y);
 	vec2i afterBreseham(int octnat, int x, int y);
 public:
 	canvashdl(int w, int h);
 	~canvashdl();
-
+	void plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying);
 	string working_directory;
 
 	// Buffer Manipulation
@@ -93,7 +93,7 @@ public:
 
 
 	vec3f to_window(vec2i pixel);
-	vec2i to_pixel(vec3f window_corndinate);
+	vec3i to_pixel(vec3f window_corndinate);
 	vec3f unproject(vec3f window);
 
 	// Drawing and Shading

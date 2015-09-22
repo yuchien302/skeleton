@@ -295,7 +295,7 @@ vec3f canvashdl::to_window(vec2i pixel)
 	return vec3f(x, y, 0.0);
 }
 
-vec2i canvashdl::to_pixel(vec3f window_cordinate)
+vec3i canvashdl::to_pixel(vec3f window_cordinate)
 {
 	/* (untested) Done Assignment 1: Given a pixel coordinate (x from 0 to width and y from 0 to height),
 	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
@@ -303,7 +303,7 @@ vec2i canvashdl::to_pixel(vec3f window_cordinate)
 
 	int x = ((window_cordinate.data[0] / 2.0) + 0.5) * width;
 	int y = ((window_cordinate.data[1] / 2.0) + 0.5) * height;
-	return vec2i(x, y, 0.0);
+	return vec3i(x, y, 0);
 }
 
 /* unproject
@@ -388,10 +388,7 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
 
 	// Done Assignment 1: Plot a point given in window coordinates.
-	int x = (v.data[0]+1.0) / 2.0 * width;
-	int y = (v.data[1]+1.0) / 2.0 * height;
-	plot(vec3i(x, y, 0), varying);
-
+	plot(to_pixel(v), varying);
 }
 
 /* plot_line
@@ -410,8 +407,8 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 	//decide octant
 
 	float slope = (v2.data[1] - v1.data[1])/ (v2.data[0] - v1.data[0]);
-	vec2i v1_pixel = to_pixel(v1);
-	vec2i v2_pixel = to_pixel(v2);
+	vec3i v1_pixel = to_pixel(v1);
+	vec3i v2_pixel = to_pixel(v2);
 
 	// compare v1x and v2x and then decide the octant the point belongs to
 	if (v1_pixel.data[0] < v2_pixel.data[0]){
@@ -514,6 +511,16 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
+	if(polygon_mode == canvashdl::point){
+		plot_point(v1, v1_varying);
+		plot_point(v2, v2_varying);
+		plot_point(v3, v3_varying);
+	}
+	else if(polygon_mode == canvashdl::line){
+		plot_line(v1, v1_varying, v2, v2_varying);
+		plot_line(v2, v2_varying, v3, v3_varying);
+		plot_line(v3, v3_varying, v1, v1_varying);
+	}
 	// TODO Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
 }
 

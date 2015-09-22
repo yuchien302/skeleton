@@ -91,7 +91,7 @@ void displayfunc()
 
 	canvas.set_matrix(canvas.projection_matrix);
 	canvas.load_identity();
-
+	/*
 
 	vector<vec8f> points = vector<vec8f>();
 	points.push_back( vec8f(0.0, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
@@ -100,8 +100,9 @@ void displayfunc()
 	points.push_back( vec8f(0.0, 0.53, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
 	points.push_back( vec8f(0.0, 0.54, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
 
-	canvas.draw_points( points );
-
+	canvas.draw_points( points );*/
+	//canvas.polygon_mode = canvashdl::point;
+	canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
 //	scene.draw();
 
 	canvas.swap_buffers();
