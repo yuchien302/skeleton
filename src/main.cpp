@@ -84,7 +84,25 @@ void displayfunc()
 	canvas.clear_color_buffer();
 	canvas.clear_depth_buffer();
 
-	scene.draw();
+
+	canvas.set_matrix(canvas.modelview_matrix);
+	canvas.load_identity();
+	canvas.translate(vec3f(-0.25, 0.25, 0.0));
+
+	canvas.set_matrix(canvas.projection_matrix);
+	canvas.load_identity();
+
+
+	vector<vec8f> points = vector<vec8f>();
+	points.push_back( vec8f(0.0, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.0, 0.51, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.0, 0.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.0, 0.53, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.0, 0.54, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+
+	canvas.draw_points( points );
+
+//	scene.draw();
 
 	canvas.swap_buffers();
 }
