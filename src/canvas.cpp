@@ -134,10 +134,10 @@ void canvashdl::rotate(float angle, vec3f axis)
 	float y = axis.data[1];
 	float z = axis.data[2];
 
-	mat4f rotate_mat = mat4f( x*x*(1.0-c)+c,   x*y*(1.0-c)-z*s, x*z*(1.0-c)+y*s, 0,
-							  y*x*(1.0-c)+z*s, y*y*(1.0-c)+c,   y*z*(1.0-c)-x*s, 0,
-							  x*z*(1.0-c)-y*s, y*z*(1.0-c)+x*s, z*z*(1.0-c)+c,   0,
-							  0, 			   0, 				0,               1);
+	mat4f rotate_mat = mat4f( x*x*(1.0-c)+c,   x*y*(1.0-c)-z*s, x*z*(1.0-c)+y*s, 0.0,
+							  y*x*(1.0-c)+z*s, y*y*(1.0-c)+c,   y*z*(1.0-c)-x*s, 0.0,
+							  x*z*(1.0-c)-y*s, y*z*(1.0-c)+x*s, z*z*(1.0-c)+c,   0.0,
+							  0.0, 			   0.0, 			0.0,             1.0);
 
 	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
 }
@@ -154,12 +154,13 @@ void canvashdl::translate(vec3f direction)
 	float y = direction.data[1];
 	float z = direction.data[2];
 
-	mat4f rotate_mat = mat4f( 1, 0, 0, x,
-							  0, 1, 0, y,
-							  0, 0, 1, z,
-							  0, 0, 0, 1);
+	mat4f rotate_mat = mat4f( 1.0, 0.0, 0.0, x,
+							  0.0, 1.0, 0.0, y,
+							  0.0, 0.0, 1.0, z,
+							  0.0, 0.0, 0.0, 1.0);
 
 	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
+
 }
 
 /* scale
@@ -175,10 +176,10 @@ void canvashdl::scale(vec3f size)
 	float y = size.data[1];
 	float z = size.data[2];
 
-	mat4f rotate_mat = mat4f( x, 0, 0, 0,
-							  0, y, 0, 0,
-							  0, 0, z, 0,
-							  0, 0, 0, 1);
+	mat4f rotate_mat = mat4f( x, 0.0, 0.0, 0.0,
+							  0.0, y, 0.0, 0.0,
+							  0.0, 0.0, z, 0.0,
+							  0.0, 0.0, 0.0, 1.0);
 
 	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
 }
@@ -193,10 +194,10 @@ void canvashdl::perspective(float fovy, float aspect, float n, float f)
 	// (untested) Done Assignment 1: Multiply the active matrix by a perspective projection matrix.
 	float fc = 1.0 / tan(fovy/2.0);
 
-	mat4f perspective_mat = mat4f( fc/aspect, 0,   0,			  0,
-							  0, 	     fc,  0,			  0,
-							  0, 		 0,   (f+n)/(n-f), (2*f*n)/(n-f),
-							  0, 		 0,   -1, 		  0);
+	mat4f perspective_mat = mat4f( fc/aspect, 0.0,   0.0,			  0.0,
+							  0.0, 	     fc,  0.0,			  0.0,
+							  0.0, 		 0.0,   (f+n)/(n-f), (2*f*n)/(n-f),
+							  0.0, 		 0.0,   -1.0, 		  0.0);
 
 	matrices[active_matrix] = perspective_mat * matrices[active_matrix];
 }
@@ -216,13 +217,13 @@ void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 	float A = (r+l)/(r-l);
 	float B = (t+b)/(t-b);
 	float C = - (f+n)/(f-n);
-	float D = - 2*f*n / (f-n);
+	float D = - 2.0*f*n / (f-n);
 
 
-	mat4f frustum_mat = mat4f( 2.0*n / (r-l), 0, A, 0,
-							   0, 2.0*n/(t-b), B, 0,
-							   0, 0, C, D,
-							   0, 0, -1, 0);
+	mat4f frustum_mat = mat4f( 2.0*n / (r-l), 0.0, A, 0.0,
+							   0.0, 2.0*n/(t-b), B, 0.0,
+							   0.0, 0.0, C, D,
+							   0.0, 0.0, -1.0, 0.0);
 
 	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
 }
@@ -244,10 +245,10 @@ void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 	float tz = - (f+n)/(f-n);
 
 
-	mat4f frustum_mat = mat4f( 2.0 / (r-l), 0, 0, tx,
-							   0, 2.0 / (t-b), 0, ty,
-							   0, 0, -2.0 / (f-n), tz,
-							   0, 0, 0, 1);
+	mat4f frustum_mat = mat4f( 2.0 / (r-l), 0.0, 0.0, tx,
+							   0.0, 2.0 / (t-b), 0.0, ty,
+							   0.0, 0.0, -2.0 / (f-n), tz,
+							   0.0, 0.0, 0.0, 1.0);
 
 	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
 }
@@ -300,8 +301,8 @@ vec2i canvashdl::to_pixel(vec3f window_cordinate)
 	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
 	 */
 
-	int x = ((window_cordinate.data[0] / 2) + 0.5) * width;
-	int y = ((window_cordinate.data[1] / 2) + 0.5) * height;
+	int x = ((window_cordinate.data[0] / 2.0) + 0.5) * width;
+	int y = ((window_cordinate.data[1] / 2.0) + 0.5) * height;
 	return vec2i(x, y, 0.0);
 }
 
