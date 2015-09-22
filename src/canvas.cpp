@@ -402,6 +402,8 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
  */
 void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying)
 {
+	// Done Assignment 1: Implement Bresenham's Algorithm.
+
 	int xmin, xmax;
 	int ymin, ymax;
 	int octant;
@@ -456,7 +458,7 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 		// use plot method
 		plot(xyz, v1_varying);
 	}
-	// TODO Assignment 1: Implement Bresenham's Algorithm.
+
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 vec2i canvashdl::beforeBreseham (int octant, int x, int y){
