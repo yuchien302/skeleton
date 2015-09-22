@@ -330,12 +330,16 @@ vec3f canvashdl::unproject(vec3f window)
  */
 vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 {
-	// TODO Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
+	// (untested) Done Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
+
+	vec4f point = matrices[projection_matrix] *
+				  matrices[modelview_matrix] *
+				  vec4f( v.data[0], v.data[1], v.data[2], 1.0 );
 
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
-	return vec3f();
+	return vec3f(point.data[0], point.data[1], point.data[2]);
 }
 
 /* shade_fragment
