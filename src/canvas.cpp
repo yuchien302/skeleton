@@ -507,7 +507,7 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
  */
 void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying)
 {
-	/* TODO Assignment 1: Use the above functions to plot a whole triangle. Don't forget to
+	/* DONE Assignment 1: Use the above functions to plot a whole triangle. Don't forget to
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
@@ -556,6 +556,17 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
 	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
+	// TODO clip
+	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
+
+	vector<float> varying1 = vector<float>();
+	vector<float> varying2 = vector<float>();
+	for(int i=0; i<indices.size()/2; i++){
+		cout << i <<endl;
+		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
+		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
+		plot_line(point1, varying1, point2, varying2);
+	}
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
 	// TODO Assignment 3: Update the normal matrix.
 }
@@ -570,6 +581,18 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
  */
 void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
+
+	vector<float> varying1 = vector<float>();
+	vector<float> varying2 = vector<float>();
+	vector<float> varying3 = vector<float>();
+	for(int i=0; i<indices.size()/3; i++){
+		vec3f point1 = shade_vertex( geometry[indices[3*i]], varying1 );
+		vec3f point2 = shade_vertex( geometry[indices[3*i+1]], varying2 );
+		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
+		plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+	}
+	// TODO clip
 	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
 	// TODO Assignment 3: Update the normal matrix.

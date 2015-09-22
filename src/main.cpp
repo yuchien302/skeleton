@@ -87,22 +87,30 @@ void displayfunc()
 
 	canvas.set_matrix(canvas.modelview_matrix);
 	canvas.load_identity();
-	canvas.translate(vec3f(-0.25, 0.25, 0.0));
+	//canvas.translate(vec3f(-0.25, 0.25, 0.0));
 
 	canvas.set_matrix(canvas.projection_matrix);
 	canvas.load_identity();
-	/*
+
 
 	vector<vec8f> points = vector<vec8f>();
-	points.push_back( vec8f(0.0, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.0, 0.51, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.0, 0.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.0, 0.53, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.0, 0.54, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-
-	canvas.draw_points( points );*/
+	points.push_back( vec8f(0.23, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.78, 0.21, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(-0.13, -0.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.0, 0.23, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	points.push_back( vec8f(0.3, 0.79, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
+	//canvas.draw_points( points );
+	vector<int> indices = vector<int>();
+	indices.push_back(1);
+	indices.push_back(4);
+	indices.push_back(5);
+	indices.push_back(3);
+	indices.push_back(2);
+	indices.push_back(4);
+	//canvas.draw_lines( points, indices);
+	canvas.draw_triangles( points, indices);
 	//canvas.polygon_mode = canvashdl::point;
-	canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
+	//canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
 //	scene.draw();
 
 	canvas.swap_buffers();
