@@ -555,8 +555,7 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
-	// DONE Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
-
+	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
 	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
 
 	vector<float> varying1 = vector<float>();
