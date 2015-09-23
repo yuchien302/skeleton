@@ -38,6 +38,9 @@ void scenehdl::draw()
 	/* TODO Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */
+	for (int i = 0; i < objects.size(); i++){
+		objects[i] -> draw(canvas);
+	}
 
 	/* TODO Assignment 3: Clear the uniform variables and pass the vector of
 	 * lights into the renderer as a uniform variable.
