@@ -555,14 +555,12 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
-	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
-	// TODO clip
+	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
 	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
 
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();
 	for(int i=0; i<indices.size()/2; i++){
-		cout << i <<endl;
 		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
 		plot_line(point1, varying1, point2, varying2);
@@ -581,6 +579,7 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
  */
 void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
 
 	vector<float> varying1 = vector<float>();
@@ -592,8 +591,6 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
 		plot_triangle(point1, varying1, point2, varying2, point3, varying3);
 	}
-	// TODO clip
-	// TODO Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
 	// TODO Assignment 3: Update the normal matrix.
 }
