@@ -58,7 +58,8 @@ void init(string working_directory)
 	canvas.working_directory = working_directory;
 	scene.canvas = &canvas;
 	scene.cameras.push_back(new frustumhdl());
-	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
+	//scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
+	scene.objects.push_back(new spherehdl(0.3, 10, 10));
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{
@@ -111,7 +112,7 @@ void displayfunc()
 	canvas.draw_triangles( points, indices);
 	//canvas.polygon_mode = canvashdl::point;
 	//canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
-//	scene.draw();
+	scene.draw();
 
 	canvas.swap_buffers();
 }
