@@ -58,8 +58,7 @@ void init(string working_directory)
 	canvas.working_directory = working_directory;
 	scene.canvas = &canvas;
 	scene.cameras.push_back(new frustumhdl());
-	//scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
-	scene.objects.push_back(new spherehdl(0.3, 10, 10));
+	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{
@@ -93,7 +92,7 @@ void displayfunc()
 	canvas.set_matrix(canvas.projection_matrix);
 	canvas.load_identity();
 
-	/*
+
 	vector<vec8f> points = vector<vec8f>();
 	points.push_back( vec8f(0.23, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
 	points.push_back( vec8f(0.78, 0.21, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
@@ -105,16 +104,14 @@ void displayfunc()
 	indices.push_back(1);
 	indices.push_back(4);
 	indices.push_back(5);
-
 	indices.push_back(3);
 	indices.push_back(2);
 	indices.push_back(4);
 	//canvas.draw_lines( points, indices);
 	canvas.draw_triangles( points, indices);
-	*/
 	//canvas.polygon_mode = canvashdl::point;
 	//canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
-	scene.draw();
+//	scene.draw();
 
 	canvas.swap_buffers();
 }

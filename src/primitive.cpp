@@ -74,8 +74,6 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
 
-	// test geometry and indices
-	cout << "level: " << levels << "\t slice: " << slices << endl;
 	// TODO Assignment 3: Set up the material properties for this object
 }
 
