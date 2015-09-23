@@ -271,7 +271,25 @@ void canvashdl::viewport(int left, int bottom, int right, int top)
  */
 void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 {
-	// TODO Assignment 1: Emulate the functionality of gluLookAt
+	// (untested) Done Assignment 1: Emulate the functionality of gluLookAt
+
+	vec3f F = at - eye;
+	vec3f f = norm(F);
+	vec3f nup = norm(up);
+	vec3f s = f*nup;
+	vec3f u = norm(s) * f;
+	mat4f M = mat4f(s.data[0], s.data[1], s.data[2], 0.0,
+					u.data[0], u.data[1], u.data[2], 0.0,
+					-f.data[0], -f.data[1], -f.data[2], 0.0,
+					0.0, 0.0, 0.0, 1.0);
+
+	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, -eye[0],
+					  		     0.0, 1.0, 0.0, -eye[1],
+							     0.0, 0.0, 1.0, -eye[2],
+							     0.0, 0.0, 0.0, 1.0);
+
+	matrices[modelview_matrix] = translate_mat * M *
+								 matrices[modelview_matrix];
 }
 
 void canvashdl::update_normal_matrix()
