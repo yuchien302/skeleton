@@ -35,10 +35,10 @@ scenehdl::~scenehdl()
  */
 void scenehdl::draw()
 {
+	cameras[active_camera] -> view(canvas);
 	for (int i = 0; i < objects.size(); i++){
 		objects[i] -> draw(canvas);
 	}
-
 	/* TODO Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */

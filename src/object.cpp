@@ -66,8 +66,11 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(canvashdl *canvas)
 {
+	canvas->set_matrix(canvashdl::modelview_matrix);
 	for (int i = 0; i < rigid.size(); i++){
+		canvas -> translate(position);
 		rigid[i].draw(canvas);
+		canvas -> translate(- position);
 	}
 	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
@@ -83,11 +86,11 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	int bound_vertices_number = 6;
 	int bound_y_index_offset = 2;
 	int bound_z_index_offset = 2;
-	vector<vec8f> points_cloud = new vector<vec8f>;
+	vector<vec8f> points_cloud = vector<vec8f>();
 	for (int x = 0; x < 2; x++)
 	for(int y = 0; y < 2; y++)
 	for(int z = 0; z < 2; z++){
-	points_cloud.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0);
+	points_cloud.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0));
 	//canvas -> draw_lines(bound[i], bound[j]);
 	}
 

@@ -78,6 +78,8 @@ void init(string working_directory)
 		scene.cameras[scene.active_camera]->project(&canvas);
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
+	//scene.cameras[scene.active_camera]->position[1] = 10.0;
+	//scene.cameras[scene.active_camera]->position[0] = 10.0;
 }
 
 void displayfunc()
@@ -109,7 +111,7 @@ void displayfunc()
 	indices.push_back(2);
 	indices.push_back(4);
 	//canvas.draw_lines( points, indices);
-	canvas.draw_triangles( points, indices);
+	//canvas.draw_triangles( points, indices);
 	//canvas.polygon_mode = canvashdl::point;
 	//canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
 	scene.draw();

@@ -139,7 +139,7 @@ void canvashdl::rotate(float angle, vec3f axis)
 							  x*z*(1.0-c)-y*s, y*z*(1.0-c)+x*s, z*z*(1.0-c)+c,   0.0,
 							  0.0, 			   0.0, 			0.0,             1.0);
 
-	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
+	matrices[active_matrix] = matrices[active_matrix] * rotate_mat;
 }
 
 /* translate
@@ -159,7 +159,7 @@ void canvashdl::translate(vec3f direction)
 							  0.0, 0.0, 1.0, z,
 							  0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
+	matrices[active_matrix] =matrices[active_matrix]*  rotate_mat ;
 
 }
 
@@ -181,7 +181,7 @@ void canvashdl::scale(vec3f size)
 							  0.0, 0.0, z, 0.0,
 							  0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] = rotate_mat * matrices[active_matrix];
+	matrices[active_matrix] = matrices[active_matrix]* rotate_mat;
 }
 
 /* perspective
@@ -199,7 +199,7 @@ void canvashdl::perspective(float fovy, float aspect, float n, float f)
 							  0.0, 		 0.0,   (f+n)/(n-f), (2*f*n)/(n-f),
 							  0.0, 		 0.0,   -1.0, 		  0.0);
 
-	matrices[active_matrix] = perspective_mat * matrices[active_matrix];
+	matrices[active_matrix] =  matrices[active_matrix] * perspective_mat;
 }
 
 /* frustum
@@ -225,7 +225,7 @@ void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 							   0.0, 0.0, C, D,
 							   0.0, 0.0, -1.0, 0.0);
 
-	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
+	matrices[active_matrix] =  matrices[active_matrix] * frustum_mat;
 }
 
 /* ortho
@@ -250,7 +250,7 @@ void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 							   0.0, 0.0, -2.0 / (f-n), tz,
 							   0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] = frustum_mat * matrices[active_matrix];
+	matrices[active_matrix] =  matrices[active_matrix]* frustum_mat;
 }
 
 void canvashdl::viewport(int left, int bottom, int right, int top)
@@ -357,7 +357,7 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
-	return vec3f(point.data[0], point.data[1], point.data[2]);
+	return vec3f(point.data[0]/point.data[3], point.data[1]/point.data[3], point.data[2]/point.data[3]);
 }
 
 /* shade_fragment

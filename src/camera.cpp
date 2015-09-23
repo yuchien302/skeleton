@@ -25,6 +25,7 @@ camerahdl::~camerahdl()
 
 void camerahdl::view(canvashdl *canvas)
 {
+	canvas -> translate(-position);
 	/* TODO Assignment 1: Do the necessary modelview transformations to move
 	 * the camera into place.
 	 */
