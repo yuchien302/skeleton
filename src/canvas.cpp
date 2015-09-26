@@ -154,12 +154,12 @@ void canvashdl::translate(vec3f direction)
 	float y = direction.data[1];
 	float z = direction.data[2];
 
-	mat4f rotate_mat = mat4f( 1.0, 0.0, 0.0, x,
+	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, x,
 							  0.0, 1.0, 0.0, y,
 							  0.0, 0.0, 1.0, z,
 							  0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] =matrices[active_matrix]*  rotate_mat ;
+	matrices[active_matrix] = matrices[active_matrix] * translate_mat ;
 
 }
 
@@ -176,12 +176,12 @@ void canvashdl::scale(vec3f size)
 	float y = size.data[1];
 	float z = size.data[2];
 
-	mat4f rotate_mat = mat4f( x, 0.0, 0.0, 0.0,
+	mat4f scale_mat = mat4f( x, 0.0, 0.0, 0.0,
 							  0.0, y, 0.0, 0.0,
 							  0.0, 0.0, z, 0.0,
 							  0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] = matrices[active_matrix]* rotate_mat;
+	matrices[active_matrix] = matrices[active_matrix] * scale_mat;
 }
 
 /* perspective
@@ -321,6 +321,8 @@ vec3i canvashdl::to_pixel(vec3f window_cordinate)
 
 	int x = ((window_cordinate.data[0] / 2.0) + 0.5) * width;
 	int y = ((window_cordinate.data[1] / 2.0) + 0.5) * height;
+	assert(x < width && y < height);
+
 	return vec3i(x, y, 0);
 }
 
@@ -388,7 +390,8 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 	int x = xyz.data[0];
 	int y = xyz.data[1];
 	int z = xyz.data[2];
-
+	assert( y < width && x < height);
+	assert( (3* (width*y + x) + 2) < 3*width*height);
 	color_buffer[ 3* (width*y + x)] = 255 * shade_fragment(varying).data[0];
 	color_buffer[ 3* (width*y + x) + 1] = 255 * shade_fragment(varying).data[1];
 	color_buffer[ 3* (width*y + x) + 2] = 255* shade_fragment(varying).data[2];
@@ -599,6 +602,10 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 {
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
+	cout << indices[0] << indices[1] << indices[2] << endl;
+	cout << geometry[0] << endl;
+	cout << geometry[1] << endl;
+	cout << geometry[2] << endl;
 
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();

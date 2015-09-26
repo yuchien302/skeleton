@@ -10,6 +10,12 @@
 #ifndef primitive_h
 #define primitive_h
 
+struct trianglehdl : objecthdl
+{
+	trianglehdl();
+	~trianglehdl();
+};
+
 struct boxhdl : objecthdl
 {
 	boxhdl(float width, float height, float depth);

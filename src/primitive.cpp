@@ -7,6 +7,28 @@
 
 #include "primitive.h"
 
+/* trianglehdl
+ *
+ * Generate the geometry and indices required to make a box.
+ */
+trianglehdl::trianglehdl()
+{
+	rigid.push_back(rigidhdl());
+	rigid[0].geometry.reserve(3);
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(0.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(0.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	rigid[0].indices.push_back(0);
+	rigid[0].indices.push_back(1);
+	rigid[0].indices.push_back(2);
+
+}
+
+trianglehdl::~trianglehdl()
+{
+
+}
+
 /* boxhdl
  *
  * Generate the geometry and indices required to make a box.
@@ -94,7 +116,6 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 	rigid[0].geometry.push_back(vec8f(0.0, 0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	for (int i = 0; i < slices; i++){
 		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-		cout<<dir<<endl;
 		rigid[0].geometry.push_back(vec8f(radius * dir[0], radius * dir[1], height/2.0, dir[0], dir[1], 0.0, 0.0, 0.0));
 	}
 	//bot circle
@@ -164,9 +185,8 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 		rigid[0].indices.push_back(((i+1)%slices) +1);
 		rigid[0].indices.push_back(i+1);
 		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
-		cout<<i<<endl;
 	}
-	cout<<"QQ"<<endl;
+
 	// side
 	for (int i = 0; i < slices; i++){
 		rigid[0].indices.push_back(i+1);
@@ -175,7 +195,7 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 
 	}
 	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
-	cout<<"FK"<<endl;
+
 	// TODO Assignment 3: Set up the material properties for this object
 }
 

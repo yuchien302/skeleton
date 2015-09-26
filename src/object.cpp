@@ -24,8 +24,8 @@ rigidhdl::~rigidhdl()
  */
 void rigidhdl::draw(canvashdl *canvas)
 {
+	// (untested) Done Assignment 1: Send the rigid body geometry to the renderer
 	canvas -> draw_triangles(geometry, indices);
-	// TODO Assignment 1: Send the rigid body geometry to the renderer
 }
 
 objecthdl::objecthdl()
@@ -66,13 +66,17 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(canvashdl *canvas)
 {
-	canvas->set_matrix(canvashdl::modelview_matrix);
+	// (untested) Done Assignment 1: Send transformations and geometry to the renderer to draw the object
+	canvas -> set_matrix(canvashdl::modelview_matrix);
+
+	canvas -> load_identity();
+
 	for (int i = 0; i < rigid.size(); i++){
 		canvas -> translate(position);
 		rigid[i].draw(canvas);
-		canvas -> translate(- position);
+		canvas -> translate(-position);
 	}
-	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
+
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
 
@@ -83,8 +87,10 @@ void objecthdl::draw(canvashdl *canvas)
  */
 void objecthdl::draw_bound(canvashdl *canvas)
 {
+
 	canvas->set_matrix(canvashdl::modelview_matrix);
 	canvas -> translate(position);
+
 	int bound_vertices_number = 6;
 	int bound_y_index_offset = 2;
 	int bound_z_index_offset = 2;
@@ -96,6 +102,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	for(int y = 0; y < 2; y++)
 	for (int x = 0; x < 2; x++)
 		geometry.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0));
+
 
 	for(int i = 0; i < 4; i++){
 		indices.push_back(i);
@@ -113,6 +120,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	/* TODO Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
 	 */
+
 	// TODO Assignment 3: clear the material in the uniform list
 }
 

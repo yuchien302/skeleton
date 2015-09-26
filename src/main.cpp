@@ -57,10 +57,14 @@ void init(string working_directory)
 
 	canvas.working_directory = working_directory;
 	scene.canvas = &canvas;
-	scene.cameras.push_back(new frustumhdl());
-	//scene.objects.push_back(new pyramidhdl(0.3, 0.3, 100));
-	scene.objects.push_back(new spherehdl(0.3, 10, 10));
-	//scene.objects.push_back(new cylinderhdl(0.3, 0.3, 10));
+
+//	scene.cameras.push_back(new orthohdl());
+	scene.cameras.push_back(new perspectivehdl());
+//	scene.objects.push_back(new spherehdl(0.3, 10, 20));
+	scene.objects.push_back(new pyramidhdl(0.3, 0.3, 10));
+//	scene.objects.push_back(new trianglehdl());
+
+
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{
@@ -72,6 +76,7 @@ void init(string working_directory)
 	swap(scene.objects.back()->bound[2], scene.objects.back()->bound[4]);
 	swap(scene.objects.back()->bound[3], scene.objects.back()->bound[5]);
 
+
 	scene.cameras.back()->model = scene.objects.back();
 	if (!scene.active_camera_valid())
 	{
@@ -79,8 +84,7 @@ void init(string working_directory)
 		scene.cameras[scene.active_camera]->project(&canvas);
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
-	//scene.cameras[scene.active_camera]->position[1] = 10.0;
-	//scene.cameras[scene.active_camera]->position[0] = 10.0;
+
 }
 
 void displayfunc()
@@ -88,35 +92,8 @@ void displayfunc()
 	canvas.clear_color_buffer();
 	canvas.clear_depth_buffer();
 
-
-	canvas.set_matrix(canvas.modelview_matrix);
-	canvas.load_identity();
-	//canvas.translate(vec3f(-0.25, 0.25, 0.0));
-
-	canvas.set_matrix(canvas.projection_matrix);
-	canvas.load_identity();
-
-
-	vector<vec8f> points = vector<vec8f>();
-	points.push_back( vec8f(0.23, 0.50, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.78, 0.21, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(-0.13, -0.52, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.0, 0.23, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	points.push_back( vec8f(0.3, 0.79, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0) );
-	//canvas.draw_points( points );
-	vector<int> indices = vector<int>();
-	indices.push_back(1);
-	indices.push_back(4);
-	indices.push_back(5);
-	indices.push_back(3);
-	indices.push_back(2);
-	indices.push_back(4);
-	//canvas.draw_lines( points, indices);
-	//canvas.draw_triangles( points, indices);
-	//canvas.polygon_mode = canvashdl::point;
-	//canvas.plot_triangle(vec3f(0.5,0.5,0.0), vector<float>(), vec3f(0.8,0.2,0.0), vector<float>(), vec3f(0.1,0.6,0.0), vector<float>());
 	scene.draw();
-
+//	cout << scene.cameras[scene.active_camera]->position << endl;
 	canvas.swap_buffers();
 }
 

@@ -25,10 +25,15 @@ camerahdl::~camerahdl()
 
 void camerahdl::view(canvashdl *canvas)
 {
-	canvas -> translate(-position);
-	/* TODO Assignment 1: Do the necessary modelview transformations to move
+	/* (untested) Done Assignment 1: Do the necessary modelview transformations to move
 	 * the camera into place.
 	 */
+	canvashdl::matrix_id prev_matrix = canvas -> active_matrix;
+	canvas -> set_matrix(canvashdl::modelview_matrix);
+	canvas -> load_identity();
+	canvas -> translate(-position);
+	canvas -> set_matrix(prev_matrix);
+
 }
 
 orthohdl::orthohdl()
@@ -48,7 +53,12 @@ orthohdl::~orthohdl()
 
 void orthohdl::project(canvashdl *canvas)
 {
-	// TODO Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
+	//  (untested) Done Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
+	canvashdl::matrix_id prev_matrix = canvas -> active_matrix;
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
+	canvas -> ortho(left, right, bottom, top, front, back);
+	canvas -> set_matrix(prev_matrix);
 }
 
 frustumhdl::frustumhdl()
@@ -69,7 +79,12 @@ frustumhdl::~frustumhdl()
 
 void frustumhdl::project(canvashdl *canvas)
 {
-	// TODO Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
+	// (untested) Done Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
+	canvashdl::matrix_id prev_matrix = canvas -> active_matrix;
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
+	canvas -> frustum(left, right, bottom, top, front, back);
+	canvas -> set_matrix(prev_matrix);
 }
 
 perspectivehdl::perspectivehdl()
@@ -88,5 +103,10 @@ perspectivehdl::~perspectivehdl()
 
 void perspectivehdl::project(canvashdl *canvas)
 {
-	// TODO Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
+	//  (untested) Done Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
+	canvashdl::matrix_id prev_matrix = canvas -> active_matrix;
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
+	canvas -> perspective(fovy, aspect, front, back);
+	canvas -> set_matrix(prev_matrix);
 }
