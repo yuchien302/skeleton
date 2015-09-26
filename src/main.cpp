@@ -58,8 +58,9 @@ void init(string working_directory)
 	canvas.working_directory = working_directory;
 	scene.canvas = &canvas;
 	scene.cameras.push_back(new frustumhdl());
-	//scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
+	//scene.objects.push_back(new pyramidhdl(0.3, 0.3, 100));
 	scene.objects.push_back(new spherehdl(0.3, 10, 10));
+	//scene.objects.push_back(new cylinderhdl(0.3, 0.3, 10));
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{

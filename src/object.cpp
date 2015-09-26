@@ -83,17 +83,33 @@ void objecthdl::draw(canvashdl *canvas)
  */
 void objecthdl::draw_bound(canvashdl *canvas)
 {
+	canvas->set_matrix(canvashdl::modelview_matrix);
+	canvas -> translate(position);
 	int bound_vertices_number = 6;
 	int bound_y_index_offset = 2;
 	int bound_z_index_offset = 2;
-	vector<vec8f> points_cloud = vector<vec8f>();
-	for (int x = 0; x < 2; x++)
-	for(int y = 0; y < 2; y++)
-	for(int z = 0; z < 2; z++){
-	points_cloud.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0));
-	//canvas -> draw_lines(bound[i], bound[j]);
-	}
 
+	vector<vec8f> geometry = vector<vec8f>();
+	vector<int> indices = vector<int>();
+
+	for(int z = 0; z < 2; z++)
+	for(int y = 0; y < 2; y++)
+	for (int x = 0; x < 2; x++)
+		geometry.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0));
+
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back((i+1)%4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i+4);
+		indices.push_back(((i+1)%4) + 4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back(i+4);
+	}
+	canvas -> translate(- position);
 	/* TODO Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
 	 */

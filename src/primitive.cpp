@@ -88,6 +88,45 @@ spherehdl::~spherehdl()
  */
 cylinderhdl::cylinderhdl(float radius, float height, int slices)
 {
+	rigid.push_back(rigidhdl());
+	rigid[0].geometry.reserve(2*slices + 2);
+	//top circle
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	for (int i = 0; i < slices; i++){
+		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+		cout<<dir<<endl;
+		rigid[0].geometry.push_back(vec8f(radius * dir[0], radius * dir[1], height/2.0, dir[0], dir[1], 0.0, 0.0, 0.0));
+	}
+	//bot circle
+	for (int i = 0; i < slices; i++){
+			vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+			rigid[0].geometry.push_back(vec8f(radius * dir[0], radius * dir[1], -height/2.0, dir[0], dir[1], 0.0, 0.0, 0.0));
+		}
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, -height/2.0, 0.0, 0.0, -1.0, 0.0, 0.0));
+	//top circle
+	//cout<<rigid[0].geometry[1]<<endl;
+	for (int i = 0; i < slices; i++){
+		rigid[0].indices.push_back(i+1);
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+		rigid[0].indices.push_back(0);
+	}
+	//bot circle
+	for (int i = 0; i < slices; i++){
+		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
+		rigid[0].indices.push_back(i+1 + slices);
+		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
+	}
+	// side
+	for (int i = 0; i < slices; i++){
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+		rigid[0].indices.push_back(i+1);
+		rigid[0].indices.push_back(i+1 +slices);
+
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+		rigid[0].indices.push_back(i+1 + slices);
+		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
+	}
+	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
 	/* TODO Assignment 1: Generate the geometry and indices required to make a cylinder.
 	 * Calculate its bounding box.
 	 */
@@ -109,7 +148,34 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	/* TODO Assignment 1: Generate the geometry and indices required to make a pyramid.
 	 * Calculate its bounding box.
 	 */
+	rigid.push_back(rigidhdl());
+	rigid[0].geometry.reserve(slices + 2);
+	//top center
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	//bot circle
+	for (int i = 0; i < slices; i++){
+		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+		rigid[0].geometry.push_back(vec8f(radius * dir[0], radius * dir[1], -height/2.0, dir[0], dir[1], 0.0, 0.0, 0.0));
+	}
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, -height/2.0, 0.0, 0.0, -1.0, 0.0, 0.0));
 
+	//bot circle
+	for (int i = 0; i < slices; i++){
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+		rigid[0].indices.push_back(i+1);
+		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
+		cout<<i<<endl;
+	}
+	cout<<"QQ"<<endl;
+	// side
+	for (int i = 0; i < slices; i++){
+		rigid[0].indices.push_back(i+1);
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+		rigid[0].indices.push_back(i+1 +slices);
+
+	}
+	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
+	cout<<"FK"<<endl;
 	// TODO Assignment 3: Set up the material properties for this object
 }
 
