@@ -38,7 +38,7 @@ void camerahdl::view(canvashdl *canvas)
 	vec3f up = ror3(vec3f(0.0, 1.0, 0.0), orientation);
 	vec3f eye = position;
 	vec3f at = eye + ror3(vec3f(0.0, 0.0, -1.0), orientation);
-	if(focus){
+	if(focus != NULL){
 		at = focus ->position;
 		eye = at - ror3(vec3f(0.0, 0.0, -radius), orientation);
 	}

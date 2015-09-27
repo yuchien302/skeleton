@@ -70,8 +70,8 @@ boxhdl::boxhdl(float width, float height, float depth)
 	rigid[0].indices.push_back(4);
 	rigid[0].indices.push_back(7);
 	rigid[0].indices.push_back(6);
-	//for()
 
+	bound = vec6f(-width, width, -height, height, -depth, depth);
 	// TODO Assignment 3: Set up the material properties for this object
 }
 
@@ -183,7 +183,7 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 		rigid[0].indices.push_back(i+1 + slices);
 		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
 	}
-	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
+	bound = vec6f(-radius, radius, -radius, radius, -height/ 2.0, height/2.0);
 
 
 	// TODO Assignment 3: Set up the material properties for this object

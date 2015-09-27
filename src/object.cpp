@@ -70,20 +70,29 @@ void objecthdl::draw(canvashdl *canvas)
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	for (int i = 0; i < rigid.size(); i++){
 		canvas -> translate(position);
-		//rotate by x (orientation from x axis)
-//		canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
 
-		//rotate by y
-		//rorate by z
-		// scale up
+		canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
+		canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
+		canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
+
+		canvas -> scale(vec3f(scale, scale, scale));
+
 		rigid[i].draw(canvas);
-		//scale down
+
+		canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
+
+		canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
+		canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
+		canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
+
+
+
 		canvas -> translate(-position);
 	}
 
-	draw_bound(canvas);
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
+
 
 /* draw_bound
  *
@@ -97,6 +106,12 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	 */
 	canvas->set_matrix(canvashdl::modelview_matrix);
 	canvas -> translate(position);
+
+	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
+	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
+	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
+
+	canvas -> scale(vec3f(scale, scale, scale));
 
 	vector<vec8f> geometry = vector<vec8f>();
 	vector<int> indices = vector<int>();
@@ -156,6 +171,13 @@ void objecthdl::draw_bound(canvashdl *canvas)
 
 
 	canvas -> draw_lines(geometry, indices);
+
+	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
+
+	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
+	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
+	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
+
 	canvas -> translate(- position);
 
 

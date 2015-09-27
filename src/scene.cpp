@@ -38,16 +38,34 @@ void scenehdl::draw()
 	/* (untested) Done Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
+	cameras[active_camera] -> project(canvas);
+
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	canvas -> load_identity();
 
 	cameras[active_camera] -> view(canvas);
 
+
+
 	for (int i = 0; i < objects.size(); i++){
-		objects[i] -> draw(canvas);
-		if(render_normals)
-			objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
+		bool is_camera = false;
+		for (int j = 0; j < cameras.size() && !is_camera; j++){
+			if (cameras[j] != NULL && cameras[j]->model == objects[i]){
+				is_camera = true;
+			}
+		}
+		if(!is_camera){
+			objects[i] -> draw(canvas);
+			if(render_normals)
+				objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
+			if(i == active_object){
+				objects[i] -> draw_bound(canvas);
+			}
+		}
 	}
+
 
 
 

@@ -155,9 +155,9 @@ void canvashdl::translate(vec3f direction)
 	float z = direction.data[2];
 
 	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, x,
-							  0.0, 1.0, 0.0, y,
-							  0.0, 0.0, 1.0, z,
-							  0.0, 0.0, 0.0, 1.0);
+							  	 0.0, 1.0, 0.0, y,
+								 0.0, 0.0, 1.0, z,
+								 0.0, 0.0, 0.0, 1.0);
 
 	matrices[active_matrix] = matrices[active_matrix] * translate_mat ;
 
@@ -265,7 +265,7 @@ void canvashdl::viewport(int left, int bottom, int right, int top)
 
 /* look_at
  *
- * Move and orient the modelview so the camera is at the 'at' position focused on the 'eye'
+ * Move and orient the modelview so the camera is at the 'eye' position focused on the 'at'
  * position and rotated so the 'up' vector is up
  * This implements: https://www.opengl.org/sdk/docs/man2/xhtml/gluLookAt.xml
  */
@@ -274,7 +274,7 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 	// (untested) Done Assignment 1: Emulate the functionality of gluLookAt
 
 
-	vec3f F = eye-at;
+	vec3f F = at - eye;
 	vec3f f = norm(F);
 	vec3f nup = norm(up);
 	vec3f s = cross(f, nup);
@@ -284,13 +284,13 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 					-f.data[0], -f.data[1], -f.data[2], 0.0,
 					0.0, 0.0, 0.0, 1.0);
 
-	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, -at[0],
-					  		     0.0, 1.0, 0.0, -at[1],
-							     0.0, 0.0, 1.0, -at[2],
+	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, -eye[0],
+					  		     0.0, 1.0, 0.0, -eye[1],
+							     0.0, 0.0, 1.0, -eye[2],
 							     0.0, 0.0, 0.0, 1.0);
 
 	cout << "canvas.lookat.modelview_matrix before::" << matrices[modelview_matrix] << endl;
-	matrices[modelview_matrix] = matrices[modelview_matrix] * M * translate_mat;
+	matrices[active_matrix] = matrices[active_matrix] * M * translate_mat;
 	cout << "canvas.lookat.modelview_matrix after::" << matrices[modelview_matrix] << endl;
 }
 
@@ -310,16 +310,14 @@ vec3f canvashdl::to_window(vec2i pixel)
 	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
 	 */
 
-	float x = (pixel.data[0] / (float) width - 0.5 ) * 2.0;
-	float y = (pixel.data[1] / (float) height - 0.5 ) * 2.0;
-	return vec3f(x, y, 0.0);
+	float x = ((float) pixel.data[0] / (float) width - 0.5 ) * 2.0;
+	float y = (0.5 - (float) pixel.data[1] / (float) height) * 2.0;
+
+	return vec3f(x, y, 1.0);
 }
 
 vec3i canvashdl::to_pixel(vec3f window_cordinate)
 {
-	/* (untested) Done Assignment 1: Given a pixel coordinate (x from 0 to width and y from 0 to height),
-	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
-	 */
 
 	int x = ((window_cordinate.data[0] / 2.0) + 0.5) * width;
 	int y = ((window_cordinate.data[1] / 2.0) + 0.5) * height;
@@ -336,12 +334,11 @@ vec3f canvashdl::unproject(vec3f window)
 {
 	// (untested) Done Assignment 1: Unproject a window coordinate into world coordinates.
 
-	vec4f temp = vec4f(window.data[0], window.data[1], window.data[2], 1);
+	vec4f temp = vec4f(window.data[0], window.data[1], window.data[2], 1.0);
 
 	mat4f invPM = inverse(matrices[modelview_matrix]) * inverse(matrices[projection_matrix]);
 
 	vec4f obj = invPM * temp;
-	obj = obj/obj.data[3];
 
 	return vec3f(obj.data[0], obj.data[1], obj.data[2]);
 }
@@ -368,11 +365,7 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 
 
 	vec4f homo_point = point / point.data[3];
-//	cout << "shade_vertex:: " << v << endl;
-//	cout << "shade_vertex:: " << matrices[projection_matrix] << endl;
-//	cout << "shade_vertex, modelview_matrix:: " << matrices[modelview_matrix] << endl;
-//	cout << "shade_vertex, point::" << point << endl;
-//	cout << "shade_vertex, homo_point::" << homo_point << endl;
+
 
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
