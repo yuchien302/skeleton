@@ -38,6 +38,9 @@ boxhdl::boxhdl(float width, float height, float depth)
 	/* TODO Assignment 1: Generate the geometry and indices required to make a box.
 	 * Calculate its bounding box.
 	 */
+	rigid.push_back(rigidhdl());
+	rigid[0].geometry.reserve(8);
+	//for()
 
 	// TODO Assignment 3: Set up the material properties for this object
 }
@@ -195,7 +198,6 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 
 	}
 	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
-
 	// TODO Assignment 3: Set up the material properties for this object
 }
 
