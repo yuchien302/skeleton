@@ -598,10 +598,10 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();
 	for(int i=0; i<indices.size()/2; i++){
+
 		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
-		cout<<"point1:" << point1<<endl;
-		cout<<"point2:"<<point2<<endl;
+
 		plot_line(point1, varying1, point2, varying2);
 	}
 	// TODO Assignment 2: Implement frustum clipping and back-face culling

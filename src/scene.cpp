@@ -46,7 +46,10 @@ void scenehdl::draw()
 	cout << "scene.draw, modelview_matrix:: " << canvas->matrices[(canvashdl::modelview_matrix)] << endl;
 	for (int i = 0; i < objects.size(); i++){
 		objects[i] -> draw(canvas);
+		if(render_normals)
+			objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
 	}
+
 
 
 

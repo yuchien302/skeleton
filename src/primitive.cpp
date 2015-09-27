@@ -203,6 +203,7 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	 * Calculate its bounding box.
 	 */
 	rigid.push_back(rigidhdl());
+	cout<<rigid.size()<<endl;
 	rigid[0].geometry.reserve(slices + 2);
 	//top center
 	rigid[0].geometry.push_back(vec8f(0.0, 0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0));

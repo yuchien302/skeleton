@@ -133,40 +133,51 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 	/* TODO Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
+	cout<<"this is draw_normals"<<endl;
 	vector<vec8f> geometry = vector<vec8f>();
 	vector<int> indices = vector<int>();
 	int index = 0;
+	float normal_length = 0.1;
+	cout << rigid.size()<<endl;
 	for (int i = 0; i < rigid.size(); i++){
 		if(face){
 			//assert (rigid[i].geometry.size()%3 == 0);
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){
-				vec3f point1 = vec3f(rigid[i].geometry[3*i].data[0], rigid[i].geometry[3*i][1], rigid[i].geometry[3*i][2]);
-				vec3f point2 = vec3f(rigid[i].geometry[3*i+1].data[0], rigid[i].geometry[3*i+1][1], rigid[i].geometry[3*i+1][2]);
-				vec3f point3 = vec3f(rigid[i].geometry[3*i+2].data[0], rigid[i].geometry[3*i+2][1], rigid[i].geometry[3*i+2][2]);
+				//cout<<"i"<<i <<", n"<<n<<", size"<<rigid[i].indices.size()<<endl;
+				//cout<<indices[3*n]<< indices[3*n+1]<<indices[3*n+2]<<endl;
+				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
+				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
+				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
 				vec3f vec12 = point2 - point1;
 				vec3f vec13 = point3 - point1;
 				vec3f direction = norm(cross(vec12, vec13));
 				vec3f start = (point1+ point2+ point3) / float(3.0);
 				geometry.push_back(start);
-				geometry.push_back(start + direction);
+				geometry.push_back(start + ( normal_length * direction));
+				/*cout<<"v1"<<vec12<<endl;
+				cout<<"v2"<< vec13 <<endl;
+				cout<<"start point"<<start<<endl;
+				cout<<"end point"<< direction <<endl;*/
 				indices.push_back(index++);
 				indices.push_back(index++);
-
 			}
 		}
 		else{
-			for(int g = 0; g < rigid[i].geometry.size(); i++){
-				vec3f normal_start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
-				vec3f normal_end = vec3f(rigid[i].geometry[g].data[0] + rigid[i].geometry[g].data[3],
-										   rigid[i].geometry[g].data[1] + rigid[i].geometry[g].data[4],
-										   rigid[i].geometry[g].data[2] + rigid[i].geometry[g].data[5]);
-				geometry.push_back(normal_start);
-				geometry.push_back(normal_end);
+			for(int g = 0; g < rigid[i].geometry.size(); g++){
+				//cout<<"i"<<i <<", n"<<g<<", size"<<rigid[i].geometry.size()<<endl;
+				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
+
+				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
+
+				geometry.push_back(start);
+				geometry.push_back(start + ( normal_length * direction));
 				indices.push_back(index++);
 				indices.push_back(index++);
 			}
 		}
 	}
+	//cout << indices[0] << endl;
 	canvas -> draw_lines(geometry, indices);
+	cout<<"Finish draw_normals"<<endl;
 	// TODO Assignment 3: clear the material in the uniform list before rendering
 }
