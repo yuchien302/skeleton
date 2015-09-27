@@ -229,7 +229,7 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 		rigid[0].indices.push_back(0);
 
 	}
-	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
+	bound = vec6f(-radius, radius, -radius, radius, -height/ 2.0, height/2.0);
 	// TODO Assignment 3: Set up the material properties for this object
 }
 
