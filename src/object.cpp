@@ -80,7 +80,6 @@ void objecthdl::draw(canvashdl *canvas)
 		//scale down
 		canvas -> translate(-position);
 	}
-
 	draw_bound(canvas);
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
@@ -98,63 +97,40 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	canvas->set_matrix(canvashdl::modelview_matrix);
 	canvas -> translate(position);
 
-	vector<vec8f> geometry = vector<vec8f>();
-	vector<int> indices = vector<int>();
-
 	float xmin = bound.data[0];
 	float xmax = bound.data[1];
 	float ymin = bound.data[2];
 	float ymax = bound.data[3];
 	float zmin = bound.data[4];
 	float zmax = bound.data[5];
-	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
+
+	vector<vec8f> geometry = vector<vec8f>();
+	vector<int> indices = vector<int>();
+
+	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
 
 
-	indices.push_back(0);
-	indices.push_back(1);
-
-	indices.push_back(1);
-	indices.push_back(2);
-
-	indices.push_back(2);
-	indices.push_back(3);
-
-	indices.push_back(3);
-	indices.push_back(0);
-
-	indices.push_back(4);
-	indices.push_back(5);
-
-	indices.push_back(5);
-	indices.push_back(6);
-
-	indices.push_back(6);
-	indices.push_back(7);
-
-	indices.push_back(7);
-	indices.push_back(4);
-
-	indices.push_back(0);
-	indices.push_back(4);
-
-	indices.push_back(1);
-	indices.push_back(5);
-
-	indices.push_back(2);
-	indices.push_back(6);
-
-	indices.push_back(3);
-	indices.push_back(7);
-
-
+	cout << "drawbound: "<< geometry.size()<<endl;
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back((i+1)%4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i+4);
+		indices.push_back(((i+1)%4) + 4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back(i+4);
+	}
 	canvas -> draw_lines(geometry, indices);
 	canvas -> translate(- position);
 
