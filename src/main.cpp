@@ -72,6 +72,7 @@ void init(string working_directory)
 	swap(scene.objects.back()->bound[3], scene.objects.back()->bound[5]);
 
 	scene.cameras.back()->model = scene.objects.back();
+
 	if (!scene.active_camera_valid())
 	{
 		scene.active_camera = scene.cameras.size()-1;

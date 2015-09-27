@@ -126,7 +126,7 @@ void canvashdl::load_identity()
  */
 void canvashdl::rotate(float angle, vec3f axis)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by a rotation matrix.
+	// Done Assignment 1: Multiply the active matrix by a rotation matrix.
 	// angel: degree
 	float c = cos(angle);
 	float s = sin(angle);
@@ -149,7 +149,7 @@ void canvashdl::rotate(float angle, vec3f axis)
  */
 void canvashdl::translate(vec3f direction)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by a translation matrix.
+	// Done Assignment 1: Multiply the active matrix by a translation matrix.
 	float x = direction.data[0];
 	float y = direction.data[1];
 	float z = direction.data[2];
@@ -159,7 +159,7 @@ void canvashdl::translate(vec3f direction)
 								 0.0, 0.0, 1.0, z,
 								 0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] = matrices[active_matrix] * translate_mat ;
+	matrices[active_matrix] = matrices[active_matrix] * translate_mat;
 
 }
 
@@ -170,7 +170,7 @@ void canvashdl::translate(vec3f direction)
  */
 void canvashdl::scale(vec3f size)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by a scaling matrix.
+	// Done Assignment 1: Multiply the active matrix by a scaling matrix.
 
 	float x = size.data[0];
 	float y = size.data[1];
@@ -191,7 +191,7 @@ void canvashdl::scale(vec3f size)
  */
 void canvashdl::perspective(float fovy, float aspect, float n, float f)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by a perspective projection matrix.
+	// Done Assignment 1: Multiply the active matrix by a perspective projection matrix.
 	float fc = 1.0 / tan(fovy/2.0);
 
 	mat4f perspective_mat = mat4f( fc/aspect, 0.0,   0.0,			  0.0,
@@ -209,7 +209,7 @@ void canvashdl::perspective(float fovy, float aspect, float n, float f)
  */
 void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by a frustum projection matrix.
+	// Done Assignment 1: Multiply the active matrix by a frustum projection matrix.
 	assert(r>l);
 	assert(t>b);
 	assert(f>n);
@@ -235,7 +235,7 @@ void canvashdl::frustum(float l, float r, float b, float t, float n, float f)
  */
 void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 {
-	// (untested) Done Assignment 1: Multiply the active matrix by an orthographic projection matrix.
+	// Done Assignment 1: Multiply the active matrix by an orthographic projection matrix.
 	assert(r>l);
 	assert(t>b);
 	assert(f>n);
@@ -245,12 +245,12 @@ void canvashdl::ortho(float l, float r, float b, float t, float n, float f)
 	float tz = - (f+n)/(f-n);
 
 
-	mat4f frustum_mat = mat4f( 2.0 / (r-l), 0.0, 0.0, tx,
+	mat4f ortho_mat = mat4f( 2.0 / (r-l), 0.0, 0.0, tx,
 							   0.0, 2.0 / (t-b), 0.0, ty,
 							   0.0, 0.0, -2.0 / (f-n), tz,
 							   0.0, 0.0, 0.0, 1.0);
 
-	matrices[active_matrix] =  matrices[active_matrix]* frustum_mat;
+	matrices[active_matrix] =  matrices[active_matrix] * ortho_mat;
 }
 
 void canvashdl::viewport(int left, int bottom, int right, int top)
@@ -271,8 +271,7 @@ void canvashdl::viewport(int left, int bottom, int right, int top)
  */
 void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 {
-	// (untested) Done Assignment 1: Emulate the functionality of gluLookAt
-
+	// Done Assignment 1: Emulate the functionality of gluLookAt
 
 	vec3f F = at - eye;
 	vec3f f = norm(F);
@@ -289,9 +288,8 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 							     0.0, 0.0, 1.0, -eye[2],
 							     0.0, 0.0, 0.0, 1.0);
 
-	cout << "canvas.lookat.modelview_matrix before::" << matrices[modelview_matrix] << endl;
 	matrices[active_matrix] = matrices[active_matrix] * M * translate_mat;
-	cout << "canvas.lookat.modelview_matrix after::" << matrices[modelview_matrix] << endl;
+
 }
 
 void canvashdl::update_normal_matrix()
@@ -306,7 +304,7 @@ void canvashdl::update_normal_matrix()
  */
 vec3f canvashdl::to_window(vec2i pixel)
 {
-	/* (untested) Done Assignment 1: Given a pixel coordinate (x from 0 to width and y from 0 to height),
+	/* Done Assignment 1: Given a pixel coordinate (x from 0 to width and y from 0 to height),
 	 * convert it into window coordinates (x from -1 to 1 and y from -1 to 1).
 	 */
 
@@ -332,12 +330,10 @@ vec3i canvashdl::to_pixel(vec3f window_cordinate)
  */
 vec3f canvashdl::unproject(vec3f window)
 {
-	// (untested) Done Assignment 1: Unproject a window coordinate into world coordinates.
+	// Done Assignment 1: Unproject a window coordinate into world coordinates.
 
 	vec4f temp = vec4f(window.data[0], window.data[1], window.data[2], 1.0);
-
 	mat4f invPM = inverse(matrices[modelview_matrix]) * inverse(matrices[projection_matrix]);
-
 	vec4f obj = invPM * temp;
 
 	return vec3f(obj.data[0], obj.data[1], obj.data[2]);
@@ -356,13 +352,11 @@ vec3f canvashdl::unproject(vec3f window)
  */
 vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 {
-	// (untested) Done Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
+	// Done Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
 
 	vec4f point = matrices[projection_matrix] *
 				  matrices[modelview_matrix] *
 				  vec4f( v.data[0], v.data[1], v.data[2], 1.0 );
-
-
 
 	vec4f homo_point = point / point.data[3];
 
@@ -388,8 +382,6 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 	 * call its fragment shader.
 	 */
 
-
-
 }
 
 /* plot
@@ -403,7 +395,6 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 	int x = xyz.data[0];
 	int y = xyz.data[1];
 	int z = xyz.data[2];
-
 
 	if(x<0 || x>=width || y<0 || y>=height)
 		return;
@@ -423,7 +414,6 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
  */
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
-
 	// Done Assignment 1: Plot a point given in window coordinates.
 	if( (v.data[0] < 1 || v.data[0]> -1) && (v.data[1] < 1 || v.data[1]> -1))
 		plot(to_pixel(v), varying);
@@ -438,12 +428,9 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
 void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying)
 {
 	// Done Assignment 1: Implement Bresenham's Algorithm.
-//	cout << "=======plot_line" << endl;
-//	cout << "v1=" << v1 << ", v2=" << v2 << endl;
 	int xmin, xmax;
 	int ymin, ymax;
 	int octant;
-	//decide octant
 
 	float slope = (v2.data[1] - v1.data[1])/ (v2.data[0] - v1.data[0]);
 	vec3i v1_pixel = to_pixel(v1);
@@ -575,7 +562,7 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
  */
 void canvashdl::draw_points(const vector<vec8f> &geometry)
 {
-	// (untested) Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
+	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
 	vector<float> varying = vector<float>();
 	for(int i=0; i<geometry.size(); i++){
 		vec3f point = shade_vertex( geometry[i], varying );
@@ -624,7 +611,6 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 {
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
-
 
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();

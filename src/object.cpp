@@ -69,25 +69,9 @@ void objecthdl::draw(canvashdl *canvas)
 	// (untested) Done Assignment 1: Send transformations and geometry to the renderer to draw the object
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	for (int i = 0; i < rigid.size(); i++){
-		canvas -> translate(position);
-
-		canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-		canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-
-		canvas -> scale(vec3f(scale, scale, scale));
-
+		before_draw(canvas);
 		rigid[i].draw(canvas);
-
-		canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-
-		canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-		canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-		canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-
-
-
-		canvas -> translate(-position);
+		after_draw(canvas);
 	}
 
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
@@ -105,13 +89,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	 * transformations and geometry to the renderer
 	 */
 	canvas->set_matrix(canvashdl::modelview_matrix);
-	canvas -> translate(position);
-
-	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-
-	canvas -> scale(vec3f(scale, scale, scale));
+	before_draw(canvas);
 
 	vector<vec8f> geometry = vector<vec8f>();
 	vector<int> indices = vector<int>();
@@ -122,63 +100,32 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	float ymax = bound.data[3];
 	float zmin = bound.data[4];
 	float zmax = bound.data[5];
-	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
 
 
-
-	indices.push_back(0);
-	indices.push_back(1);
-
-	indices.push_back(1);
-	indices.push_back(2);
-
-	indices.push_back(2);
-	indices.push_back(3);
-
-	indices.push_back(3);
-	indices.push_back(0);
-
-	indices.push_back(4);
-	indices.push_back(5);
-
-	indices.push_back(5);
-	indices.push_back(6);
-
-	indices.push_back(6);
-	indices.push_back(7);
-
-	indices.push_back(7);
-	indices.push_back(4);
-
-	indices.push_back(0);
-	indices.push_back(4);
-
-	indices.push_back(1);
-	indices.push_back(5);
-
-	indices.push_back(2);
-	indices.push_back(6);
-
-	indices.push_back(3);
-	indices.push_back(7);
+	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
 
 
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back((i+1)%4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i+4);
+		indices.push_back(((i+1)%4) + 4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back(i+4);
+	}
 	canvas -> draw_lines(geometry, indices);
-
-	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-
-	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-
-	canvas -> translate(- position);
+	after_draw(canvas);
 
 
 	// TODO Assignment 3: clear the material in the uniform list
@@ -195,18 +142,16 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 	/* (untested) Done Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
-	cout<<"this is draw_normals"<<endl;
 	vector<vec8f> geometry = vector<vec8f>();
 	vector<int> indices = vector<int>();
 	int index = 0;
 	float normal_length = 0.1;
-	cout << rigid.size()<<endl;
+
 	for (int i = 0; i < rigid.size(); i++){
 		if(face){
 			//assert (rigid[i].geometry.size()%3 == 0);
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){
-				//cout<<"i"<<i <<", n"<<n<<", size"<<rigid[i].indices.size()<<endl;
-				//cout<<indices[3*n]<< indices[3*n+1]<<indices[3*n+2]<<endl;
+
 				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
 				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
 				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
@@ -216,32 +161,52 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 				vec3f start = (point1+ point2+ point3) / float(3.0);
 				geometry.push_back(start);
 				geometry.push_back(start + ( normal_length * direction));
-				/*cout<<"v1"<<vec12<<endl;
-				cout<<"v2"<< vec13 <<endl;
-				cout<<"start point"<<start<<endl;
-				cout<<"end point"<< direction <<endl;*/
+
 				indices.push_back(index++);
 				indices.push_back(index++);
 			}
 		}
 		else{
 			for(int g = 0; g < rigid[i].geometry.size(); g++){
-				//cout<<"i"<<i <<", n"<<g<<", size"<<rigid[i].geometry.size()<<endl;
+
 				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
 
 				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
 
 				geometry.push_back(start);
 				geometry.push_back(start + ( normal_length * direction));
-				cout << start <<endl;
-				cout << ( normal_length * direction) <<endl;
+				
 				indices.push_back(index++);
 				indices.push_back(index++);
 			}
 		}
 	}
-	//cout << indices[0] << endl;
+	before_draw(canvas);
 	canvas -> draw_lines(geometry, indices);
-	cout<<"Finish draw_normals"<<endl;
+	after_draw(canvas);
+
 	// TODO Assignment 3: clear the material in the uniform list before rendering
 }
+
+void objecthdl::before_draw(canvashdl *canvas){
+	canvas -> translate(position);
+
+	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
+	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
+	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
+
+	canvas -> scale(vec3f(scale, scale, scale));
+}
+
+
+void objecthdl::after_draw(canvashdl *canvas){
+	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
+
+	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
+	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
+	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
+
+	canvas -> translate(- position);
+}
+
+
