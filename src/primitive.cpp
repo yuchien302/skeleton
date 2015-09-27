@@ -225,7 +225,7 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	for (int i = 0; i < slices; i++){
 		rigid[0].indices.push_back(i+1);
 		rigid[0].indices.push_back(((i+1)%slices) +1);
-		rigid[0].indices.push_back(i+1 +slices);
+		rigid[0].indices.push_back(0);
 
 	}
 	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);

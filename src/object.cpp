@@ -171,6 +171,8 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 
 				geometry.push_back(start);
 				geometry.push_back(start + ( normal_length * direction));
+				cout << start <<endl;
+				cout << ( normal_length * direction) <<endl;
 				indices.push_back(index++);
 				indices.push_back(index++);
 			}

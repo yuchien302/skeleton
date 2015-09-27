@@ -62,8 +62,8 @@ void init(string working_directory)
 //	scene.cameras.push_back(new perspectivehdl());
 	scene.cameras.push_back(new frustumhdl());
 
-	scene.objects.push_back(new spherehdl(0.3, 10, 20));
-	//scene.objects.push_back(new pyramidhdl(0.3, 0.3, 10));
+	//scene.objects.push_back(new spherehdl(0.3, 10, 20));
+	scene.objects.push_back(new pyramidhdl(0.3, 0.3, 10));
 	//scene.objects.push_back(new trianglehdl());
 
 
