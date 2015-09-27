@@ -43,7 +43,6 @@ void scenehdl::draw()
 
 	cameras[active_camera] -> view(canvas);
 
-	cout << "scene.draw, modelview_matrix:: " << canvas->matrices[(canvashdl::modelview_matrix)] << endl;
 	for (int i = 0; i < objects.size(); i++){
 		objects[i] -> draw(canvas);
 		if(render_normals)

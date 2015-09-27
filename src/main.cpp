@@ -57,16 +57,8 @@ void init(string working_directory)
 
 	canvas.working_directory = working_directory;
 	scene.canvas = &canvas;
-
-//	scene.cameras.push_back(new orthohdl());
-//	scene.cameras.push_back(new perspectivehdl());
 	scene.cameras.push_back(new frustumhdl());
-
-	//scene.objects.push_back(new spherehdl(0.3, 10, 20));
-	scene.objects.push_back(new pyramidhdl(0.3, 0.3, 10));
-	//scene.objects.push_back(new trianglehdl());
-
-
+	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{
@@ -78,7 +70,6 @@ void init(string working_directory)
 	swap(scene.objects.back()->bound[2], scene.objects.back()->bound[4]);
 	swap(scene.objects.back()->bound[3], scene.objects.back()->bound[5]);
 
-
 	scene.cameras.back()->model = scene.objects.back();
 	if (!scene.active_camera_valid())
 	{
@@ -86,8 +77,6 @@ void init(string working_directory)
 		scene.cameras[scene.active_camera]->project(&canvas);
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
-
-
 }
 
 void displayfunc()

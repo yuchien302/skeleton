@@ -35,7 +35,7 @@ trianglehdl::~trianglehdl()
  */
 boxhdl::boxhdl(float width, float height, float depth)
 {
-	/* TODO Assignment 1: Generate the geometry and indices required to make a box.
+	/* (untested) Done Assignment 1: Generate the geometry and indices required to make a box.
 	 * Calculate its bounding box.
 	 */
 	rigid.push_back(rigidhdl());
@@ -143,6 +143,9 @@ spherehdl::~spherehdl()
  */
 cylinderhdl::cylinderhdl(float radius, float height, int slices)
 {
+	/* (untested) Done Assignment 1: Generate the geometry and indices required to make a cylinder.
+	 * Calculate its bounding box.
+	 */
 	rigid.push_back(rigidhdl());
 	rigid[0].geometry.reserve(2*slices + 2);
 	//top circle
@@ -181,9 +184,7 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
 	}
 	bound = vec6f(-radius, radius, -radius, radius, height/ 2.0, height/2.0);
-	/* TODO Assignment 1: Generate the geometry and indices required to make a cylinder.
-	 * Calculate its bounding box.
-	 */
+
 
 	// TODO Assignment 3: Set up the material properties for this object
 }
@@ -199,7 +200,7 @@ cylinderhdl::~cylinderhdl()
  */
 pyramidhdl::pyramidhdl(float radius, float height, int slices)
 {
-	/* TODO Assignment 1: Generate the geometry and indices required to make a pyramid.
+	/* (untested) Done Assignment 1: Generate the geometry and indices required to make a pyramid.
 	 * Calculate its bounding box.
 	 */
 	rigid.push_back(rigidhdl());

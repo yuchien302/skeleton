@@ -273,7 +273,8 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 {
 	// (untested) Done Assignment 1: Emulate the functionality of gluLookAt
 
-	vec3f F = at - eye;
+
+	vec3f F = eye-at;
 	vec3f f = norm(F);
 	vec3f nup = norm(up);
 	vec3f s = cross(f, nup);
@@ -283,12 +284,14 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 					-f.data[0], -f.data[1], -f.data[2], 0.0,
 					0.0, 0.0, 0.0, 1.0);
 
-	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, -eye[0],
-					  		     0.0, 1.0, 0.0, -eye[1],
-							     0.0, 0.0, 1.0, -eye[2],
+	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, -at[0],
+					  		     0.0, 1.0, 0.0, -at[1],
+							     0.0, 0.0, 1.0, -at[2],
 							     0.0, 0.0, 0.0, 1.0);
 
+	cout << "canvas.lookat.modelview_matrix before::" << matrices[modelview_matrix] << endl;
 	matrices[modelview_matrix] = matrices[modelview_matrix] * M * translate_mat;
+	cout << "canvas.lookat.modelview_matrix after::" << matrices[modelview_matrix] << endl;
 }
 
 void canvashdl::update_normal_matrix()
@@ -331,8 +334,16 @@ vec3i canvashdl::to_pixel(vec3f window_cordinate)
  */
 vec3f canvashdl::unproject(vec3f window)
 {
-	// TODO Assignment 1: Unproject a window coordinate into world coordinates.
-	return vec3f();
+	// (untested) Done Assignment 1: Unproject a window coordinate into world coordinates.
+
+	vec4f temp = vec4f(window.data[0], window.data[1], window.data[2], 1);
+
+	mat4f invPM = inverse(matrices[modelview_matrix]) * inverse(matrices[projection_matrix]);
+
+	vec4f obj = invPM * temp;
+	obj = obj/obj.data[3];
+
+	return vec3f(obj.data[0], obj.data[1], obj.data[2]);
 }
 
 /* shade_vertex
@@ -491,7 +502,7 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 
 		plot(xyz, v1_varying);
 	}
-//	cout << "=======end plot_line" << endl;
+
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 vec2i canvashdl::beforeBreseham (int octant, int x, int y){

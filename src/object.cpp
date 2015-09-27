@@ -70,10 +70,18 @@ void objecthdl::draw(canvashdl *canvas)
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	for (int i = 0; i < rigid.size(); i++){
 		canvas -> translate(position);
+		//rotate by x (orientation from x axis)
+//		canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
+
+		//rotate by y
+		//rorate by z
+		// scale up
 		rigid[i].draw(canvas);
+		//scale down
 		canvas -> translate(-position);
 	}
 
+	draw_bound(canvas);
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
 
@@ -84,40 +92,72 @@ void objecthdl::draw(canvashdl *canvas)
  */
 void objecthdl::draw_bound(canvashdl *canvas)
 {
-
+	/* (untested) Done Assignment 1: Generate the geometry for the bounding box and send the necessary
+	 * transformations and geometry to the renderer
+	 */
 	canvas->set_matrix(canvashdl::modelview_matrix);
 	canvas -> translate(position);
-
-	int bound_vertices_number = 6;
-	int bound_y_index_offset = 2;
-	int bound_z_index_offset = 2;
 
 	vector<vec8f> geometry = vector<vec8f>();
 	vector<int> indices = vector<int>();
 
-	for(int z = 0; z < 2; z++)
-	for(int y = 0; y < 2; y++)
-	for (int x = 0; x < 2; x++)
-		geometry.push_back(vec8f(bound.data[x], bound[y+bound_y_index_offset], bound[z+bound_z_index_offset], 0.0, 0.0, 0.0, 0.0, 0.0));
+	float xmin = bound.data[0];
+	float xmax = bound.data[1];
+	float ymin = bound.data[2];
+	float ymax = bound.data[3];
+	float zmin = bound.data[4];
+	float zmax = bound.data[5];
+	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0));
+	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0));
 
 
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back((i+1)%4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i+4);
-		indices.push_back(((i+1)%4) + 4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back(i+4);
-	}
+
+	indices.push_back(0);
+	indices.push_back(1);
+
+	indices.push_back(1);
+	indices.push_back(2);
+
+	indices.push_back(2);
+	indices.push_back(3);
+
+	indices.push_back(3);
+	indices.push_back(0);
+
+	indices.push_back(4);
+	indices.push_back(5);
+
+	indices.push_back(5);
+	indices.push_back(6);
+
+	indices.push_back(6);
+	indices.push_back(7);
+
+	indices.push_back(7);
+	indices.push_back(4);
+
+	indices.push_back(0);
+	indices.push_back(4);
+
+	indices.push_back(1);
+	indices.push_back(5);
+
+	indices.push_back(2);
+	indices.push_back(6);
+
+	indices.push_back(3);
+	indices.push_back(7);
+
+
 	canvas -> draw_lines(geometry, indices);
 	canvas -> translate(- position);
-	/* TODO Assignment 1: Generate the geometry for the bounding box and send the necessary
-	 * transformations and geometry to the renderer
-	 */
+
 
 	// TODO Assignment 3: clear the material in the uniform list
 }
@@ -130,7 +170,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
  */
 void objecthdl::draw_normals(canvashdl *canvas, bool face)
 {
-	/* TODO Assignment 1: Generate the geometry to display the normals and send the necessary
+	/* (untested) Done Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
 	cout<<"this is draw_normals"<<endl;
