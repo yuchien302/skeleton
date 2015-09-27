@@ -277,7 +277,7 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 	vec3f f = norm(F);
 	vec3f nup = norm(up);
 	vec3f s = cross(f, nup);
-	vec3f u = norm(s) * f;
+	vec3f u = cross(norm(s), f);
 	mat4f M = mat4f(s.data[0], s.data[1], s.data[2], 0.0,
 					u.data[0], u.data[1], u.data[2], 0.0,
 					-f.data[0], -f.data[1], -f.data[2], 0.0,
