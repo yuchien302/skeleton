@@ -38,7 +38,11 @@ void scenehdl::draw()
 	/* (untested) Done Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */
+	canvas -> set_matrix(canvashdl::modelview_matrix);
+	canvas -> load_identity();
+
 	cameras[active_camera] -> view(canvas);
+
 	cout << "scene.draw, modelview_matrix:: " << canvas->matrices[(canvashdl::modelview_matrix)] << endl;
 	for (int i = 0; i < objects.size(); i++){
 		objects[i] -> draw(canvas);
