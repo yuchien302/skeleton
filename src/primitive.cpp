@@ -40,6 +40,36 @@ boxhdl::boxhdl(float width, float height, float depth)
 	 */
 	rigid.push_back(rigidhdl());
 	rigid[0].geometry.reserve(8);
+	rigid[0].geometry.push_back(vec8f(width/2.0, height/2.0, depth/2.0, 1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(-width/2.0, height/2.0, depth/2.0, -1.0/sqrt(3), 1.0/sqrt(3), 1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(-width/2.0, -height/2.0, depth/2.0, -1.0/sqrt(3), -1.0/sqrt(3), 1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(width/2.0, -height/2.0, depth/2.0, 1.0/sqrt(3), -1.0/sqrt(3), 1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(width/2.0, height/2.0, -depth/2.0, 1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(-width/2.0, height/2.0, -depth/2.0, -1.0/sqrt(3), 1.0/sqrt(3), -1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(-width/2.0, -height/2.0, -depth/2.0, -1.0/sqrt(3), -1.0/sqrt(3), -1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(width/2.0, -height/2.0, -depth/2.0, 1.0/sqrt(3), -1.0/sqrt(3),-1.0/sqrt(3), 0.0, 0.0));
+	rigid[0].indices.push_back(0);
+	rigid[0].indices.push_back(1);
+	rigid[0].indices.push_back(2);
+	rigid[0].indices.push_back(0);
+	rigid[0].indices.push_back(2);
+	rigid[0].indices.push_back(3);
+	for(int i = 0; i < 4; i++){
+		rigid[0].indices.push_back(i);
+		rigid[0].indices.push_back((i+1)%4);
+		rigid[0].indices.push_back(i+4);
+	}
+	for(int i = 0; i < 4; i++){
+		rigid[0].indices.push_back(i+4);
+		rigid[0].indices.push_back((i+1)%4+4);
+		rigid[0].indices.push_back((i+1)%4);
+	}
+	rigid[0].indices.push_back(4);
+	rigid[0].indices.push_back(6);
+	rigid[0].indices.push_back(5);
+	rigid[0].indices.push_back(4);
+	rigid[0].indices.push_back(7);
+	rigid[0].indices.push_back(6);
 	//for()
 
 	// TODO Assignment 3: Set up the material properties for this object
