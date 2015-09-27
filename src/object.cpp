@@ -113,6 +113,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
 		indices.push_back(i);
 		indices.push_back(i+4);
 	}
+	canvas -> draw_lines(geometry, indices);
 	canvas -> translate(- position);
 	/* TODO Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
@@ -132,6 +133,40 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 	/* TODO Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
+	vector<vec8f> geometry = vector<vec8f>();
+	vector<int> indices = vector<int>();
+	int index = 0;
+	for (int i = 0; i < rigid.size(); i++){
+		if(face){
+			//assert (rigid[i].geometry.size()%3 == 0);
+			for(int n = 0; n < rigid[i].indices.size()/3; n++){
+				vec3f point1 = vec3f(rigid[i].geometry[3*i].data[0], rigid[i].geometry[3*i][1], rigid[i].geometry[3*i][2]);
+				vec3f point2 = vec3f(rigid[i].geometry[3*i+1].data[0], rigid[i].geometry[3*i+1][1], rigid[i].geometry[3*i+1][2]);
+				vec3f point3 = vec3f(rigid[i].geometry[3*i+2].data[0], rigid[i].geometry[3*i+2][1], rigid[i].geometry[3*i+2][2]);
+				vec3f vec12 = point2 - point1;
+				vec3f vec13 = point3 - point1;
+				vec3f direction = norm(cross(vec12, vec13));
+				vec3f start = (point1+ point2+ point3) / float(3.0);
+				geometry.push_back(start);
+				geometry.push_back(start + direction);
+				indices.push_back(index++);
+				indices.push_back(index++);
 
+			}
+		}
+		else{
+			for(int g = 0; g < rigid[i].geometry.size(); i++){
+				vec3f normal_start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
+				vec3f normal_end = vec3f(rigid[i].geometry[g].data[0] + rigid[i].geometry[g].data[3],
+										   rigid[i].geometry[g].data[1] + rigid[i].geometry[g].data[4],
+										   rigid[i].geometry[g].data[2] + rigid[i].geometry[g].data[5]);
+				geometry.push_back(normal_start);
+				geometry.push_back(normal_end);
+				indices.push_back(index++);
+				indices.push_back(index++);
+			}
+		}
+	}
+	canvas -> draw_lines(geometry, indices);
 	// TODO Assignment 3: clear the material in the uniform list before rendering
 }

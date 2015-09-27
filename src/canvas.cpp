@@ -421,7 +421,8 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
 
 	// Done Assignment 1: Plot a point given in window coordinates.
-	plot(to_pixel(v), varying);
+	if( (v.data[0] < 1 || v.data[0]> -1) && (v.data[1] < 1 || v.data[1]> -1))
+		plot(to_pixel(v), varying);
 }
 
 /* plot_line
@@ -599,6 +600,8 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 	for(int i=0; i<indices.size()/2; i++){
 		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
+		cout<<"point1:" << point1<<endl;
+		cout<<"point2:"<<point2<<endl;
 		plot_line(point1, varying1, point2, varying2);
 	}
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
@@ -624,17 +627,11 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 	vector<float> varying3 = vector<float>();
 
 	for(int i=0; i<indices.size()/3; i++){
-//		cout << "=====" << i << endl;
-//		cout << geometry[indices[3*i]] << endl;
-//		cout << geometry[indices[3*i+1]] << endl;
-//		cout << geometry[indices[3*i+2]] << endl;
 
 		vec3f point1 = shade_vertex( geometry[indices[3*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[3*i+1]], varying2 );
 		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
 
-//		cout << "after shade_vertex" << endl;
-//		cout << point1 << point2 << point3 << endl;
 		plot_triangle(point1, varying1, point2, varying2, point3, varying3);
 	}
 	// TODO Assignment 2: Implement frustum clipping and back-face culling
