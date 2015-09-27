@@ -17,7 +17,7 @@ trianglehdl::trianglehdl()
 	rigid[0].geometry.reserve(3);
 	rigid[0].geometry.push_back(vec8f(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	rigid[0].geometry.push_back(vec8f(0.5, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
-	rigid[0].geometry.push_back(vec8f(0.0, 0.5, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	rigid[0].geometry.push_back(vec8f(0.0, 0.0, -0.5, 0.0, 0.0, 1.0, 0.0, 0.0));
 	rigid[0].indices.push_back(0);
 	rigid[0].indices.push_back(1);
 	rigid[0].indices.push_back(2);

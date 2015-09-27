@@ -276,7 +276,7 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 	vec3f F = at - eye;
 	vec3f f = norm(F);
 	vec3f nup = norm(up);
-	vec3f s = f*nup;
+	vec3f s = cross(f, nup);
 	vec3f u = norm(s) * f;
 	mat4f M = mat4f(s.data[0], s.data[1], s.data[2], 0.0,
 					u.data[0], u.data[1], u.data[2], 0.0,
@@ -288,8 +288,7 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 							     0.0, 0.0, 1.0, -eye[2],
 							     0.0, 0.0, 0.0, 1.0);
 
-	matrices[modelview_matrix] = translate_mat * M *
-								 matrices[modelview_matrix];
+	matrices[modelview_matrix] = matrices[modelview_matrix] * M * translate_mat;
 }
 
 void canvashdl::update_normal_matrix()
@@ -321,7 +320,6 @@ vec3i canvashdl::to_pixel(vec3f window_cordinate)
 
 	int x = ((window_cordinate.data[0] / 2.0) + 0.5) * width;
 	int y = ((window_cordinate.data[1] / 2.0) + 0.5) * height;
-	assert(x < width && y < height);
 
 	return vec3i(x, y, 0);
 }
@@ -356,10 +354,20 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 				  matrices[modelview_matrix] *
 				  vec4f( v.data[0], v.data[1], v.data[2], 1.0 );
 
+
+
+	vec4f homo_point = point / point.data[3];
+//	cout << "shade_vertex:: " << v << endl;
+//	cout << "shade_vertex:: " << matrices[projection_matrix] << endl;
+//	cout << "shade_vertex, modelview_matrix:: " << matrices[modelview_matrix] << endl;
+//	cout << "shade_vertex, point::" << point << endl;
+//	cout << "shade_vertex, homo_point::" << homo_point << endl;
+
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
-	return vec3f(point.data[0]/point.data[3], point.data[1]/point.data[3], point.data[2]/point.data[3]);
+
+	return vec3f(homo_point.data[0], homo_point.data[1], homo_point.data[2]);
 }
 
 /* shade_fragment
@@ -387,11 +395,15 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
 	// Done Assignment 1: Plot a pixel, calling the fragment shader.
+
 	int x = xyz.data[0];
 	int y = xyz.data[1];
 	int z = xyz.data[2];
-	assert( y < width && x < height);
-	assert( (3* (width*y + x) + 2) < 3*width*height);
+
+
+	if(x<0 || x>=width || y<0 || y>=height)
+		return;
+
 	color_buffer[ 3* (width*y + x)] = 255 * shade_fragment(varying).data[0];
 	color_buffer[ 3* (width*y + x) + 1] = 255 * shade_fragment(varying).data[1];
 	color_buffer[ 3* (width*y + x) + 2] = 255* shade_fragment(varying).data[2];
@@ -421,7 +433,8 @@ void canvashdl::plot_point(vec3f v, vector<float> varying)
 void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying)
 {
 	// Done Assignment 1: Implement Bresenham's Algorithm.
-
+//	cout << "=======plot_line" << endl;
+//	cout << "v1=" << v1 << ", v2=" << v2 << endl;
 	int xmin, xmax;
 	int ymin, ymax;
 	int octant;
@@ -474,9 +487,10 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], width* v1.data[2]);
 		// use plot method
+
 		plot(xyz, v1_varying);
 	}
-
+//	cout << "=======end plot_line" << endl;
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
 vec2i canvashdl::beforeBreseham (int octant, int x, int y){
@@ -532,6 +546,7 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
+	
 	if(polygon_mode == canvashdl::point){
 		plot_point(v1, v1_varying);
 		plot_point(v2, v2_varying);
@@ -602,18 +617,24 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 {
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
-	cout << indices[0] << indices[1] << indices[2] << endl;
-	cout << geometry[0] << endl;
-	cout << geometry[1] << endl;
-	cout << geometry[2] << endl;
+
 
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();
 	vector<float> varying3 = vector<float>();
+
 	for(int i=0; i<indices.size()/3; i++){
+//		cout << "=====" << i << endl;
+//		cout << geometry[indices[3*i]] << endl;
+//		cout << geometry[indices[3*i+1]] << endl;
+//		cout << geometry[indices[3*i+2]] << endl;
+
 		vec3f point1 = shade_vertex( geometry[indices[3*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[3*i+1]], varying2 );
 		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
+
+//		cout << "after shade_vertex" << endl;
+//		cout << point1 << point2 << point3 << endl;
 		plot_triangle(point1, varying1, point2, varying2, point3, varying3);
 	}
 	// TODO Assignment 2: Implement frustum clipping and back-face culling

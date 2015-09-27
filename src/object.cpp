@@ -68,9 +68,6 @@ void objecthdl::draw(canvashdl *canvas)
 {
 	// (untested) Done Assignment 1: Send transformations and geometry to the renderer to draw the object
 	canvas -> set_matrix(canvashdl::modelview_matrix);
-
-	canvas -> load_identity();
-
 	for (int i = 0; i < rigid.size(); i++){
 		canvas -> translate(position);
 		rigid[i].draw(canvas);

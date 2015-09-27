@@ -59,7 +59,9 @@ void init(string working_directory)
 	scene.canvas = &canvas;
 
 //	scene.cameras.push_back(new orthohdl());
-	scene.cameras.push_back(new perspectivehdl());
+//	scene.cameras.push_back(new perspectivehdl());
+	scene.cameras.push_back(new frustumhdl());
+
 //	scene.objects.push_back(new spherehdl(0.3, 10, 20));
 	scene.objects.push_back(new pyramidhdl(0.3, 0.3, 10));
 //	scene.objects.push_back(new trianglehdl());
@@ -85,6 +87,7 @@ void init(string working_directory)
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
 
+
 }
 
 void displayfunc()
@@ -93,7 +96,7 @@ void displayfunc()
 	canvas.clear_depth_buffer();
 
 	scene.draw();
-//	cout << scene.cameras[scene.active_camera]->position << endl;
+
 	canvas.swap_buffers();
 }
 
