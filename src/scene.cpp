@@ -44,11 +44,9 @@ void scenehdl::draw()
 
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	canvas -> load_identity();
-
 	cameras[active_camera] -> view(canvas);
 
 
-	cout << "scene.draw Hi" << endl;
 	for (int i = 0; i < objects.size(); i++){
 		bool is_camera = false;
 		for (int j = 0; j < cameras.size() && !is_camera; j++){
