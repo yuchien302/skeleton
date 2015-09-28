@@ -48,15 +48,17 @@ void scenehdl::draw()
 	cameras[active_camera] -> view(canvas);
 
 
-
+	cout << "scene.draw Hi" << endl;
 	for (int i = 0; i < objects.size(); i++){
 		bool is_camera = false;
 		for (int j = 0; j < cameras.size() && !is_camera; j++){
-			if (cameras[j] != NULL && cameras[j]->model == objects[i]){
+			if (cameras[j] != NULL && cameras[j] -> model == objects[i]){
 				is_camera = true;
+				objects[i] -> position = cameras[j] -> position;
+				objects[i] -> orientation = cameras[j] -> orientation;
 			}
 		}
-		if(!is_camera){
+		if(!is_camera || render_cameras){
 			objects[i] -> draw(canvas);
 			if(render_normals)
 				objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
@@ -64,6 +66,7 @@ void scenehdl::draw()
 				objects[i] -> draw_bound(canvas);
 			}
 		}
+
 	}
 
 
