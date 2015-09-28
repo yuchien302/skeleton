@@ -53,28 +53,31 @@ boxhdl::boxhdl(float width, float height, float depth)
 	rigid[0].geometry.push_back(vec8f(width/2.0, -height/2.0, -depth/2.0, 1.0/sqrt(3), -1.0/sqrt(3),-1.0/sqrt(3), 0.0, 0.0));
 
 	// push 12 lines in to indices
-	rigid[0].indices.push_back(0);
+
+	rigid[0].indices.push_back(2);
 	rigid[0].indices.push_back(1);
+	rigid[0].indices.push_back(0);
+	rigid[0].indices.push_back(3);
 	rigid[0].indices.push_back(2);
 	rigid[0].indices.push_back(0);
-	rigid[0].indices.push_back(2);
-	rigid[0].indices.push_back(3);
 	for(int i = 0; i < 4; i++){
 		rigid[0].indices.push_back(i);
+
 		rigid[0].indices.push_back((i+1)%4);
 		rigid[0].indices.push_back(i+4);
 	}
 	for(int i = 0; i < 4; i++){
-		rigid[0].indices.push_back(i+4);
-		rigid[0].indices.push_back((i+1)%4+4);
+
 		rigid[0].indices.push_back((i+1)%4);
+		rigid[0].indices.push_back((i+1)%4+4);
+		rigid[0].indices.push_back(i+4);
 	}
-	rigid[0].indices.push_back(4);
-	rigid[0].indices.push_back(6);
 	rigid[0].indices.push_back(5);
-	rigid[0].indices.push_back(4);
-	rigid[0].indices.push_back(7);
 	rigid[0].indices.push_back(6);
+	rigid[0].indices.push_back(4);
+	rigid[0].indices.push_back(6);
+	rigid[0].indices.push_back(7);
+	rigid[0].indices.push_back(4);
 
 	// set bounding box
 	bound = vec6f(-width, width, -height, height, -depth, depth);
@@ -220,22 +223,26 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	//bot circle
 	for (int i = 0; i < slices; i++){
 		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-		rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, radius * dir[1], dir[0], 0.0, dir[1], 0.0, 0.0));
+		rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, -radius * dir[1], dir[0], 0.0, -dir[1], 0.0, 0.0));
 	}
 	rigid[0].geometry.push_back(vec8f(0.0, -height/2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0));
 
 	//bot circle
 	for (int i = 0; i < slices; i++){
+
+
 		rigid[0].indices.push_back(((i+1)%slices) +1);
-		rigid[0].indices.push_back(i+1);
 		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
+		rigid[0].indices.push_back(i+1);
+
 	}
 
 	// side
 	for (int i = 0; i < slices; i++){
 		rigid[0].indices.push_back(i+1);
-		rigid[0].indices.push_back(((i+1)%slices) +1);
 		rigid[0].indices.push_back(0);
+		rigid[0].indices.push_back(((i+1)%slices) +1);
+
 	}
 	bound = vec6f(-radius, radius, -height/ 2.0, height/2.0, -radius, radius);
 	// TODO Assignment 3: Set up the material properties for this object

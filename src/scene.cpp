@@ -49,11 +49,13 @@ void scenehdl::draw()
 
 	for (int i = 0; i < objects.size(); i++){
 		bool is_camera = false;
-		for (int j = 0; j < cameras.size() && !is_camera; j++){
+		for (int j = 0; (j < cameras.size()) && !is_camera; j++){
 			if (cameras[j] != NULL && cameras[j] -> model == objects[i]){
 				is_camera = true;
 				objects[i] -> position = cameras[j] -> position;
 				objects[i] -> orientation = cameras[j] -> orientation;
+//				cameras[j] -> model -> position = cameras[j] -> position;
+//				cameras[j] -> orientation = cameras[j] -> model -> orientation;
 			}
 		}
 		if(!is_camera || render_cameras){

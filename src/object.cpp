@@ -153,11 +153,11 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){
 
 				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
-				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
-				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
+				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
+				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
 				vec3f vec12 = point2 - point1;
 				vec3f vec13 = point3 - point1;
-				vec3f direction = norm(cross(vec12, vec13));
+				vec3f direction = norm(cross(vec13, vec12));
 				vec3f start = (point1+ point2+ point3) / float(3.0);
 				geometry.push_back(start);
 				geometry.push_back(start + ( normal_length * direction));
@@ -206,7 +206,7 @@ void objecthdl::after_draw(canvashdl *canvas){
 	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
 	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
 
-	canvas -> translate(- position);
+	canvas -> translate(-position);
 }
 
 
