@@ -68,12 +68,10 @@ void objecthdl::draw(canvashdl *canvas)
 {
 	// (untested) Done Assignment 1: Send transformations and geometry to the renderer to draw the object
 	canvas -> set_matrix(canvashdl::modelview_matrix);
-	for (int i = 0; i < rigid.size(); i++){
-		before_draw(canvas);
+	before_draw(canvas);
+	for (int i = 0; i < rigid.size(); i++)
 		rigid[i].draw(canvas);
-		after_draw(canvas);
-	}
-
+	after_draw(canvas);
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
 
