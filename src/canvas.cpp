@@ -477,7 +477,7 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 
 		// tranform the cordinate back to original octant
 		vec2i xy_plot = afterBreseham(octant, x, y);
-		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], width* v1.data[2]);
+		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], 0);
 		// use plot method
 
 		plot(xyz, v1_varying);
@@ -487,27 +487,20 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 }
 vec2i canvashdl::beforeBreseham (int octant, int x, int y){
 	switch(octant){
-		case 0: return vec2i(x, y);
-		case 1: return vec2i(y, x);
-		case 2: return vec2i(y, -x);
-		case 3: return vec2i(-x, y);
-		case 4: return vec2i(-x, -y);
-		case 5: return vec2i(-y, -x);
-		case 6: return vec2i(-y, x);
-		case 7: return vec2i(x, -y);
+		case 0: case 4: return vec2i(x, y);
+		case 1: case 5: return vec2i(y, x);
+		case 2: case 6: return vec2i(y, -x);
+		case 3: case 7: return vec2i(-x, y);
 		default: return vec2i(x, y);
 	}
 }
 vec2i canvashdl::afterBreseham(int octant, int x, int y){
 	switch(octant){
-		case 0: return vec2i(x, y);
-		case 1: return vec2i(y, x);
-		case 2: return vec2i(-y, x);
-		case 3: return vec2i(-x, y);
-		case 4: return vec2i(-x, -y);
-		case 5: return vec2i(-y, -x);
-		case 6: return vec2i(y, -x);
-		case 7: return vec2i(x, -y);
+		case 0: case 4: return vec2i(x, y);
+		case 1: case 5: return vec2i(y, x);
+		case 2: case 6: return vec2i(-y, x);
+		case 3: case 7: return vec2i(-x, y);
+
 		default: return vec2i(x, y);
 	}
 }
