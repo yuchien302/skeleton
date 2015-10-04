@@ -831,8 +831,8 @@ void create_menu()
 	int mode_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" Point       ", 21);
 	glutAddMenuEntry(" Line        ", 22);
-	// TODO Assignment 2: uncomment this
-	//glutAddMenuEntry(" Fill        ", 23);
+//	 Done Assignment 2: uncomment this
+	glutAddMenuEntry(" Fill        ", 23);
 
 
 	// TODO Assignment 3: uncomment this
@@ -891,11 +891,11 @@ void create_menu()
 	glutAddMenuEntry(" Flat        ", 25);
 	glutAddMenuEntry(" Smooth      ", 26);*/
 
-	// TODO Assignment 2: uncomment this
-	/*int culling_id = glutCreateMenu(canvas_menu);
+	// Done Assignment 2: uncomment this
+	int culling_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 28);
 	glutAddMenuEntry(" Back        ", 29);
-	glutAddMenuEntry(" Front       ", 30);*/
+	glutAddMenuEntry(" Front       ", 30);
 
 	int normal_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 31);
@@ -910,8 +910,8 @@ void create_menu()
     glutAddSubMenu  (" Polygon     ", mode_id);
     // TODO Assignment 3: uncomment this
     //glutAddSubMenu  (" Shading     ", shading_id);
-    // TODO Assignment 2: uncomment this
-    //glutAddSubMenu  (" Culling     ", culling_id);
+    // Done Assignment 2: uncomment this
+    glutAddSubMenu  (" Culling     ", culling_id);
     glutAddSubMenu  (" Normals     ", normal_id);
     glutAddMenuEntry(" Quit        ", 0);
 
