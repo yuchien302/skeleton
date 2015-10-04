@@ -416,8 +416,8 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
 	// Done Assignment 1: Plot a point given in window coordinates.
-	if( (v.data[0] < 1 || v.data[0]> -1) && (v.data[1] < 1 || v.data[1]> -1))
-		plot(to_pixel(v), varying);
+//	if( (v.data[0] < 1 || v.data[0]> -1) && (v.data[1] < 1 || v.data[1]> -1))
+	plot(to_pixel(v), varying);
 }
 
 /* plot_line
