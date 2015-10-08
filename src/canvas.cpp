@@ -627,6 +627,7 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 	vector<float> varying1 = vector<float>();
 	vector<float> varying2 = vector<float>();
 	vector<float> varying3 = vector<float>();
+	mat4f trans = matrices[projection_matrix] * matrices[modelview_matrix];
 
 	for(int i=0; i<indices.size()/3; i++){
 
@@ -634,9 +635,28 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		vec3f point2 = shade_vertex( geometry[indices[3*i+1]], varying2 );
 		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
 
-		plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+
+		// TODO Assignment 2: Implement frustum clipping
+
+		// Done Assignment 2: Implement back-face culling
+		if(culling != disable){
+			vec3f vec12 = point2 - point1;
+			vec3f vec13 = point3 - point1;
+			vec3f direction = norm(cross(vec12, vec13));
+
+			if(direction.data[2] <= 0 && culling == backface){
+				plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+			} else if(direction.data[2] >= 0 && culling == frontface){
+				plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+			}
+
+		} else {
+			plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+		}
+
 	}
-	// TODO Assignment 2: Implement frustum clipping and back-face culling
+
+
 	// TODO Assignment 3: Update the normal matrix.
 }
 
