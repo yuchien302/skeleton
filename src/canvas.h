@@ -53,6 +53,7 @@ private:
 
 	vec2i beforeBreseham (int octant, int x, int y);
 	vec2i afterBreseham(int octnat, int x, int y);
+	vector<vec6f> clipping_planes;
 public:
 	canvashdl(int w, int h);
 	~canvashdl();

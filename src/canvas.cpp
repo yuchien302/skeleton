@@ -41,6 +41,15 @@ canvashdl::canvashdl(int w, int h)
 	polygon_mode = line;
 	shade_model = smooth;
 	culling = backface;
+
+	clipping_planes = vector<vec6f>();
+	clipping_planes.push_back(vec6f(-1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
+	clipping_planes.push_back(vec6f(1.0, 0.0, 0.0, -1.0, 0.0, 0.0));
+	clipping_planes.push_back(vec6f(0.0, -1.0, 0.0, 0.0, 1.0, 0.0));
+	clipping_planes.push_back(vec6f(0.0, 1.0, 0.0, 0.0, -1.0, 0.0));
+	clipping_planes.push_back(vec6f(0.0, 0.0, -1.0, 0.0, 0.0, 1.0));
+	clipping_planes.push_back(vec6f(0.0, 0.0, 1.0, 0.0, 0.0, -1.0));
+
 }
 
 canvashdl::~canvashdl()
