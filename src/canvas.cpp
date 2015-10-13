@@ -600,6 +600,18 @@ bool canvashdl::is_inside(vec3f point, vec6f plane){
 
 	return dot(point - n0, n) >= 0.0;
 }
+
+vec3f canvashdl::intersect_point(vec3f point1, vec3f point2, vec6f plane){
+	vec3f n0 = vec3f(plane.data[0], plane.data[1], plane.data[2]);
+	vec3f n = vec3f(plane.data[3], plane.data[4], plane.data[5]);
+	vec3f vec12 = point2 - point1;
+
+	assert(dot(vec12, n) > 0.0000001 || dot(vec12, n) < -0.0000001);
+	float d = dot(n0-point1, n) / dot(vec12, n);
+
+	return d * vec12 + point1;
+}
+
 /* draw_lines
  *
  * Draw a set of 3D lines on the canvas. Each point in geometry
