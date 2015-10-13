@@ -594,6 +594,12 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 	// TODO Assignment 3: Update the normal matrix.
 }
 
+bool canvashdl::is_inside(vec3f point, vec6f plane){
+	vec3f n0 = vec3f(plane.data[0], plane.data[1], plane.data[2]);
+	vec3f n = vec3f(plane.data[3], plane.data[4], plane.data[5]);
+
+	return dot(point - n0, n) >= 0.0;
+}
 /* draw_lines
  *
  * Draw a set of 3D lines on the canvas. Each point in geometry
