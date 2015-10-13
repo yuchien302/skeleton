@@ -624,9 +624,25 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
 		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
 
-		plot_line(point1, varying1, point2, varying2);
+		// Done Assignment 2: Implement frustum clipping
+		bool is_outside = false;
+		for(int p=0; p<6; p++){
+			vec6f plane = clipping_planes[p];
+			if(!is_inside(point1, plane) && !is_inside(point2, plane)){
+				is_outside = true;
+				break;
+			} else if(is_inside(point1, plane) && !is_inside(point2, plane)){
+				point2 = intersect_point(point1, point2, plane);
+			} else if(!is_inside(point1, plane) && is_inside(point2, plane)){
+				point1 = intersect_point(point1, point2, plane);
+			}
+		}
+		if(!is_outside){
+			plot_line(point1, varying1, point2, varying2);
+		}
+
 	}
-	// TODO Assignment 2: Implement frustum clipping and back-face culling
+
 	// TODO Assignment 3: Update the normal matrix.
 }
 
