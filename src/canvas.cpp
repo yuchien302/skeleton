@@ -671,23 +671,61 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
 
 
-		// TODO Assignment 2: Implement frustum clipping
-
 		// Done Assignment 2: Implement back-face culling
 		if(culling != disable){
 			vec3f vec12 = point2 - point1;
 			vec3f vec13 = point3 - point1;
 			vec3f direction = norm(cross(vec12, vec13));
 
-			if(direction.data[2] <= 0 && culling == backface){
-				plot_triangle(point1, varying1, point2, varying2, point3, varying3);
-			} else if(direction.data[2] >= 0 && culling == frontface){
-				plot_triangle(point1, varying1, point2, varying2, point3, varying3);
+			if( (direction.data[2] <= 0.0 && culling == frontface) ||
+				(direction.data[2] >= 0.0 && culling == backface)	){
+				continue;
 			}
-
-		} else {
-			plot_triangle(point1, varying1, point2, varying2, point3, varying3);
 		}
+
+
+		// Done Assignment 2: Implement frustum clipping
+		vector<vec3f> points;
+		vector<vec3f> clipped_points;
+		points.push_back(point1);
+		points.push_back(point2);
+		points.push_back(point3);
+		points.push_back(point1);
+
+		for(int p=0; p<6; p++){
+
+			vec6f plane = clipping_planes[p];
+			clipped_points.clear();
+			for(int j=0; j < (int)points.size()-1; j++){
+				vec3f p1 = points[j];
+				vec3f p2 = points[j+1];
+
+				if(is_inside(p1, plane)){
+					if(is_inside(p2, plane)){
+						clipped_points.push_back(p2);
+					} else{
+						clipped_points.push_back(intersect_point(p1, p2, plane));
+					}
+
+				} else {
+					if(is_inside(p2, plane)){
+						clipped_points.push_back(intersect_point(p1, p2, plane));
+						clipped_points.push_back(p2);
+					}
+
+				}
+			}
+			if(clipped_points.size() > 0)
+				clipped_points.push_back(clipped_points[0]);
+
+			points = clipped_points;
+
+		}
+
+		for(int j=0; j < (int)points.size() - 2; j+=2){
+			plot_triangle(points[j], varying1, points[j+1], varying2, points[(j+2) % points.size()], varying3);
+		}
+
 
 	}
 
