@@ -49,16 +49,24 @@ private:
 	void plot(vec3i xyz, vector<float> varying);
 	void plot_point(vec3f v, vector<float> varying);
 	void plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying);
-	void plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying);
 
+
+	void sort3vertex(vec3i &, vector<float>&,vec3i &, vector<float>&, vec3i &, vector<float>&);
+	vec5i pre_plot(vec3i, vec3i);
 	vec2i beforeBreseham (int octant, int x, int y);
 	vec2i afterBreseham(int octnat, int x, int y);
+	void bresenham(vec5i, vector<float>);
+	vec3i bresenham_halftri(vec5i, vector<float>, vec2i, int);
 
 	bool is_inside(vec3f point, vec6f plane);
 	vec3f intersect_point(vec3f point1, vec3f point2, vec6f plane);
 	vector<vec6f> clipping_planes;
 
+
+
+
 public:
+	void plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying);
 	canvashdl(int w, int h);
 	~canvashdl();
 	void plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vector<float> v2_varying, vec3f v3, vector<float> v3_varying);

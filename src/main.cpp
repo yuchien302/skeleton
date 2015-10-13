@@ -87,7 +87,12 @@ void displayfunc()
 	canvas.clear_depth_buffer();
 
 	scene.draw();
+	//vector<float> a = vector<float>();
+	//vec3i a = vec3i(100,200,300);
 
+	//canvas.plot_triangle(vec3f(-0.0,0.2,0.0), vector<float>(), vec3f(0.0,0.8,0.0), vector<float>(), vec3f(0.5,-0.2,0.0), vector<float>());
+
+	//canvas.plot_half_triangle(vec3i(200,300,400),vector<float>(), vec3i(250,400,400),vector<float>(),vec3i(400,800,400),vector<float>(),vector<float>());
 	canvas.swap_buffers();
 }
 
