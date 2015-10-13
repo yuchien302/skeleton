@@ -571,23 +571,15 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 	for(int i=0; i<geometry.size(); i++){
 		vec3f point = shade_vertex( geometry[i], varying );
 
-		// Done Assignment 2: Implement frustum clipping and back-face culling
-		if( point.data[0] < -1 || point.data[0] > 1 || point.data[1] < -1 || point.data[1] > 1 || point.data[2] < -1 || point.data[2] > 1)
+		// Done Assignment 2: Implement back-face culling
+		if( point.data[0] < -1.0 || point.data[0] > 1.0 ||
+			point.data[1] < -1.0 || point.data[1] > 1.0 ||
+			point.data[2] < -1.0 || point.data[2] > 1.0){
 			continue;
 
-		if(culling != disable){
-			vec4f normal_point = trans * vec4f( geometry[i].data[3], geometry[i].data[4], geometry[i].data[5], 1.0 );
-			vec4f normal_point0 = trans * vec4f( 0.0, 0.0, 0.0, 1.0 );
-			vec4f normal = normal_point - normal_point0;
-			if(normal.data[2] <= 0 && culling == backface){
-				plot_point(point, varying);
-			} else if(normal.data[2] >= 0 && culling == frontface){
-				plot_point(point, varying);
-			}
-
-		} else {
-			plot_point(point, varying);
 		}
+		plot_point(point, varying);
+
 	}
 
 
