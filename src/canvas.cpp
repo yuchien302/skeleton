@@ -602,7 +602,8 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 {
 	// TODO Assignment 2: Implement Bresenham's half triangle fill algorithm
 	//vec3i order = sort3(s1.data[1], s2.data[1], s3.data[1]);
-	cout<< "plot_half"<<endl;
+
+
 	vec3i tmp1 = s1;
 	vec5i xyminmaxoctant1 = pre_plot(tmp1, s2);
 	int delta_x1 = xyminmaxoctant1.data[1] - xyminmaxoctant1.data[0];
@@ -617,40 +618,27 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 	int delta_y2 = xyminmaxoctant2.data[3] - xyminmaxoctant2.data[2];
 	tmp2.data[2] = 2*delta_y2 - delta_x2;
 	vec2i delta2 = vec2i(delta_x2, delta_y2);
-	cout<<"123123123" << xyminmaxoctant1 << endl;
-	cout<<"123123123" << xyminmaxoctant2 << endl;
 	vec2i xy_plot1;
 	vec2i xy_plot2;
 	int a = 0;
-	cout<<"bresenham"<<endl;
-	cout<<"tmp1:"<<tmp1<<endl;
-
-	cout<<"delta"<<delta1<<delta2<<endl;
 	do{
 
 		tmp1 = bresenham_halftri(xyminmaxoctant1, v1_varying, delta1, tmp1.data[2]);
 		xyminmaxoctant1.data[0] = tmp1.data[0];
 		xyminmaxoctant1.data[2] = tmp1.data[1];
-		//cout<<"tmp1:"<<tmp1<<endl;
-		//cout << xyminmaxoctant1 << endl;
+
 		tmp2 = bresenham_halftri(xyminmaxoctant2, v1_varying, delta2, tmp2.data[2]);
 		xyminmaxoctant2.data[0] = tmp2.data[0];
 		xyminmaxoctant2.data[2] = tmp2.data[1];
-		//cout<<"tmp2:"<<tmp2<<endl;
-		//cout<<tmp1.data[1]<< " "<< tmp2.data[1]<<endl;
+
 		xy_plot1 = afterBreseham(xyminmaxoctant1.data[4], tmp1.data[0], tmp1.data[1]);
 		xy_plot2 = afterBreseham(xyminmaxoctant2.data[4], tmp2.data[0], tmp2.data[1]);
-		//cout<<tmp1<<tmp2<<endl;
+
 		int xstart = (xy_plot1.data[0] < xy_plot2.data[0])? xy_plot1.data[0]: xy_plot2.data[0];
 		int xend = (xy_plot1.data[0] < xy_plot2.data[0])? xy_plot2.data[0]: xy_plot1.data[0];
-		//cout<<"plot line"<<xstart<<" "<<xend<<endl;
 		for(int x = xstart+1; x < xend; x++)
 			plot(vec3i(x,xy_plot1.data[1], 0), v1_varying);
-		//cout<<xy_plot1<<"xy"<< xy_plot2<<endl;
-		//cout<<s1<<"s1"<<s2<<s3<<endl;
-		//cout<<xstart<<" "<<xend<<endl;
-		//cout<<xy_plot1<<xy_plot2<<endl;
-	//}while(0);
+
 	}while(xy_plot1.data[1] != s2.data[1]);
 	cout<<s2.data[1]<<endl;
 
@@ -683,18 +671,24 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	}
 	else if(polygon_mode == canvashdl::fill){
 		vec3i v1_pixel = to_pixel(v1);
-							vec3i v2_pixel = to_pixel(v2);
-							vec3i v3_pixel = to_pixel(v3);
+		vec3i v2_pixel = to_pixel(v2);
+		vec3i v3_pixel = to_pixel(v3);
 
-							sort3vertex(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying);
-							plot_half_triangle(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying, vector<float>());
-							if (v2_pixel.data[1] != v3_pixel.data[1]){
-								cout<<v3_pixel<<v1_pixel<<endl;
-								plot_half_triangle(v3_pixel, v3_varying, v2_pixel, v2_varying, v1_pixel, v1_varying, vector<float>());
-							}
+		vector<float> ave_varying = vector<float>();
+		for(int i = 0; i < v1_varying.size(); i++){
+			ave_varying.push_back((v1_varying[i] + v2_varying[i] + v3_varying[i]) / 3);
+		}
+
+
+		sort3vertex(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying);
+		plot_half_triangle(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying, ave_varying);
+		if (v2_pixel.data[1] != v3_pixel.data[1]){
+			plot_half_triangle(v3_pixel, v3_varying, v2_pixel, v2_varying, v1_pixel, v1_varying, ave_varying);
+		}
 
 
 	}
+
 
 	// TODO Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
 }
