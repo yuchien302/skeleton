@@ -43,12 +43,14 @@ canvashdl::canvashdl(int w, int h)
 	culling = backface;
 
 	clipping_planes = vector<vec6f>();
+	clipping_planes.push_back(vec6f(0.0, 0.0, 1.0, 0.0, 0.0, -1.0));
+	clipping_planes.push_back(vec6f(0.0, 0.0, -1.0, 0.0, 0.0, 1.0));
 	clipping_planes.push_back(vec6f(-1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	clipping_planes.push_back(vec6f(1.0, 0.0, 0.0, -1.0, 0.0, 0.0));
 	clipping_planes.push_back(vec6f(0.0, -1.0, 0.0, 0.0, 1.0, 0.0));
 	clipping_planes.push_back(vec6f(0.0, 1.0, 0.0, 0.0, -1.0, 0.0));
-	clipping_planes.push_back(vec6f(0.0, 0.0, -1.0, 0.0, 0.0, 1.0));
-	clipping_planes.push_back(vec6f(0.0, 0.0, 1.0, 0.0, 0.0, -1.0));
+
+
 
 }
 
@@ -320,7 +322,7 @@ vec3f canvashdl::to_window(vec2i pixel)
 	float x = ((float) pixel.data[0] / (float) width - 0.5 ) * 2.0;
 	float y = (0.5 - (float) pixel.data[1] / (float) height) * 2.0;
 
-	return vec3f(x, y, 1.0);
+	return vec3f(x, y, 1.04);
 }
 
 vec3i canvashdl::to_pixel(vec3f window_cordinate)
@@ -366,6 +368,14 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	vec4f point = matrices[projection_matrix] *
 				  matrices[modelview_matrix] *
 				  vec4f( v.data[0], v.data[1], v.data[2], 1.0 );
+
+	if(point.data[3] < 0.0000001 && point.data[3] >= 0){
+		point.data[3] = 0.0000001;
+	} else if (point.data[3] > -0.0000001 && point.data[3] < 0){
+		point.data[3] = -0.0000001;
+	}
+
+	assert(point.data[3] != 0);
 
 	vec4f homo_point = point / point.data[3];
 
@@ -575,8 +585,8 @@ void canvashdl::sort3vertex(vec3i &v1, vector<float> &v1_varying, vec3i &v2, vec
 		swap(a,c);
 		v1_varying.swap(v3_varying);
 	}*/
-	cout<<v1<<" "<< v2<<" "<<v3<<endl;
-	cout<<a<<b<<c<<endl;
+//	cout<<v1<<" "<< v2<<" "<<v3<<endl;
+//	cout<<a<<b<<c<<endl;
 }
 /* plot_half_triangle
  *
@@ -792,29 +802,28 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 	vector<float> varying3 = vector<float>();
 	mat4f trans = matrices[projection_matrix] * matrices[modelview_matrix];
 
-	for(int i=0; i<indices.size()/3; i++){
 
-		vec3f point1 = shade_vertex( geometry[indices[3*i]], varying1 );
-		vec3f point2 = shade_vertex( geometry[indices[3*i+1]], varying2 );
-		vec3f point3 = shade_vertex( geometry[indices[3*i+2]], varying3 );
-
+	for (int i = 2; i < indices.size(); i+=3){
+		vec3f point1 = shade_vertex( geometry[indices[i-2]], varying1 );
+		vec3f point2 = shade_vertex( geometry[indices[i-1]], varying2 );
+		vec3f point3 = shade_vertex( geometry[indices[i]], varying3 );
 
 		// Done Assignment 2: Implement back-face culling
 		if(culling != disable){
 			vec3f vec12 = point2 - point1;
 			vec3f vec13 = point3 - point1;
-			vec3f direction = norm(cross(vec12, vec13));
+			vec3f direction = cross(vec13, vec12);
 
-			if( (direction.data[2] <= 0.0 && culling == frontface) ||
-				(direction.data[2] >= 0.0 && culling == backface)	){
+			if( (direction.data[2] >= 0.0 && culling == frontface) ||
+				(direction.data[2] <= 0.0 && culling == backface)	){
 				continue;
 			}
 		}
 
 
 		// Done Assignment 2: Implement frustum clipping
-		vector<vec3f> points;
-		vector<vec3f> clipped_points;
+		vector<vec3f> points = vector<vec3f>();
+		vector<vec3f> clipped_points = vector<vec3f>();
 		points.push_back(point1);
 		points.push_back(point2);
 		points.push_back(point3);
