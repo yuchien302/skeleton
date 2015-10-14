@@ -850,8 +850,8 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 
 		}
 
-		for(int j=0; j < (int)points.size() - 2; j+=2){
-			plot_triangle(points[j], varying1, points[j+1], varying2, points[(j+2) % points.size()], varying3);
+		for(int j=0; j < (int)points.size() - 2; j++){
+			plot_triangle(points[0], varying1, points[j+1], varying2, points[j+2], varying3);
 		}
 
 
