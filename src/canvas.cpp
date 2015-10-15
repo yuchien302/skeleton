@@ -748,10 +748,10 @@ void canvashdl::update_clipping_planes(){
 	plane = -col3 + col4;
 	update_clipping_planes_helper(plane, 5);
 
-	cout << "updating clipping planes" << endl;
-	for(int p=0; p<6; p++){
-		cout << clipping_planes[p] << endl;
-	}
+//	cout << "updating clipping planes" << endl;
+//	for(int p=0; p<6; p++){
+//		cout << clipping_planes[p] << endl;
+//	}
 }
 
 
@@ -860,12 +860,12 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 
 		// Done Assignment 2: Implement back-face culling
 		if(culling != disable){
-			vec3f vec12 = point2 - point1;
-			vec3f vec13 = point3 - point1;
-			vec3f direction = cross(vec13, vec12);
-			vec3f eye = vec3f(clipping_planes[5].data[3], clipping_planes[5].data[4], clipping_planes[5].data[5]);
-			if( (dot(direction, eye) >= 0.0 && culling == frontface) ||
-				(dot(direction, eye) <= 0.0 && culling == backface)	){
+			vec3f vec12 = shade_vertex(point2, varying2) - shade_vertex(point1, varying1);
+			vec3f vec13 = shade_vertex(point3, varying3) - shade_vertex(point1, varying1);
+			vec3f direction = cross(vec12, vec13);
+
+			if( (direction.data[2] <= 0.0 && culling == frontface) ||
+				(direction.data[2] >= 0.0 && culling == backface)	){
 				continue;
 			}
 		}
