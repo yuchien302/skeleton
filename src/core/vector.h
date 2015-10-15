@@ -757,8 +757,12 @@ t1 dot(vec<t1, s1> v1, vec<t2, s2> v2)
 	t1 result = 0;
 
 	int m = min(s1, s2);
-	for (int i = 0; i < m; i++)
-		result += v1.data[i]*v2.data[i];
+	for (int i = 0; i < m; i++){
+		if(v1.data[i] == 0 || v2.data[i] == 0) {
+			continue;
+		}
+		result += v1.data[i] * v2.data[i];
+	}
 	return result;
 }
 
