@@ -58,8 +58,8 @@ private:
 	void bresenham(int, int, int, int, int, vector<float>);
 	void bresenham_halftri(int &, int &, int, int, int, int, int, vector<float>, int &);
 
-	bool is_inside(vec3f point, vec6f plane);
-	vec3f intersect_point(vec3f point1, vec3f point2, vec6f plane);
+	bool is_inside(vec8f point, vec6f plane);
+	vec3f intersect_point(vec8f point1, vec8f point2, vec6f plane);
 	vector<vec6f> clipping_planes;
 	void update_clipping_planes();
 	void update_clipping_planes_helper(vec4f plane, int i);
