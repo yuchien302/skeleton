@@ -61,7 +61,8 @@ private:
 	bool is_inside(vec3f point, vec6f plane);
 	vec3f intersect_point(vec3f point1, vec3f point2, vec6f plane);
 	vector<vec6f> clipping_planes;
-
+	void update_clipping_planes();
+	void update_clipping_planes_helper(vec4f plane, int i);
 
 
 

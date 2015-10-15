@@ -43,12 +43,12 @@ canvashdl::canvashdl(int w, int h)
 	culling = backface;
 
 	clipping_planes = vector<vec6f>();
-	clipping_planes.push_back(vec6f(0.0, 0.0, 1.0, 0.0, 0.0, -1.0));
-	clipping_planes.push_back(vec6f(0.0, 0.0, -1.0, 0.0, 0.0, 1.0));
 	clipping_planes.push_back(vec6f(-1.0, 0.0, 0.0, 1.0, 0.0, 0.0));
 	clipping_planes.push_back(vec6f(1.0, 0.0, 0.0, -1.0, 0.0, 0.0));
 	clipping_planes.push_back(vec6f(0.0, -1.0, 0.0, 0.0, 1.0, 0.0));
 	clipping_planes.push_back(vec6f(0.0, 1.0, 0.0, 0.0, -1.0, 0.0));
+	clipping_planes.push_back(vec6f(0.0, 0.0, -1.0, 0.0, 0.0, 1.0));
+	clipping_planes.push_back(vec6f(0.0, 0.0, 1.0, 0.0, 0.0, -1.0));
 
 
 
@@ -741,6 +741,60 @@ vec3f canvashdl::intersect_point(vec3f point1, vec3f point2, vec6f plane){
 
 	return d * vec12 + point1;
 }
+void canvashdl::update_clipping_planes_helper(vec4f plane, int i){
+	float temp = plane.data[3] / (plane.data[0] + plane.data[1] + plane.data[2]);
+	clipping_planes[i].data[0] = -temp;
+	clipping_planes[i].data[1] = -temp;
+	clipping_planes[i].data[2] = -temp;
+	clipping_planes[i].data[3] = plane.data[0];
+	clipping_planes[i].data[4] = plane.data[1];
+	clipping_planes[i].data[5] = plane.data[2];
+}
+
+void canvashdl::update_clipping_planes(){
+	mat4f mp = matrices[projection_matrix] * matrices[modelview_matrix];
+
+	vec4f col1 = mp.data[0];
+	vec4f col2 = mp.data[1];
+	vec4f col3 = mp.data[2];
+	vec4f col4 = mp.data[3];
+
+	float temp;
+	vec4f plane;
+	cout << matrices[projection_matrix] << endl;
+	cout << matrices[modelview_matrix] << endl;
+	cout << mp << endl;
+
+	// Left
+	plane = col1 + col4;
+	update_clipping_planes_helper(plane, 0);
+
+	// Right
+	plane = -col1 + col4;
+	update_clipping_planes_helper(plane, 1);
+
+	// Bottom
+	plane = col2 + col4;
+	update_clipping_planes_helper(plane, 2);
+
+	// Top
+	plane = -col2 + col4;
+	update_clipping_planes_helper(plane, 3);
+
+	// Near
+	plane = col3 + col4;
+	update_clipping_planes_helper(plane, 4);
+
+	// Far
+	plane = -col3 + col4;
+	update_clipping_planes_helper(plane, 5);
+
+	cout << "update_clipping_planes" << endl;
+	for(int p=0; p<6; p++){
+		cout << clipping_planes[p] << endl;
+	}
+
+}
 
 /* draw_lines
  *
@@ -752,6 +806,8 @@ vec3f canvashdl::intersect_point(vec3f point1, vec3f point2, vec6f plane){
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	update_clipping_planes();
+
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
 	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
 
@@ -759,13 +815,14 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 	vector<float> varying2 = vector<float>();
 	for(int i=0; i<indices.size()/2; i++){
 
-		vec3f point1 = shade_vertex( geometry[indices[2*i]], varying1 );
-		vec3f point2 = shade_vertex( geometry[indices[2*i+1]], varying2 );
+		vec3f point1 = vec3f(geometry[indices[2*i]].data[0], geometry[indices[2*i]].data[1], geometry[indices[2*i]].data[2]);
+		vec3f point2 = vec3f(geometry[indices[2*i+1]].data[0], geometry[indices[2*i+1]].data[1], geometry[indices[2*i+1]].data[2]);
 
 		// Done Assignment 2: Implement frustum clipping
 		bool is_outside = false;
 		for(int p=0; p<6; p++){
 			vec6f plane = clipping_planes[p];
+
 			if(!is_inside(point1, plane) && !is_inside(point2, plane)){
 				is_outside = true;
 				break;
@@ -776,12 +833,26 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 			}
 		}
 		if(!is_outside){
-			plot_line(point1, varying1, point2, varying2);
+			vec3f point1_s = shade_vertex( vec8f(point1.data[0], point1.data[1], point1.data[2], geometry[indices[2*i]].data[3], geometry[indices[2*i]].data[4], geometry[indices[2*i]].data[5], geometry[indices[2*i]].data[6], geometry[indices[2*i]].data[7]), varying1 );
+			vec3f point2_s = shade_vertex( vec8f(point2.data[0], point2.data[1], point2.data[2], geometry[indices[2*i+1]].data[3], geometry[indices[2*i+1]].data[4], geometry[indices[2*i+1]].data[5], geometry[indices[2*i+1]].data[6], geometry[indices[2*i+1]].data[7]), varying1 );
+			plot_line(point1_s, varying1, point2_s, varying2);
 		}
 
 	}
 
 	// TODO Assignment 3: Update the normal matrix.
+}
+
+vec3f get_position(vec8f v){
+	return vec3f(v.data[0], v.data[1], v.data[2]);
+}
+
+vec5f get_rest(vec8f v){
+	return vec5f(v.data[3], v.data[4], v.data[5], v.data[6], v.data[7]);
+}
+
+vec8f combined(vec3f p, vec5f r){
+	return vec8f(p.data[0], p.data[1], p.data[2], r.data[0], r.data[1], r.data[2], r.data[3], r.data[4]);
 }
 
 /* draw_triangles
@@ -794,6 +865,7 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
  */
 void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
 
@@ -804,18 +876,22 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 
 
 	for (int i = 2; i < indices.size(); i+=3){
-		vec3f point1 = shade_vertex( geometry[indices[i-2]], varying1 );
-		vec3f point2 = shade_vertex( geometry[indices[i-1]], varying2 );
-		vec3f point3 = shade_vertex( geometry[indices[i]], varying3 );
+		vec3f point1 = get_position(geometry[indices[i-2]]);
+		vec3f point2 = get_position(geometry[indices[i-1]]);
+		vec3f point3 = get_position(geometry[indices[i]]);
+
+		vec5f point1_r = get_rest(geometry[indices[i-2]]);
+		vec5f point2_r = get_rest(geometry[indices[i-1]]);
+		vec5f point3_r = get_rest(geometry[indices[i]]);
 
 		// Done Assignment 2: Implement back-face culling
 		if(culling != disable){
 			vec3f vec12 = point2 - point1;
 			vec3f vec13 = point3 - point1;
 			vec3f direction = cross(vec13, vec12);
-
-			if( (direction.data[2] >= 0.0 && culling == frontface) ||
-				(direction.data[2] <= 0.0 && culling == backface)	){
+			vec3f eye = vec3f(clipping_planes[5].data[3], clipping_planes[5].data[4], clipping_planes[5].data[5]);
+			if( (dot(direction, eye) >= 0.0 && culling == frontface) ||
+				(dot(direction, eye) <= 0.0 && culling == backface)	){
 				continue;
 			}
 		}
@@ -859,8 +935,11 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 
 		}
 
-		for(int j=0; j < (int)points.size() - 2; j++){
-			plot_triangle(points[0], varying1, points[j+1], varying2, points[j+2], varying3);
+		for(int j=0; j < (int)points.size() - 3; j++){
+			vec3f p1 = shade_vertex(combined(points[0], vec5f(1.0, 0.0, 0.0, 0.0, 0.0)), varying1);
+			vec3f p2 = shade_vertex(combined(points[j+1], vec5f(1.0, 0.0, 0.0, 0.0, 0.0)), varying1);
+			vec3f p3 = shade_vertex(combined(points[j+2], vec5f(1.0, 0.0, 0.0, 0.0, 0.0)), varying1);
+			plot_triangle(p1, varying1, p2, varying2, p3, varying3);
 		}
 
 
