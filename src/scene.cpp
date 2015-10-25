@@ -35,7 +35,7 @@ scenehdl::~scenehdl()
  */
 void scenehdl::draw()
 {
-	/* (untested) Done Assignment 1: Draw all of the objects, and
+	/* DONE Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */
 	canvas -> set_matrix(canvashdl::projection_matrix);
@@ -46,38 +46,36 @@ void scenehdl::draw()
 	canvas -> load_identity();
 	cameras[active_camera] -> view(canvas);
 
-
-	for (int i = 0; i < objects.size(); i++){
-		bool is_camera = false;
-		for (int j = 0; (j < cameras.size()) && !is_camera; j++){
-			if (cameras[j] != NULL && cameras[j] -> model == objects[i]){
-				is_camera = true;
-				objects[i] -> position = cameras[j] -> position;
-				objects[i] -> orientation = cameras[j] -> orientation;
-//				cameras[j] -> model -> position = cameras[j] -> position;
-//				cameras[j] -> orientation = cameras[j] -> model -> orientation;
-			}
-		}
-		if(!is_camera || render_cameras){
-			objects[i] -> draw(canvas);
-			if(render_normals)
-				objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
-			if(i == active_object){
-				objects[i] -> draw_bound(canvas);
-			}
-		}
-
-	}
-
-
-
-
-
-	/* TODO Assignment 3: Clear the uniform variables and pass the vector of
+	/* DONE Assignment 3: Clear the uniform variables and pass the vector of
 	 * lights into the renderer as a uniform variable.
-	 * TODO Assignment 3: Update the light positions and directions
-	 * TODO Assignment 3: Render the lights
 	 */
+	canvas -> uniform.clear();
+	canvas -> uniform["lights"] = &lights;
+
+
+	// TODO Assignment 3: Update the light positions and directions
+	for (int i = 0; i < objects.size(); i++){
+		if (objects[i] != NULL) {
+			bool is_camera = false;
+
+			// TODO Assignment 3: Render the lights;
+
+			for (int j = 0; j < cameras.size() && !is_camera; j++)
+				if (cameras[j] != NULL && cameras[j]->model == objects[i])
+					is_camera = true;
+
+			if (!is_camera || (is_camera && render_cameras && (!active_camera_valid() || objects[i] != cameras[active_camera]->model)))
+			{
+				objects[i]->draw(canvas);
+
+				if (render_normals == vertex || render_normals == face)
+					objects[i]->draw_normals(canvas, render_normals == face);
+
+				if (i == active_object)
+					objects[i]->draw_bound(canvas);
+			}
+		}
+	}
 }
 
 bool scenehdl::active_camera_valid()
