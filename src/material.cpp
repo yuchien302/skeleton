@@ -31,6 +31,7 @@ whitehdl::~whitehdl()
 vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const
 {
 	// TODO Assignment 3: Move your solid color shader from the canvas to here.
+
 }
 
 vec3f whitehdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const

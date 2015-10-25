@@ -371,7 +371,7 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 
 	vec4f homo_point = point / point.data[3];
 
-	/* TODO Assignment 3: Get the material from the list of uniform variables and
+	/* DONE Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
 	const materialhdl* m;
@@ -389,9 +389,11 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 vec3f canvashdl::shade_fragment(vector<float> varying)
 {
 	// Done Assignment 1: Pick a color, any color (as long as it is distinguishable from the background color).
-	return vec3f(1.0, 1.0, 1.0);
-
-	/* TODO Assignment 3: Get the material from the list of uniform variables and
+	//return vec3f(1.0, 1.0, 1.0);
+	const materialhdl* m;
+	get_uniform("current_material", m);
+	return m -> shade_fragment(this, varying);
+	/* DONE Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
 	 */
 
