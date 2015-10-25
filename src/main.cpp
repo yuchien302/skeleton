@@ -166,10 +166,10 @@ void pmotionfunc(int x, int y)
 				bool is_light = false;
 				bool is_camera = false;
 
-				// TODO Assignment 3: uncomment this
-				//for (int j = 0; j < scene.lights.size() && !is_light; j++)
-				//	if (scene.lights[j] != NULL && scene.lights[j]->model == scene.objects[i])
-				//		is_light = true;
+				// Done Assignment 3: uncomment this
+				for (int j = 0; j < scene.lights.size() && !is_light; j++)
+					if (scene.lights[j] != NULL && scene.lights[j]->model == scene.objects[i])
+						is_light = true;
 
 				for (int j = 0; j < scene.cameras.size() && !is_camera; j++)
 					if (scene.cameras[j] != NULL && scene.cameras[j]->model == scene.objects[i])
@@ -210,10 +210,10 @@ void pmotionfunc(int x, int y)
 			bool is_light = false;
 			bool is_camera = false;
 
-			// TODO Assignment 3: uncomment this
-			//for (int i = 0; i < scene.lights.size() && !is_light; i++)
-			//	if (scene.lights[i] != NULL && scene.active_object_valid() && scene.lights[i]->model == scene.objects[scene.active_object])
-			//		is_light = true;
+			// Done Assignment 3: uncomment this
+			for (int i = 0; i < scene.lights.size() && !is_light; i++)
+				if (scene.lights[i] != NULL && scene.active_object_valid() && scene.lights[i]->model == scene.objects[scene.active_object])
+					is_light = true;
 
 			for (int i = 0; i < scene.cameras.size() && !is_camera; i++)
 				if (scene.cameras[i] != NULL && scene.active_object_valid() && scene.cameras[i]->model == scene.objects[scene.active_object])
@@ -453,8 +453,8 @@ void canvas_menu(int num)
 		if (path != NULL && strlen(path) > 0)
 			scene.objects.push_back(new modelhdl(path));
 	}
-	// TODO Assignment 3: uncomment this
-	/*else if (num == 6)
+	// Done Assignment 3: uncomment this
+	else if (num == 6)
 		scene.render_lights = !scene.render_lights;
 	else if (num == 7)
 	{
@@ -493,7 +493,7 @@ void canvas_menu(int num)
 		swap(scene.objects.back()->bound[2], scene.objects.back()->bound[4]);
 		swap(scene.objects.back()->bound[3], scene.objects.back()->bound[5]);
 		scene.lights.back()->model = scene.objects.back();
-	}*/
+	}
 	else if (num == 10)
 		manipulator = manipulate::fovy;
 	else if (num == 11)
@@ -582,11 +582,11 @@ void canvas_menu(int num)
 		canvas.polygon_mode = canvashdl::line;
 	else if (num == 23)
 		canvas.polygon_mode = canvashdl::fill;
-	// TODO Assignment 3: uncomment this
-	//else if (num == 25)
-	//	canvas.shade_model = canvashdl::flat;
-	//else if (num == 26)
-	//	canvas.shade_model = canvashdl::smooth;
+	// Done Assignment 3: uncomment this
+	else if (num == 25)
+		canvas.shade_model = canvashdl::flat;
+	else if (num == 26)
+		canvas.shade_model = canvashdl::smooth;
 	else if (num == 28)
 		canvas.culling = canvashdl::disable;
 	else if (num == 29)
@@ -611,8 +611,8 @@ void object_menu(int num)
 		{
 			if (scene.objects[scene.active_object] != NULL)
 			{
-				// TODO Assignment 3: uncomment this
-				/*for (int i = 0; i < scene.lights.size(); )
+				// Done Assignment 3: uncomment this
+				for (int i = 0; i < scene.lights.size(); )
 				{
 					if (scene.lights[i] != NULL && scene.lights[i]->model == scene.objects[scene.active_object])
 					{
@@ -621,7 +621,7 @@ void object_menu(int num)
 					}
 					else
 						i++;
-				}*/
+				}
 
 				for (int i = 0; i < scene.cameras.size(); )
 				{
@@ -675,8 +675,8 @@ void object_menu(int num)
 		}
 		glutPostRedisplay();
 	}*/
-	// TODO Assignment 3: uncomment this
-	/*else if (num == 7 && scene.active_object_valid())
+	// Done Assignment 3: uncomment this
+	else if (num == 7 && scene.active_object_valid())
 	{
 		for (map<string, materialhdl*>::iterator i = scene.objects[scene.active_object]->material.begin(); i != scene.objects[scene.active_object]->material.end(); i++)
 		{
@@ -715,11 +715,11 @@ void object_menu(int num)
 			i->second = new whitehdl();
 		}
 		glutPostRedisplay();
-	}*/
+	}
 }
 
-// TODO Assignment 3: uncomment this
-/*void color_menu(int num)
+// Done Assignment 3: uncomment this
+void color_menu(int num)
 {
 	for (int i = 0; i < scene.lights.size(); i++)
 		if (scene.lights[i] != NULL && scene.lights[i]->model == scene.objects[scene.active_object])
@@ -801,7 +801,7 @@ void attenuation_menu(int num)
 			}
 		}
 	}
-}*/
+}
 
 void create_menu()
 {
@@ -813,12 +813,12 @@ void create_menu()
     glutAddMenuEntry(" Model       ", 5);
 
 
-    // TODO Assignment 3: uncomment this
-    /*int lights_id = glutCreateMenu(canvas_menu);
+    // Done Assignment 3: uncomment this
+    int lights_id = glutCreateMenu(canvas_menu);
     glutAddMenuEntry(" Toggle Draw ", 6);
 	glutAddMenuEntry(" Directional ", 7);
 	glutAddMenuEntry(" Point       ", 8);
-	glutAddMenuEntry(" Spot        ", 9);*/
+	glutAddMenuEntry(" Spot        ", 9);
 
 	int camera_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" Fovy        ", 10);
@@ -840,8 +840,8 @@ void create_menu()
 	glutAddMenuEntry(" Fill        ", 23);
 
 
-	// TODO Assignment 3: uncomment this
-	/*int ambient_id = glutCreateMenu(color_menu);
+	// Done Assignment 3: uncomment this
+	int ambient_id = glutCreateMenu(color_menu);
 	glutAddMenuEntry(" Red         ", 0);
 	glutAddMenuEntry(" Orange      ", 1);
 	glutAddMenuEntry(" Yellow      ", 2);
@@ -894,7 +894,7 @@ void create_menu()
 
 	int shading_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" Flat        ", 25);
-	glutAddMenuEntry(" Smooth      ", 26);*/
+	glutAddMenuEntry(" Smooth      ", 26);
 
 	// Done Assignment 2: uncomment this
 	int culling_id = glutCreateMenu(canvas_menu);
@@ -909,37 +909,37 @@ void create_menu()
 
     canvas_menu_id = glutCreateMenu(canvas_menu);
     glutAddSubMenu  (" Objects     ", objects_id);
-    // TODO Assignment 3: uncomment this
-    //glutAddSubMenu  (" Lights      ", lights_id);
+    // Done Assignment 3: uncomment this
+    glutAddSubMenu  (" Lights      ", lights_id);
     glutAddSubMenu  (" Cameras     ", camera_id);
     glutAddSubMenu  (" Polygon     ", mode_id);
-    // TODO Assignment 3: uncomment this
-    //glutAddSubMenu  (" Shading     ", shading_id);
+    // Done Assignment 3: uncomment this
+    glutAddSubMenu  (" Shading     ", shading_id);
     // Done Assignment 2: uncomment this
     glutAddSubMenu  (" Culling     ", culling_id);
     glutAddSubMenu  (" Normals     ", normal_id);
     glutAddMenuEntry(" Quit        ", 0);
 
-    // TODO Assignment 3: uncomment this
-    /*int material_menu_id = glutCreateMenu(object_menu);
+    // DOne Assignment 3: uncomment this
+    int material_menu_id = glutCreateMenu(object_menu);
 	glutAddMenuEntry(" White       ", 10);
 	glutAddMenuEntry(" Gouraud     ", 9);
 	glutAddMenuEntry(" Phong       ", 8);
-	glutAddMenuEntry(" Custom      ", 7);*/
+	glutAddMenuEntry(" Custom      ", 7);
     // TODO Assignment 4: uncomment this
 	//glutAddMenuEntry(" Texture     ", 6);
 
     object_menu_id = glutCreateMenu(object_menu);
-    // TODO Assignment 3: uncomment this
-    //glutAddSubMenu  (" Material    ", material_menu_id);
+    // Done Assignment 3: uncomment this
+    glutAddSubMenu  (" Material    ", material_menu_id);
     glutAddMenuEntry(" Set Focus   ", 5);
     glutAddMenuEntry(" Translate   ", 1);
     glutAddMenuEntry(" Rotate      ", 2);
     glutAddMenuEntry(" Scale       ", 3);
     glutAddMenuEntry(" Delete      ", 0);
 
-    // TODO Assignment 3: uncomment this
-    /*light_menu_id = glutCreateMenu(object_menu);
+    // Done Assignment 3: uncomment this
+    light_menu_id = glutCreateMenu(object_menu);
     glutAddSubMenu  (" Ambient     ", ambient_id);
 	glutAddSubMenu  (" Diffuse     ", diffuse_id);
 	glutAddSubMenu  (" Specular    ", specular_id);
@@ -947,7 +947,7 @@ void create_menu()
 	glutAddMenuEntry(" Set Focus   ", 5);
 	glutAddMenuEntry(" Translate   ", 1);
 	glutAddMenuEntry(" Rotate      ", 2);
-	glutAddMenuEntry(" Delete      ", 0);*/
+	glutAddMenuEntry(" Delete      ", 0);
 
 	camera_menu_id = glutCreateMenu(object_menu);
 	glutAddMenuEntry(" Set Active  ", 4);

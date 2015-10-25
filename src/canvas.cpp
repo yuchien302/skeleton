@@ -588,8 +588,8 @@ void canvashdl::sort3vertex(vec3i &v1, vector<float> &v1_varying, vec3i &v2, vec
  */
 void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2, vector<float> v2_varying, vec3i s3, vector<float> v3_varying, vector<float> ave_varying)
 {
-	// TODO Assignment 2: Implement Bresenham's half triangle fill algorithm
-	//vec3i order = sort3(s1.data[1], s2.data[1], s3.data[1]);
+	// Done Assignment 2: Implement Bresenham's half triangle fill algorithm
+	// vec3i order = sort3(s1.data[1], s2.data[1], s3.data[1]);
 
 
 	vec5i xyminmaxoctant1 = pre_plot(s1, s2);
