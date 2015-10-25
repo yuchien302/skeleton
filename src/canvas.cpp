@@ -363,22 +363,14 @@ vec3f canvashdl::unproject(vec3f window)
  */
 vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 {
-	// Done Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
-
-	vec4f point = matrices[projection_matrix] *
-				  matrices[modelview_matrix] *
-				  vec4f( v.data[0], v.data[1], v.data[2], 1.0 );
-
-	vec4f homo_point = point / point.data[3];
-
+	// DONE Assignment 1: Do all of the necessary transformations (normal, projection, modelview, etc)
 	/* DONE Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
 	const materialhdl* m;
 	get_uniform("current_material", m);
-	m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
 
-	return vec3f(homo_point.data[0], homo_point.data[1], homo_point.data[2]);
+	return m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
 }
 
 /* shade_fragment
