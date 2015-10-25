@@ -374,6 +374,9 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	/* TODO Assignment 3: Get the material from the list of uniform variables and
 	 * call its vertex shader.
 	 */
+	const materialhdl* m;
+	get_uniform("current_material", m);
+	m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
 
 	return vec3f(homo_point.data[0], homo_point.data[1], homo_point.data[2]);
 }
