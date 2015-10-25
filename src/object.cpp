@@ -25,7 +25,9 @@ rigidhdl::~rigidhdl()
 void rigidhdl::draw(canvashdl *canvas)
 {
 	// (untested) Done Assignment 1: Send the rigid body geometry to the renderer
+	//canvas
 	canvas -> draw_triangles(geometry, indices);
+
 }
 
 objecthdl::objecthdl()
@@ -69,10 +71,13 @@ void objecthdl::draw(canvashdl *canvas)
 	// (untested) Done Assignment 1: Send transformations and geometry to the renderer to draw the object
 	canvas -> set_matrix(canvashdl::modelview_matrix);
 	before_draw(canvas);
-	for (int i = 0; i < rigid.size(); i++)
+	for (int i = 0; i < rigid.size(); i++){
+		// TODO Assignment 3: Pass the material as a uniform into the renderer
+		canvas->uniform["current_material"] = material[rigid[i].material] ;
 		rigid[i].draw(canvas);
+	}
 	after_draw(canvas);
-	// TODO Assignment 3: Pass the material as a uniform into the renderer
+
 }
 
 
@@ -122,11 +127,15 @@ void objecthdl::draw_bound(canvashdl *canvas)
 		indices.push_back(i);
 		indices.push_back(i+4);
 	}
+
+	// DONE Assignment 3: clear the material in the uniform list
+	canvas -> uniform.clear();
+
 	canvas -> draw_lines(geometry, indices);
 	after_draw(canvas);
 
 
-	// TODO Assignment 3: clear the material in the uniform list
+
 }
 
 /* draw_normals
@@ -180,10 +189,12 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 		}
 	}
 	before_draw(canvas);
+	// DONE Assignment 3: clear the material in the uniform list
+	canvas -> uniform.clear();
+
 	canvas -> draw_lines(geometry, indices);
 	after_draw(canvas);
 
-	// TODO Assignment 3: clear the material in the uniform list before rendering
 }
 
 void objecthdl::before_draw(canvashdl *canvas){
