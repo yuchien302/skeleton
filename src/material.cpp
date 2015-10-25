@@ -126,7 +126,12 @@ vec3f phonghdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 	 * and flat. The difference is that the normals have been interpolated and passed into the fragment shader
 	 * instead of the color. The final color is calculated in the fragment shader.
 	 */
-
+	lighthdl** l;
+	/*for(int i = 0; i < l.length; i ++)
+		l[i] -> shade(ambient, diffuse,  specular,
+				vec3f(varying[varying.length-3], varying[varying.length-2], varying[varying.length-3]),
+				vec3f(varying[i], varying[i+1], varying[i+2]), shininess);
+	*/
 	return vec3f(1.0, 1.0, 1.0);
 }
 
@@ -169,6 +174,7 @@ vec3f customhdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 	 * is that the normals have been interpolated. Implement the none shading model, this just returns the
 	 * color of the material without lighting.
 	 */
+
 
 	return vec3f(1.0, 1.0, 1.0);
 }
