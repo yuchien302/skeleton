@@ -59,6 +59,7 @@ struct pointhdl : lighthdl
 	// Updated
 	vec3f position;
 
+
 	void update(canvashdl *canvas);
 	void shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const;
 };

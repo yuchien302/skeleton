@@ -50,6 +50,7 @@ void directionalhdl::update(canvashdl *canvas)
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply some initial direction vector by the normal matrix.
 	 */
+
 }
 
 void directionalhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
@@ -86,9 +87,25 @@ void pointhdl::update(canvashdl *canvas)
 
 void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
 {
-	/* TODO Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
+	/* TEST Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
+	vec3f toSurface = norm(position - vertex);
+	vec3f camera_dir = (0.0, 0.0, 1.0);
+	vec3f eye = norm(vertex);
+
+	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
+	float spec_base = max((float)0.0, (float) eye);
+	float spec_pf;
+
+	if(diff_cosine == 0)
+		spec_pf = 0;
+	else
+		spec_pf = pow(spec_base, shininess);
+
+	ambient += ambient * attenuation;
+	diffuse += diffuse * diff_cosine * attenuation;
+	specular += specular * spec_pf * attenuation;
 }
 
 spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
