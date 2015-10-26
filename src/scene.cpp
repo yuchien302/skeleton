@@ -59,8 +59,6 @@ void scenehdl::draw()
 				is_camera = true;
 				objects[i] -> position = cameras[j] -> position;
 				objects[i] -> orientation = cameras[j] -> orientation;
-//				cameras[j] -> model -> position = cameras[j] -> position;
-//				cameras[j] -> orientation = cameras[j] -> model -> orientation;
 			}
 		}
 		if(!is_camera || render_cameras){
@@ -71,15 +69,14 @@ void scenehdl::draw()
 				objects[i] -> draw_bound(canvas);
 			}
 		}
-
+	}
+	// DONE Assignment 3: Update the light positions and directions
+	for (int i=0; i<lights.size(); i++){
+		lights[i] -> update(canvas);
 	}
 
-
-
-
-
 	/*
-	 * TODO Assignment 3: Update the light positions and directions
+	 *
 	 * TODO Assignment 3: Render the lights
 	 */
 }

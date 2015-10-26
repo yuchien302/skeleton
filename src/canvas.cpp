@@ -403,17 +403,18 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 	int y = xyz.data[1];
 	int z = xyz.data[2];
 
-	if(x<0 || x>=width || y<0 || y>=height)
+	/* DONE Assignment 3: Compare the z value against the depth buffer and
+	 * only render if its less. Then set the depth buffer.
+	 */
+	if(x<0 || x>=width || y<0 || y>=height || depth_buffer[(width*y + x)] < z)
 		return;
 
 	vec3f frag = shade_fragment(varying);
 	color_buffer[ 3* (width*y + x)] = 255 * frag.data[0];
 	color_buffer[ 3* (width*y + x) + 1] = 255 * frag.data[1];
 	color_buffer[ 3* (width*y + x) + 2] = 255* frag.data[2];
+	depth_buffer[(width*y + x)] = z;
 
-	/* TODO Assignment 3: Compare the z value against the depth buffer and
-	 * only render if its less. Then set the depth buffer.
-	 */
 }
 
 /* plot_point
