@@ -83,8 +83,8 @@ boxhdl::boxhdl(float width, float height, float depth)
 	bound = vec6f(-width, width, -height, height, -depth, depth);
 
 	// DONE Assignment 3: Set up the material properties for this object
-	rigid[0].material = "white";
-	material["white"] = new whitehdl();
+	rigid[0].material = "Material__1";
+	material["Material__1"] = new whitehdl();
 }
 
 boxhdl::~boxhdl()
@@ -142,8 +142,8 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
 
 	// DONE Assignment 3: Set up the material properties for this object
-	rigid[0].material = "white";
-	material["white"] = new whitehdl();
+	rigid[0].material = "Material__1";
+	material["Material__1"] = new whitehdl();
 }
 
 spherehdl::~spherehdl()
@@ -202,8 +202,8 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 
 
 	// DONE Assignment 3: Set up the material properties for this object
-	rigid[0].material = "white";
-	material["white"] = new whitehdl();
+	rigid[0].material = "Material__1";
+	material["Material__1"] = new whitehdl();
 }
 
 cylinderhdl::~cylinderhdl()
@@ -253,8 +253,8 @@ pyramidhdl::pyramidhdl(float radius, float height, int slices)
 	bound = vec6f(-radius, radius, -height/ 2.0, height/2.0, -radius, radius);
 
 	// DONE Assignment 3: Set up the material properties for this object
-	rigid[0].material = "white";
-	material["white"] = new whitehdl();
+	rigid[0].material = "Material__1";
+	material["Material__1"] = new whitehdl();
 }
 
 pyramidhdl::~pyramidhdl()
