@@ -305,7 +305,8 @@ void canvashdl::look_at(vec3f eye, vec3f at, vec3f up)
 
 void canvashdl::update_normal_matrix()
 {
-	// TODO Assignment 3: calculate the normal matrix
+	// DONE Assignment 3: calculate the normal matrix
+	matrices[normal_matrix] = transpose(inverse(matrices[modelview_matrix]));
 }
 
 /* to_window
@@ -763,6 +764,8 @@ void canvashdl::update_clipping_planes(){
  */
 void canvashdl::draw_points(const vector<vec8f> &geometry)
 {
+	// DONE Assignment 3: Update the normal matrix.
+	update_normal_matrix();
 	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
 	vector<float> varying = vector<float>();
@@ -781,7 +784,7 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 	}
 
 
-	// TODO Assignment 3: Update the normal matrix.
+
 }
 
 /* draw_lines
@@ -794,6 +797,8 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
  */
 void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	// DONE Assignment 3: Update the normal matrix.
+	update_normal_matrix();
 	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
 	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
@@ -825,8 +830,6 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 		}
 
 	}
-
-	// TODO Assignment 3: Update the normal matrix.
 }
 
 
@@ -841,6 +844,8 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
  */
 void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> &indices)
 {
+	// DONE Assignment 3: Update the normal matrix.
+	update_normal_matrix();
 	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
@@ -916,9 +921,6 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 
 
 	}
-
-
-	// TODO Assignment 3: Update the normal matrix.
 }
 
 
