@@ -72,24 +72,45 @@ gouraudhdl::~gouraudhdl()
  */
 vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const
 {
-	/* TODO Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
+	/* DONE Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
 				  canvas -> matrices[canvas -> modelview_matrix] *
-				  homogenize(vec3f(vertex));
+				  homogenize(vertex);
+
+	vec4f camera_coordinates_point = canvas -> matrices[canvas -> modelview_matrix] *
+			  homogenize(vertex);
+
+	vec4f camera_coordinates_normal = canvas -> matrices[canvas -> modelview_matrix] *
+			  homogenize(normal);
 
 	point = point / point.data[3];
+	const vector<lighthdl*>* lights;
+	canvas -> get_uniform("lights", lights);
+
+	vec3f a = ambient;
+	vec3f d = diffuse;
+	vec3f s = specular;
+
+	for(int i=0; i < lights->size(); i++){
+		(*lights)[i] -> shade(a, d, s, camera_coordinates_point, camera_coordinates_normal, shininess);
+	}
+
+	vec3f color = a+d+s;
+	varying.push_back(color.data[0]);
+	varying.push_back(color.data[1]);
+	varying.push_back(color.data[2]);
+
 	return point;
 }
 
 vec3f gouraudhdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 {
-	/* TODO Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
+	/* DONE Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
-
-	return vec3f(1.0, 1.0, 1.0);
+	return vec3f(varying[0], varying[1], varying[2]);
 }
 
 materialhdl *gouraudhdl::clone() const
