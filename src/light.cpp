@@ -112,7 +112,7 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 	vec3f eye = norm(vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
-	float spec_base = max((float)0.0, (float) eye);
+	float spec_base = max((float)0.0, (float)dot(normal, eye));
 	float spec_pf;
 
 	if(diff_cosine == 0)
@@ -120,9 +120,9 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 	else
 		spec_pf = pow(spec_base, shininess);
 
-	ambient += ambient * attenuation;
-	diffuse += diffuse * diff_cosine * attenuation;
-	specular += specular * spec_pf * attenuation;
+	ambient += ambient * attenuation[0];
+	diffuse += diffuse * diff_cosine * attenuation[1];
+	specular += specular * spec_pf * attenuation[2];
 }
 
 spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
@@ -166,21 +166,22 @@ void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f verte
 	vec3f eye = norm(vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
-	float spec_base = max((float)0.0, (float) eye);
+	float spec_base = max((float)0.0, (float) dot(normal, eye));
 	float spec_pf;
 
 	float spot_cosine =  -1*dot(toSurface,norm (direction));
+	vec3f now_attenuation = vec3f(0.0, 0.0, 0.0);
 	if (spot_cosine < cutoff)
-		attenuation = 0.0;
+		now_attenuation = vec3f(0.0, 0.0, 0.0);
 	else
-		attenuation = pow(spot_cosine, exponent);
+		now_attenuation = ((float)pow(spot_cosine, exponent)) * attenuation;
 
 	if(diff_cosine == 0)
 		spec_pf = 0;
 	else
 		spec_pf = pow(spec_base, shininess);
 
-	ambient += ambient * attenuation;
-	diffuse += diffuse * diff_cosine * attenuation;
-	specular += specular * spec_pf * attenuation;
+	ambient += ambient * attenuation[0];
+	diffuse += diffuse * diff_cosine * attenuation[1];
+	specular += specular * spec_pf * attenuation[2];
 }
