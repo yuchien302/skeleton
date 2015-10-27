@@ -108,7 +108,9 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 	/* TEST Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
-	vec3f toSurface = norm(position - vertex);
+	vec3f toSurface = position - vertex;
+	float d = mag(toSurface);
+	toSurface = norm(toSurface);
 	vec3f eye = norm(-vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
@@ -119,10 +121,10 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 		spec_pf = 0;
 	else
 		spec_pf = pow(spec_base, shininess);
-
-	ambient += ambient * attenuation[0];
-	diffuse += diffuse * diff_cosine * attenuation[1];
-	specular += specular * spec_pf * attenuation[2];
+	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
+	ambient += ambient * decay;
+	diffuse += diffuse * diff_cosine * decay;
+	specular += specular * spec_pf * decay;
 }
 
 spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
@@ -162,8 +164,10 @@ void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f verte
 	/* TODO Assignment 3: Implement a spot light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
-	vec3f toSurface = norm(position - vertex);
-	vec3f eye = norm(vertex);
+	vec3f toSurface = position - vertex;
+	float d = mag(toSurface);
+	toSurface = norm(toSurface);
+	vec3f eye = norm(-vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
 	float spec_base = max((float)0.0, (float) dot(normal, eye));
@@ -181,7 +185,8 @@ void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f verte
 	else
 		spec_pf = pow(spec_base, shininess);
 
-	ambient += ambient * attenuation[0];
-	diffuse += diffuse * diff_cosine * attenuation[1];
-	specular += specular * spec_pf * attenuation[2];
+	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
+	ambient += ambient * decay;
+	diffuse += diffuse * diff_cosine * decay;
+	specular += specular * spec_pf * decay;
 }
