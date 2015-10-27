@@ -109,7 +109,7 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
 	vec3f toSurface = norm(position - vertex);
-	vec3f eye = norm(vertex);
+	vec3f eye = norm(-vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
 	float spec_base = max((float)0.0, (float)dot(normal, eye));

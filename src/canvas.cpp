@@ -369,8 +369,9 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	 * call its vertex shader.
 	 */
 	const materialhdl* m;
+	//cout<<"QQ"<<endl;
 	get_uniform("current_material", m);
-
+	cout<<m<<endl;
 	return m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
 }
 

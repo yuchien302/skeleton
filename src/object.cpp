@@ -130,10 +130,10 @@ void objecthdl::draw_bound(canvashdl *canvas)
 
 	// DONE Assignment 3: clear the material in the uniform list
 	canvas -> uniform.clear();
-
+	canvas -> uniform["current_material"] = new whitehdl();
 	canvas -> draw_lines(geometry, indices);
 	after_draw(canvas);
-
+	canvas -> uniform.clear();
 
 
 }
@@ -191,9 +191,10 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 	before_draw(canvas);
 	// DONE Assignment 3: clear the material in the uniform list
 	canvas -> uniform.clear();
-
+	canvas -> uniform["current_material"] = new whitehdl();
 	canvas -> draw_lines(geometry, indices);
 	after_draw(canvas);
+	canvas -> uniform.clear();
 
 }
 

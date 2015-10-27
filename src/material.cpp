@@ -34,8 +34,9 @@ vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vect
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
 				  canvas -> matrices[canvas -> modelview_matrix] *
 				  homogenize(vec3f(vertex));
-
+	cout<<"QQ"<<endl;
 	point = point / point.data[3];
+
 	return point;
 }
 
