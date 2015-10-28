@@ -836,7 +836,7 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 		if(!both_outside){
 			vec3f vertex1 = shade_vertex(point1, varying1);
 			vec3f vertex2 = shade_vertex(point2, varying2);
-			cout<<varying1.size()<<endl;
+//			cout<<varying1.size()<<endl;
 			plot_line(vertex1, varying1, vertex2, varying2);
 		}
 
