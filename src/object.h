@@ -57,7 +57,7 @@ struct objecthdl
 	void draw_bound(canvashdl *canvas);
 	void draw_normals(canvashdl *canvas, bool face = false);
 
-private:
+public:
 	void before_draw(canvashdl *canvas);
 	void after_draw(canvashdl *canvas);
 };

@@ -102,9 +102,9 @@ void directionalhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3
 	else
 		spec_pf = pow(spec_base, shininess);
 
-	ambient += ambient;
-	diffuse += diffuse * diff_cosine;
-	specular += specular * spec_pf;
+	ambient += this->ambient;
+	diffuse += this->diffuse * diff_cosine;
+	specular += this->specular * spec_pf;
 }
 
 pointhdl::pointhdl() : lighthdl(white*0.1f, white*0.5f, white)
@@ -133,8 +133,11 @@ void pointhdl::update(canvashdl *canvas)
 	//position = model -> position;
 	//mat4f homo_pos = homogenize(model -> position);
 	//homo_pos = rotate()
-	position = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
-			  homogenize(model -> position));
+	model ->before_draw(canvas);
+	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] *
+			  vec4f(0.0,0.0,0.0,1.0);
+	position = vec3f (homo_pos/homo_pos[3]);
+	model ->after_draw(canvas);
 
 }
 
@@ -145,23 +148,30 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 	/* TEST Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
-	vec3f toSurface = position - vertex;
-	float d = mag(toSurface);
-	toSurface = norm(toSurface);
-	vec3f eye = norm(-vertex);
-
-	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
-	float spec_base = max((float)0.0, (float)dot(normal, eye));
+	vec3f toLight = position - vertex;
+	float d = mag(toLight);
+	toLight = toLight/d;
+	vec3f toEye = norm(-vertex);
+	normal = norm(normal);
+	float diff_cosine = max((float)0.0, (float)dot(normal, toLight));
+	float spec_base = max((float)0.0, (float)dot(normal, norm(toLight+toEye)));
 	float spec_pf;
 
 	if(diff_cosine == 0)
 		spec_pf = 0;
 	else
 		spec_pf = pow(spec_base, shininess);
+
 	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
-	ambient += ambient * decay;
-	diffuse += diffuse * diff_cosine * decay;
-	specular += specular * spec_pf * decay;
+
+	//cout <<"decay"<< decay << endl;
+	ambient += this->ambient * decay;
+	diffuse += this->diffuse * diff_cosine * decay;
+	specular += this->specular * spec_pf * decay;
+	//cout<<normal<<endl;
+	//cout << "dif_cosin"<< diff_cosine << "spec" << spec_base<<endl;
+	//cout << "a: "<< this->ambient << "d: " << this->diffuse<<endl;
+	//cout << ambient << " " << diffuse << " " <<specular<<endl;
 }
 
 spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
@@ -223,7 +233,7 @@ void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f verte
 		spec_pf = pow(spec_base, shininess);
 
 	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
-	ambient += ambient * decay;
-	diffuse += diffuse * diff_cosine * decay;
-	specular += specular * spec_pf * decay;
+	ambient += this->ambient * decay;
+	diffuse += this->diffuse * diff_cosine * decay;
+	specular += this->specular * spec_pf * decay;
 }

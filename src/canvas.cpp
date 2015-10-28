@@ -836,7 +836,7 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 		if(!both_outside){
 			vec3f vertex1 = shade_vertex(point1, varying1);
 			vec3f vertex2 = shade_vertex(point2, varying2);
-			//cout<<varying1.size()<<endl;
+			cout<<varying1.size()<<endl;
 			plot_line(vertex1, varying1, vertex2, varying2);
 		}
 
@@ -870,6 +870,7 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		vec8f point1 = geometry[indices[i-2]];
 		vec8f point2 = geometry[indices[i-1]];
 		vec8f point3 = geometry[indices[i]];
+
 
 
 		// Done Assignment 2: Implement back-face culling
@@ -924,9 +925,13 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		}
 
 		for(int j=0; j < (int)points.size() - 3; j++){
+			vector<float> varying1 = vector<float>();
+			vector<float> varying2 = vector<float>();
+			vector<float> varying3 = vector<float>();
+
 			vec3f p1 = shade_vertex(points[0], varying1);
-			vec3f p2 = shade_vertex(points[j+1], varying1);
-			vec3f p3 = shade_vertex(points[j+2], varying1);
+			vec3f p2 = shade_vertex(points[j+1], varying2);
+			vec3f p3 = shade_vertex(points[j+2], varying3);
 			plot_triangle(p1, varying1, p2, varying2, p3, varying3);
 		}
 

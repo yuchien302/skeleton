@@ -46,6 +46,11 @@ void scenehdl::draw()
 	canvas -> load_identity();
 	cameras[active_camera] -> view(canvas);
 
+
+	// DONE Assignment 3: Update the light positions and directions
+	for (int i=0; i<lights.size(); i++){
+		lights[i] -> update(canvas);
+	}
 	/* DONE Assignment 3: Clear the uniform variables and pass the vector of
 	 * lights into the renderer as a uniform variable.
 	 */
@@ -70,10 +75,7 @@ void scenehdl::draw()
 			}
 		}
 	}
-	// DONE Assignment 3: Update the light positions and directions
-	for (int i=0; i<lights.size(); i++){
-		lights[i] -> update(canvas);
-	}
+
 
 	/*
 	 *
