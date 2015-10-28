@@ -371,7 +371,7 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	const materialhdl* m;
 	//cout<<"QQ"<<endl;
 	get_uniform("current_material", m);
-	cout<<m<<endl;
+	//cout<<m<<endl;
 	return m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
 }
 
@@ -458,12 +458,13 @@ vec5i canvashdl::pre_plot(vec3i v1_pixel, vec3i v2_pixel){
 	return vec5i(v1_t.data[0], v2_t.data[0], v1_t.data[1], v2_t.data[1], octant);
 }
 
-void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int octant, vector<float> v1_varying){
+void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int octant, vector<float> v1_varying, vector<float> v2_varying){
 	//Breseham's algorithm for plot line
 	int delta_y = ymax - ymin;
 	int delta_x = xmax - xmin;
 	int y = ymin; int x = xmin;
 	int d = 2*delta_y - delta_x;
+	//cout<<delta_x<<endl;
 	while(x < xmax){
 		x++;
 		if (d <= 0){
@@ -475,11 +476,18 @@ void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int octant, ve
 		}
 
 		// tranform the cordinate back to original octant
+		float ratio = (float)(x-xmin)/(float)(delta_x);
+		assert (ratio <= 1 && ratio >= 0);
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], 0);
 		// use plot method
-
-		plot(xyz, v1_varying);
+		vec3f color1 = vec3f(v1_varying[0], v1_varying[1],v1_varying[2]);
+		vec3f color2 = vec3f(v2_varying[0], v2_varying[1],v2_varying[2]);
+		vector<float> plotcolor = vector<float>();
+		for (int i = 0; i < 3; i++){
+			plotcolor.push_back(ratio*(color2.data[i]) + (1.0-ratio)*color1.data[i]);
+		}
+		plot(xyz, plotcolor);
 	}
 }
 void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octant, int delta_x, int delta_y,vector<float> v1_varying,  int &d){
@@ -488,7 +496,6 @@ void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octan
 
 	bool octant_flag = (octant ==0 || octant == 3 || octant == 4 || octant == 7);
 	bool stop_flag = false;
-	//cout<<"x:"<<x<<"xmax"<<xmax<<endl;
 	while(x < xmax){
 		x++; if(!octant_flag) stop_flag = true;
 		if (d <= 0){
@@ -505,9 +512,7 @@ void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octan
 		// use plot method
 		plot(xyz, v1_varying);
 		if (stop_flag) return;
-		//cout<<vec3i(x,y, d)<<endl;
 	}
-	//cout<<"troll"<<endl;
 	return;
 }
 /* plot_line
@@ -523,9 +528,15 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 	vec3i v1_pixel = to_pixel(v1);
 	vec3i v2_pixel = to_pixel(v2);
 	vec5i xyminmaxoctant = pre_plot(v1_pixel, v2_pixel);
-	bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
-			  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v1_varying);
-
+	//if(xyminmaxoctant.data[4] == 0 || xyminmaxoctant.data[4] == 3 ||xyminmaxoctant.data[4] == 4 || xyminmaxoctant.data[4] == 7)
+	//{
+		bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
+			  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v1_varying, v2_varying);
+	//}
+	//else{
+		//bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
+		//	  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v2_varying, v1_varying);
+	//}
 
 	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
 }
@@ -576,8 +587,6 @@ void canvashdl::sort3vertex(vec3i &v1, vector<float> &v1_varying, vec3i &v2, vec
 		swap(a,c);
 		v1_varying.swap(v3_varying);
 	}*/
-//	cout<<v1<<" "<< v2<<" "<<v3<<endl;
-//	cout<<a<<b<<c<<endl;
 }
 /* plot_half_triangle
  *
@@ -748,7 +757,6 @@ void canvashdl::update_clipping_planes(){
 	plane = -col3 + col4;
 	update_clipping_planes_helper(plane, 5);
 
-//	cout << "updating clipping planes" << endl;
 //	for(int p=0; p<6; p++){
 //		cout << clipping_planes[p] << endl;
 //	}
@@ -804,10 +812,10 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_line
 	assert((indices.size()%2 == 0) && "canvas.draw_lines: indices size cannot be divided by 2");
 
-	vector<float> varying1 = vector<float>();
-	vector<float> varying2 = vector<float>();
-	for(int i=0; i<indices.size()/2; i++){
 
+	for(int i=0; i<indices.size()/2; i++){
+		vector<float> varying1 = vector<float>();
+		vector<float> varying2 = vector<float>();
 		vec8f point1 = geometry[indices[2*i]];
 		vec8f point2 = geometry[indices[2*i+1]];
 
@@ -828,6 +836,7 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 		if(!both_outside){
 			vec3f vertex1 = shade_vertex(point1, varying1);
 			vec3f vertex2 = shade_vertex(point2, varying2);
+			//cout<<varying1.size()<<endl;
 			plot_line(vertex1, varying1, vertex2, varying2);
 		}
 

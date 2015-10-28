@@ -129,11 +129,15 @@ void objecthdl::draw_bound(canvashdl *canvas)
 	}
 
 	// DONE Assignment 3: clear the material in the uniform list
+	//cout<<"bound fk"<<endl;
 	canvas -> uniform.clear();
 	canvas -> uniform["current_material"] = new whitehdl();
+	//cout<<"bound fk"<<endl;
 	canvas -> draw_lines(geometry, indices);
 	after_draw(canvas);
+	//cout<<"bound fk"<<endl;
 	canvas -> uniform.clear();
+	//cout<<"bound fk"<<endl;
 
 
 }

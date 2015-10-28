@@ -34,8 +34,11 @@ vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vect
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
 				  canvas -> matrices[canvas -> modelview_matrix] *
 				  homogenize(vec3f(vertex));
-	cout<<"QQ"<<endl;
+	//cout<<"QQ"<<endl;
 	point = point / point.data[3];
+	varying.push_back(1.0);
+	varying.push_back(1.0);
+	varying.push_back(1.0);
 
 	return point;
 }
@@ -77,11 +80,11 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
 
-	vec4f camera_coordinates_point = canvas -> matrices[canvas -> modelview_matrix] *
-			  homogenize(vertex);
+	vec3f camera_coordinates_point = vec3f(canvas -> matrices[canvas -> modelview_matrix] *
+			  homogenize(vertex));
 
-	vec4f camera_coordinates_normal = canvas -> matrices[canvas -> normal_matrix] *
-			  homogenize(normal);
+	vec3f camera_coordinates_normal = vec3f(canvas -> matrices[canvas -> normal_matrix] *
+			  homogenize(normal));
 
 
 	const vector<lighthdl*>* lights;
@@ -93,6 +96,7 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 
 	for(int i=0; i < lights->size(); i++){
 		(*lights)[i] -> shade(a, d, s, camera_coordinates_point, camera_coordinates_normal, shininess);
+		//cout<<""<<i<<endl;
 	}
 
 	vec3f color = a+d+s;

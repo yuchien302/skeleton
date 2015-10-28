@@ -28,7 +28,38 @@ lighthdl::~lighthdl()
 {
 
 }
+mat4f lighthdl::rotate(float angle, vec3f axis, mat4f matrix)
+{
+	// Done Assignment 1: Multiply the active matrix by a rotation matrix.
+	// angel: degree
+	float c = cos(angle);
+	float s = sin(angle);
+	float x = axis.data[0];
+	float y = axis.data[1];
+	float z = axis.data[2];
 
+	mat4f rotate_mat = mat4f( x*x*(1.0-c)+c,   x*y*(1.0-c)-z*s, x*z*(1.0-c)+y*s, 0.0,
+							  y*x*(1.0-c)+z*s, y*y*(1.0-c)+c,   y*z*(1.0-c)-x*s, 0.0,
+							  x*z*(1.0-c)-y*s, y*z*(1.0-c)+x*s, z*z*(1.0-c)+c,   0.0,
+							  0.0, 			   0.0, 			0.0,             1.0);
+
+	return matrix * rotate_mat;
+}
+mat4f lighthdl::translate(vec3f direction, mat4f matrix)
+{
+	// Done Assignment 1: Multiply the active matrix by a translation matrix.
+	float x = direction.data[0];
+	float y = direction.data[1];
+	float z = direction.data[2];
+
+	mat4f translate_mat = mat4f( 1.0, 0.0, 0.0, x,
+							  	 0.0, 1.0, 0.0, y,
+								 0.0, 0.0, 1.0, z,
+								 0.0, 0.0, 0.0, 1.0);
+
+	return matrix * translate_mat;
+
+}
 directionalhdl::directionalhdl() : lighthdl(white*0.1f, white*0.5f, white)
 {
 	type = "directional";
@@ -99,9 +130,15 @@ void pointhdl::update(canvashdl *canvas)
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply the origin by the modelview matrix.
 	 */
+	//position = model -> position;
+	//mat4f homo_pos = homogenize(model -> position);
+	//homo_pos = rotate()
 	position = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
 			  homogenize(model -> position));
+
 }
+
+
 
 void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
 {
@@ -167,7 +204,7 @@ void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f verte
 	vec3f toSurface = position - vertex;
 	float d = mag(toSurface);
 	toSurface = norm(toSurface);
-	vec3f eye = norm(-vertex);
+	vec3f eye = norm(vertex);
 
 	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
 	float spec_base = max((float)0.0, (float) dot(normal, eye));
