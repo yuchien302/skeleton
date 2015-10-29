@@ -498,12 +498,13 @@ void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int octant, ve
 		plot(xyz, varying_result);
 	}
 }
-void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octant, int delta_x, int delta_y,vector<float> v1_varying,  int &d){
+vector<float> canvashdl::bresenham_halftri(int &x, int &y, int &d, int xmin,int xmax, int octant, int delta_x, int delta_y, vector<float> v1_varying, vector<float> v2_varying){
 	//Breseham's algorithm for plot line
 
 
 	bool octant_flag = (octant ==0 || octant == 3 || octant == 4 || octant == 7);
 	bool stop_flag = false;
+	vector<float> varying_result = vector<float>();
 	while(x < xmax){
 		x++; if(!octant_flag) stop_flag = true;
 		if (d <= 0){
@@ -513,15 +514,21 @@ void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octan
 			d += 2*delta_y - 2*delta_x;
 			y++; if(octant_flag) stop_flag = true;
 		}
-
+		float ratio = (float)(x-xmin)/(float)(delta_x);
+		vector<float> varying_result = vector<float>();
+		assert(v1_varying.size() == v2_varying.size());
+		for (int i = 0; i < v1_varying.size(); i++){
+			varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
+		}
 		// tranform the cordinate back to original octant
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], 0);
 		// use plot method
-		plot(xyz, v1_varying);
-		if (stop_flag) return;
+		plot(xyz, varying_result);
+		if (stop_flag) return varying_result;
 	}
-	return;
+	cout <<"fk"<<endl;
+	return v1_varying;
 }
 /* plot_line
  *
@@ -584,12 +591,13 @@ void canvashdl::sort3vertex(vec3i &v1, vector<float> &v1_varying, vec3i &v2, vec
 	if(v1.data[1] > v2.data[1]){
 		swap(v1,v2);
 		swap(a,b);
-		v1_varying.swap(v2_varying);
+		swap(v1_varying, v2_varying);
+		//v1_varying.swap(v2_varying);
 	}
 	if(v2.data[1] > v3.data[1]){
 		swap(v2,v3);
 		swap(b,c);
-		v2_varying.swap(v3_varying);
+		swap(v2_varying, v3_varying);
 	}
 	}
 /*	if(v1.data[1] > v3.data[1]){
@@ -612,7 +620,8 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 
 
 	vec5i xyminmaxoctant1 = pre_plot(s1, s2);
-	int x1 = xyminmaxoctant1.data[0];
+	int xmin1 = xyminmaxoctant1.data[0];
+	int x1 = xmin1;
     int y1 = xyminmaxoctant1.data[2];
     int xmax1 = xyminmaxoctant1.data[1];
     int ymax1 = xyminmaxoctant1.data[3];
@@ -622,7 +631,8 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 	int d1 = 2*delta_y1 - delta_x1;
 
 	vec5i xyminmaxoctant2 = pre_plot(s1, s3);
-	int x2 = xyminmaxoctant2.data[0];
+	int xmin2 = xyminmaxoctant2.data[0];
+	int x2 = xmin2;
 	int y2 = xyminmaxoctant2.data[2];
     int xmax2 = xyminmaxoctant2.data[1];
     int ymax2 = xyminmaxoctant2.data[3];
@@ -636,16 +646,30 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 
 	do{
 		// plot one edge return if y++
-		bresenham_halftri(x1, y1, xmax1, ymax1, octant1, delta_x1, delta_y1, ave_varying, d1);
+		vector<float> varying_1 = bresenham_halftri(x1, y1, d1, xmin1, xmax1, octant1, delta_x1, delta_y1, v1_varying, v2_varying);
 		// plot one edge return if y++
-		bresenham_halftri(x2, y2, xmax2, ymax2, octant2, delta_x2, delta_y2, ave_varying, d2);
+		vector<float> varying_2 = bresenham_halftri(x2, y2, d2, xmin2, xmax2, octant2, delta_x2, delta_y2, v1_varying, v3_varying);
 		// fill the scanline
 		xy_plot1 = afterBreseham(octant1, x1, y1);
 		xy_plot2 = afterBreseham(octant2, x2, y2);
 		int xstart = (xy_plot1.data[0] < xy_plot2.data[0])? xy_plot1.data[0]: xy_plot2.data[0];
 		int xend = (xy_plot1.data[0] < xy_plot2.data[0])? xy_plot2.data[0]: xy_plot1.data[0];
-		for(int x = xstart; x <= xend; x++)
-			plot(vec3i(x,xy_plot1.data[1], 0), v1_varying);
+		vector<float> varying_start = (xy_plot1.data[0] < xy_plot2.data[0])? varying_1: varying_2;
+		vector<float> varying_end = (xy_plot1.data[0] < xy_plot2.data[0])? varying_2: varying_1;
+		float step = 1.0f/(float)(xend - xstart);
+		float ratio = 0.0f;
+		for(int x = xstart; x <= xend; x++){
+
+			vector<float> varying_result = vector<float>();
+			for (int i = 0; i < varying_start.size(); i++){
+				//cout << "varying" << varying_end[i] << varying_start[i];
+				varying_result.push_back(ratio*(varying_end[i]) + (1.0-ratio)*varying_start[i]);
+			}
+			//cout << endl;
+			plot(vec3i(x,xy_plot1.data[1], 0), varying_result);
+			ratio = (ratio <= 1.0f)? ratio+step: 1.0f;
+
+		}
 	//check if we finish half
 	}while(xy_plot1.data[1] != s2.data[1]);
 
