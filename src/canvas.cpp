@@ -538,15 +538,17 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 	vec5i xyminmaxoctant = pre_plot(v1_pixel, v2_pixel);
 	//if(xyminmaxoctant.data[4] == 0 || xyminmaxoctant.data[4] == 3 ||xyminmaxoctant.data[4] == 4 || xyminmaxoctant.data[4] == 7)
 	//{
-		bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
-			  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v1_varying, v2_varying);
+
+	// DONE Assignment 3: Interpolate the varying values before passing them into plot.
+	bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
+		  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v1_varying, v2_varying);
 	//}
 	//else{
 		//bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
 		//	  xyminmaxoctant.data[2], xyminmaxoctant.data[3], xyminmaxoctant.data[4], v2_varying, v1_varying);
 	//}
 
-	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
+
 }
 vec2i canvashdl::beforeBreseham (int octant, int x, int y){
 	switch(octant){
@@ -682,11 +684,11 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 		vec3i v2_pixel = to_pixel(v2);
 		vec3i v3_pixel = to_pixel(v3);
 
-		vector<float> ave_varying = vector<float>();
-		for(int i = 0; i < v1_varying.size(); i++){
-			ave_varying.push_back((v1_varying[i] + v2_varying[i] + v3_varying[i]) / 3);
-		}
 
+		// DONE Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
+		vector<float> ave_varying(v1_varying.size());
+		for (int i = 0; i < (int)v1_varying.size(); i++)
+			ave_varying[i] = (v1_varying[i] + v2_varying[i] + v3_varying[i])/3.0f;
 
 		sort3vertex(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying);
 		plot_half_triangle(v1_pixel, v1_varying, v2_pixel, v2_varying, v3_pixel, v3_varying, ave_varying);
@@ -698,7 +700,7 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	}
 
 
-	// TODO Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
+
 }
 
 
