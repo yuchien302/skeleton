@@ -673,7 +673,7 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 	//check if we finish half
 	}while(xy_plot1.data[1] != s2.data[1]);
 
-	// TODO Assignment 3: Interpolate the varying values before passing them into plot.
+	// DONE Assignment 3: Interpolate the varying values before passing them into plot.
 }
 
 /* plot_triangle
