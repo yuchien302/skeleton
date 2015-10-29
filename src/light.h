@@ -32,8 +32,6 @@ struct lighthdl
 
 	virtual void update(canvashdl *canvas) = 0;
 	virtual void shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const = 0;
-	mat4f rotate(float angle, vec3f axis, mat4f matrix);
-	mat4f translate(vec3f direction, mat4f matrix);
 };
 
 struct directionalhdl : lighthdl
