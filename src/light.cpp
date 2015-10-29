@@ -122,7 +122,7 @@ void pointhdl::update(canvashdl *canvas)
 
 void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
 {
-	/* TEST Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
+	/* DONE Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
 	vec3f toLight = position - vertex;
@@ -141,14 +141,10 @@ void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vert
 
 	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
 
-	//cout <<"decay"<< decay << endl;
 	ambient += this->ambient * decay;
 	diffuse += this->diffuse * diff_cosine * decay;
 	specular += this->specular * spec_pf * decay;
-	//cout<<normal<<endl;
-	//cout << "dif_cosin"<< diff_cosine << "spec" << spec_base<<endl;
-	//cout << "a: "<< this->ambient << "d: " << this->diffuse<<endl;
-	//cout << ambient << " " << diffuse << " " <<specular<<endl;
+
 }
 
 spothdl::spothdl() : lighthdl(white*0.1f, white*0.5f, white)
