@@ -141,29 +141,49 @@ phonghdl::~phonghdl()
  */
 vec3f phonghdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const
 {
-	/* TODO Assignment 3: Implement phong shading, doing the same thing that you did to implement the gouraud
+	/* DONE Assignment 3: Implement phong shading, doing the same thing that you did to implement the gouraud
 	 * and flat. The difference is that the normals have been interpolated and passed into the fragment shader
 	 * instead of the color. The final color is calculated in the fragment shader.
 	 */
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
 
+	varying.push_back(vertex[0]);
+	varying.push_back(vertex[1]);
+	varying.push_back(vertex[2]);
+	varying.push_back(normal[0]);
+	varying.push_back(normal[1]);
+	varying.push_back(normal[2]);
+
 	return point;
 }
 
 vec3f phonghdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 {
-	/* TODO Assignment 3: Implement phong shading, doing the same thing that you did to implement the gouraud
+	/* DONE Assignment 3: Implement phong shading, doing the same thing that you did to implement the gouraud
 	 * and flat. The difference is that the normals have been interpolated and passed into the fragment shader
 	 * instead of the color. The final color is calculated in the fragment shader.
 	 */
-	lighthdl** l;
-	/*for(int i = 0; i < l.length; i ++)
-		l[i] -> shade(ambient, diffuse,  specular,
-				vec3f(varying[varying.length-3], varying[varying.length-2], varying[varying.length-3]),
-				vec3f(varying[i], varying[i+1], varying[i+2]), shininess);
-	*/
-	return vec3f(1.0, 1.0, 1.0);
+	const vector<lighthdl*>* lights;
+	canvas -> get_uniform("lights", lights);
+	vec3f a = vec3f(0.0, 0.0, 0.0);
+	vec3f d = vec3f(0.0, 0.0, 0.0);
+	vec3f s = vec3f(0.0, 0.0, 0.0);
+
+
+	vec3f vertex = vec3f(varying[0], varying[1], varying[2]);
+	vec3f normal = vec3f(varying[3], varying[4], varying[5]);
+
+	for(int i=0; (lights != NULL) && (i<lights->size()); i++){
+
+		(*lights)[i] -> shade(a, d, s, vertex, normal, shininess);
+
+	}
+
+	vec3f color = a*this->ambient +d*this ->diffuse +s*this->specular + this->emission ;
+	color = clamp(color, 0.0f, 1.0f);
+
+	return color;
 }
 
 materialhdl *phonghdl::clone() const
