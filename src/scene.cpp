@@ -48,30 +48,46 @@ void scenehdl::draw()
 	canvas -> uniform.clear();
 	canvas -> uniform["lights"] = &lights;
 
-	for (int i = 0; i < objects.size(); i++){
+
+	// DONE Assignment 3: Update the light positions and directions
+	for (int i=0; i < lights.size(); i++){
+		lights[i] -> update(canvas);
+	}
+
+	for (int i = 0; i < objects.size(); i++) {
+
 		bool is_camera = false;
-		for (int j = 0; (j < cameras.size()) && !is_camera; j++){
+		bool is_light = false;
+
+		// DONE Assignment 3: Render the lights;
+
+		for (int j = 0; j < cameras.size(); j++){
 			if (cameras[j] != NULL && cameras[j] -> model == objects[i]){
 				is_camera = true;
-				objects[i] -> position = cameras[j] -> position;
-				objects[i] -> orientation = cameras[j] -> orientation;
+				break;
+
 			}
 		}
-		if(!is_camera || render_cameras){
+
+		for (int j = 0; j < lights.size(); j++){
+			if (lights[j] != NULL && lights[j] -> model == objects[i]){
+				is_light = true;
+				break;
+
+			}
+		}
+
+		if( (!is_camera && !is_light) || (is_camera && render_cameras) || (is_light && render_lights) ){
 			objects[i] -> draw(canvas);
+
 			if(render_normals)
 				objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
-			if(i == active_object){
+
+			if(i == active_object)
 				objects[i] -> draw_bound(canvas);
-			}
 		}
 	}
 
-
-	/*
-	 *
-	 * TODO Assignment 3: Render the lights
-	 */
 }
 
 bool scenehdl::active_camera_valid()
