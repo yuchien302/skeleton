@@ -369,10 +369,14 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	 * call its vertex shader.
 	 */
 	const materialhdl* m;
-	//cout<<"QQ"<<endl;
 	get_uniform("current_material", m);
-	//cout<<m<<endl;
-	return m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
+	if( m == NULL) {
+		m = new whitehdl();
+	}
+
+	vec3f position = m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
+
+	return position;
 }
 
 /* shade_fragment
@@ -386,6 +390,11 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 	//return vec3f(1.0, 1.0, 1.0);
 	const materialhdl* m;
 	get_uniform("current_material", m);
+
+	if( m == NULL) {
+		m = new whitehdl();
+	}
+
 	return m -> shade_fragment(this, varying);
 	/* DONE Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
