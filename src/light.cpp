@@ -67,21 +67,18 @@ void directionalhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3
 	/* TODO Assignment 3: Implement a directional light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
-	// need to modify spec_base
 
-	float diff_cosine = max((float)0.0, (float)dot(normal, norm(direction)));
-	//float spec_base = max((float)0.0, (float)dot(normal, norm(half_vector)));
-	float spec_base = max((float)0.0, (float)dot(normal, norm(direction)));
-	float spec_pf;
 
-	if(diff_cosine == 0)
-		spec_pf = 0;
-	else
-		spec_pf = pow(spec_base, shininess);
+	float pf; // power factor
+	float nDotVP = max(0.0f, dot(normal, norm(direction)));
 
-	ambient += this->ambient;
-	diffuse += this->diffuse * diff_cosine;
-	specular += this->specular * spec_pf;
+	if (nDotVP == 0.0)
+		pf = 0.0;
+//	else
+//		pf = pow(nDotHV, shininess);
+	ambient  += this->ambient;
+	diffuse  += this->diffuse * nDotVP;
+	specular += this->specular * pf;
 }
 
 pointhdl::pointhdl() : lighthdl(white*0.1f, white*0.5f, white)
