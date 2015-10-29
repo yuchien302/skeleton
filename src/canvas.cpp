@@ -874,20 +874,6 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 		vec8f point3 = geometry[indices[i]];
 
 
-
-		// Done Assignment 2: Implement back-face culling
-		if(culling != disable){
-			vec3f vec12 = shade_vertex(point2, varying2) - shade_vertex(point1, varying1);
-			vec3f vec13 = shade_vertex(point3, varying3) - shade_vertex(point1, varying1);
-			vec3f direction = cross(vec12, vec13);
-
-			if( (direction.data[2] <= 0.0 && culling == frontface) ||
-				(direction.data[2] >= 0.0 && culling == backface)	){
-				continue;
-			}
-		}
-
-
 		// Done Assignment 2: Implement frustum clipping
 		vector<vec8f> points = vector<vec8f>();
 		vector<vec8f> clipped_points = vector<vec8f>();
@@ -934,6 +920,20 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 			vec3f p1 = shade_vertex(points[0], varying1);
 			vec3f p2 = shade_vertex(points[j+1], varying2);
 			vec3f p3 = shade_vertex(points[j+2], varying3);
+
+
+			// Done Assignment 2: Implement back-face culling
+			if(culling != disable){
+				vec3f vec12 = p2 - p1;
+				vec3f vec13 = p3 - p1;
+				vec3f direction = cross(vec12, vec13);
+
+				if( (direction.data[2] <= 0.0 && culling == frontface) ||
+					(direction.data[2] >= 0.0 && culling == backface)	){
+					continue;
+				}
+			}
+
 			plot_triangle(p1, varying1, p2, varying2, p3, varying3);
 		}
 
