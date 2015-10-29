@@ -31,14 +31,8 @@ whitehdl::~whitehdl()
 vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const
 {
 	// DONE Assignment 3: Move your solid color shader from the canvas to here.
-	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
-				  canvas -> matrices[canvas -> modelview_matrix] *
-				  homogenize(vec3f(vertex));
-
+	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
-	varying.push_back(1.0);
-	varying.push_back(1.0);
-	varying.push_back(1.0);
 
 	return point;
 }
@@ -80,38 +74,26 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
 
-
-	vec4f homo_cam = canvas -> matrices[canvas -> modelview_matrix] * homogenize(vertex);
-	vec3f camera_coordinates_point = vec3f(homo_cam/homo_cam[3]);
-
-	vec3f camera_coordinates_normal = (mat3f)canvas -> matrices[canvas -> normal_matrix] * (normal);
-
-
 	const vector<lighthdl*>* lights;
 	canvas -> get_uniform("lights", lights);
 	vec3f a = vec3f(0.0, 0.0, 0.0);
 	vec3f d = vec3f(0.0, 0.0, 0.0);
 	vec3f s = vec3f(0.0, 0.0, 0.0);
 
-
-
 	for(int i=0; (lights != NULL) && (i<lights->size()); i++){
 
-		(*lights)[i] -> shade(a, d, s, camera_coordinates_point, camera_coordinates_normal, shininess);
+		(*lights)[i] -> shade(a, d, s, vertex, normal, shininess);
 
 	}
 
 	vec3f color = a*this->ambient +d*this ->diffuse +s*this->specular + this->emission ;
-	color = clamp(color, 0.0f, 1.0f);
 
 	varying.push_back(color.data[0]);
 	varying.push_back(color.data[1]);
 	varying.push_back(color.data[2]);
 
 
-	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
-				  homo_cam;
-
+	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
 
 	return point;
@@ -122,7 +104,8 @@ vec3f gouraudhdl::shade_fragment(canvashdl *canvas, vector<float> &varying) cons
 	/* DONE Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
-	return vec3f(varying[0], varying[1], varying[2]);
+	vec3f color = clamp(vec3f(varying[0], varying[1], varying[2]), 0.0f, 1.0f);
+	return color;
 }
 
 materialhdl *gouraudhdl::clone() const
@@ -162,11 +145,9 @@ vec3f phonghdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vect
 	 * and flat. The difference is that the normals have been interpolated and passed into the fragment shader
 	 * instead of the color. The final color is calculated in the fragment shader.
 	 */
-	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
-				  canvas -> matrices[canvas -> modelview_matrix] *
-				  homogenize(vec3f(vertex));
-
+	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
+
 	return point;
 }
 
@@ -215,11 +196,9 @@ vec3f customhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vec
 	 * and pass that to the fragment shader through the varying array. Pass the necessary data for phong shading
 	 * through the varying array.
 	 */
-	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
-				  canvas -> matrices[canvas -> modelview_matrix] *
-				  homogenize(vec3f(vertex));
-
+	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
+
 	return point;
 }
 
