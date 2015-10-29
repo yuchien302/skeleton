@@ -190,32 +190,35 @@ void spothdl::update(canvashdl *canvas)
 
 void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
 {
-	/* TODO Assignment 3: Implement a spot light. See the OpenGL Orange Book in the references section
+	/* DONE Assignment 3: Implement a spot light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
-	vec3f toSurface = position - vertex;
-	float d = mag(toSurface);
-	toSurface = norm(toSurface);
+	vec3f VP = position - vertex;
+	float d = mag(VP);
+	VP = norm(VP);
 	vec3f eye = norm(vertex);
 
-	float diff_cosine = max((float)0.0, (float)dot(normal, toSurface));
-	float spec_base = max((float)0.0, (float) dot(normal, eye));
-	float spec_pf;
+	float attenuate = 1.0 / (attenuation[0] + attenuation[1] * d + attenuation[2] * d * d);
 
-	float spot_cosine =  -1*dot(toSurface,norm (direction));
-	vec3f now_attenuation = vec3f(0.0, 0.0, 0.0);
-	if (spot_cosine < cutoff)
-		now_attenuation = vec3f(0.0, 0.0, 0.0);
+	float spotDot =  dot(-VP, norm(direction));
+
+	if (spotDot < cutoff)
+		attenuate = 0.0f;
 	else
-		now_attenuation = ((float)pow(spot_cosine, exponent)) * attenuation;
+		attenuate *= ((float)pow(spotDot, exponent));
 
-	if(diff_cosine == 0)
-		spec_pf = 0;
+	vec3f halfVector = norm(VP + eye);
+	float nDotVP = max(0.0f, dot(normal, VP));
+	float nDotHV = max(0.0f, dot(normal, halfVector));
+	float pf;
+
+	if (nDotVP == 0.0f)
+		pf = 0.0f;
 	else
-		spec_pf = pow(spec_base, shininess);
+		pf = pow(nDotHV, shininess);
 
-	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
-	ambient += this->ambient * decay;
-	diffuse += this->diffuse * diff_cosine * decay;
-	specular += this->specular * spec_pf * decay;
+	ambient  += this->ambient * attenuate;
+	diffuse  += this->diffuse * nDotVP * attenuate;
+	specular += this->specular * pf * attenuate;
+
 }
