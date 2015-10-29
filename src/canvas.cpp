@@ -782,7 +782,7 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 	update_normal_matrix();
 	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_point
-	vector<float> varying = vector<float>();
+
 
 	for(int i=0; i<geometry.size(); i++){
 		vec8f point = geometry[i];
@@ -792,6 +792,7 @@ void canvashdl::draw_points(const vector<vec8f> &geometry)
 			vec6f plane = clipping_planes[p];
 
 			if(is_inside(point, plane)){
+				vector<float> varying = vector<float>();
 				plot_point(shade_vertex( geometry[i], varying ), varying);
 			}
 		}
@@ -819,8 +820,6 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 
 
 	for(int i=0; i<indices.size()/2; i++){
-		vector<float> varying1 = vector<float>();
-		vector<float> varying2 = vector<float>();
 		vec8f point1 = geometry[indices[2*i]];
 		vec8f point2 = geometry[indices[2*i+1]];
 
@@ -839,9 +838,11 @@ void canvashdl::draw_lines(const vector<vec8f> &geometry, const vector<int> &ind
 			}
 		}
 		if(!both_outside){
+			vector<float> varying1 = vector<float>();
+			vector<float> varying2 = vector<float>();
 			vec3f vertex1 = shade_vertex(point1, varying1);
 			vec3f vertex2 = shade_vertex(point2, varying2);
-//			cout<<varying1.size()<<endl;
+
 			plot_line(vertex1, varying1, vertex2, varying2);
 		}
 
@@ -865,10 +866,6 @@ void canvashdl::draw_triangles(const vector<vec8f> &geometry, const vector<int> 
 	update_clipping_planes();
 	// Done Assignment 1: call the vertex shader on the geometry, then pass it to plot_triangle
 	assert((indices.size()%3 == 0) && "canvas.draw_triangles: indices size cannot be divided by 3");
-
-	vector<float> varying1 = vector<float>();
-	vector<float> varying2 = vector<float>();
-	vector<float> varying3 = vector<float>();
 
 
 	for (int i = 2; i < indices.size(); i+=3){
