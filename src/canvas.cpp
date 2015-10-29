@@ -374,9 +374,13 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 		m = new whitehdl();
 	}
 
-	vec3f position = m -> shade_vertex(this, vec3f(v), vec3f(v.data[3], v.data[4], v.data[5]), varying);
+	vec4f position_homo = matrices[modelview_matrix] * homogenize(vec3f(v));
+	vec3f position = position_homo / position_homo[3];
+	vec3f normal = (mat3f) matrices[normal_matrix] * ( vec3f(v[3], v[4], v[5]) );
 
-	return position;
+	vec3f window_position = m -> shade_vertex(this, position, normal, varying);
+
+	return window_position;
 }
 
 /* shade_fragment
