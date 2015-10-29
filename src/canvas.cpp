@@ -527,7 +527,7 @@ vector<float> canvashdl::bresenham_halftri(int &x, int &y, int &d, int xmin,int 
 		plot(xyz, varying_result);
 		if (stop_flag) return varying_result;
 	}
-	cout <<"fk"<<endl;
+
 	return v1_varying;
 }
 /* plot_line
