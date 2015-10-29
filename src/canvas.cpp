@@ -486,13 +486,12 @@ void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int octant, ve
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], 0);
 		// use plot method
-		vec3f color1 = vec3f(v1_varying[0], v1_varying[1],v1_varying[2]);
-		vec3f color2 = vec3f(v2_varying[0], v2_varying[1],v2_varying[2]);
-		vector<float> plotcolor = vector<float>();
-		for (int i = 0; i < 3; i++){
-			plotcolor.push_back(ratio*(color2.data[i]) + (1.0-ratio)*color1.data[i]);
+		vector<float> varying_result = vector<float>();
+		assert(v1_varying.size() == v2_varying.size());
+		for (int i = 0; i < v1_varying.size(); i++){
+			varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
 		}
-		plot(xyz, plotcolor);
+		plot(xyz, varying_result);
 	}
 }
 void canvashdl::bresenham_halftri(int &x, int &y , int xmax, int ymax, int octant, int delta_x, int delta_y,vector<float> v1_varying,  int &d){
