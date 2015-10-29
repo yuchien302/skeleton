@@ -64,18 +64,19 @@ void directionalhdl::update(canvashdl *canvas)
 
 void directionalhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
 {
-	/* TODO Assignment 3: Implement a directional light. See the OpenGL Orange Book in the references section
+	/* DONE Assignment 3: Implement a directional light. See the OpenGL Orange Book in the references section
 	 * of the course website. Its under the section about emulating the fixed function pipeline.
 	 */
 
 
-	float pf; // power factor
+	float pf = 0.0; // power factor
 	float nDotVP = max(0.0f, dot(normal, norm(direction)));
 
 	if (nDotVP == 0.0)
 		pf = 0.0;
-//	else
-//		pf = pow(nDotHV, shininess);
+	else
+		pf = pow(nDotVP, shininess);
+
 	ambient  += this->ambient;
 	diffuse  += this->diffuse * nDotVP;
 	specular += this->specular * pf;
