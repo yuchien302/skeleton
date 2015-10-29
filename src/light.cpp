@@ -77,11 +77,19 @@ directionalhdl::~directionalhdl()
 
 void directionalhdl::update(canvashdl *canvas)
 {
-	/* TODO Assignment 3: Update the direction of the light using the orientation of the attached model.
+	/* DONE Assignment 3: Update the direction of the light using the orientation of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply some initial direction vector by the normal matrix.
 	 */
+	model ->before_draw(canvas);
 
+	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
+	vec3f position = homo_pos/homo_pos[3];
+
+	vec4f homo_direction = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, -1.0, 1.0);
+	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
+
+	model ->after_draw(canvas);
 
 }
 
@@ -126,16 +134,16 @@ pointhdl::~pointhdl()
 
 void pointhdl::update(canvashdl *canvas)
 {
-	/* TODO Assignment 3: Update the position of the light using the position of the attached model.
+	/* DONE Assignment 3: Update the position of the light using the position of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply the origin by the modelview matrix.
 	 */
-	//position = model -> position;
-	//mat4f homo_pos = homogenize(model -> position);
-	//homo_pos = rotate()
+	//	position = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
+	//				  homogenize(model -> position));
+
+
 	model ->before_draw(canvas);
-	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] *
-			  vec4f(0.0,0.0,0.0,1.0);
+	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
 	position = vec3f (homo_pos/homo_pos[3]);
 	model ->after_draw(canvas);
 
@@ -197,13 +205,18 @@ spothdl::~spothdl()
 
 void spothdl::update(canvashdl *canvas)
 {
-	/* TODO Assignment 3: Update both the direction and position of the light using the position and orientation
+	/* DONE Assignment 3: Update both the direction and position of the light using the position and orientation
 	 * of the attached model. See above.
 	 */
-	position = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
-				  homogenize(model -> position));
-	direction = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
-			  homogenize(model -> orientation));
+	model ->before_draw(canvas);
+
+	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
+	position = homo_pos/homo_pos[3];
+
+	vec4f homo_direction = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, -1.0, 1.0);
+	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
+
+	model ->after_draw(canvas);
 }
 
 void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
