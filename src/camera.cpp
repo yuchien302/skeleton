@@ -38,7 +38,15 @@ void camerahdl::view(canvashdl *canvas)
 		eye = at - ror3(vec3f(0.0, 0.0, -radius), orientation);
 	}
 
+	canvas -> set_matrix(canvashdl::modelview_matrix);
+	canvas -> load_identity();
 	canvas -> look_at(eye, at, up);
+
+	if (model != NULL) {
+		model->position = position;
+		model->orientation = orientation;
+		model->orientation[0] *= -1;
+	}
 
 }
 
@@ -60,6 +68,8 @@ orthohdl::~orthohdl()
 void orthohdl::project(canvashdl *canvas)
 {
 	// Done Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
 	canvas -> ortho(left, right, bottom, top, front, back);
 }
 
@@ -82,6 +92,8 @@ frustumhdl::~frustumhdl()
 void frustumhdl::project(canvashdl *canvas)
 {
 	// Done Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
 	canvas -> frustum(left, right, bottom, top, front, back);
 }
 
@@ -102,5 +114,7 @@ perspectivehdl::~perspectivehdl()
 void perspectivehdl::project(canvashdl *canvas)
 {
 	// Done Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
+	canvas -> set_matrix(canvashdl::projection_matrix);
+	canvas -> load_identity();
 	canvas -> perspective(fovy, aspect, front, back);
 }

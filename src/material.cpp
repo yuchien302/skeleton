@@ -34,7 +34,7 @@ vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vect
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
 				  canvas -> matrices[canvas -> modelview_matrix] *
 				  homogenize(vec3f(vertex));
-	//cout<<"QQ"<<endl;
+
 	point = point / point.data[3];
 	varying.push_back(1.0);
 	varying.push_back(1.0);
@@ -79,6 +79,8 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 	/* DONE Assignment 3: For flat and gouraud shading, just return the color you passed through the varying array.
 	 * The final color is calculated in the vertex shader and passed to the fragment shader.
 	 */
+
+
 	vec4f homo_cam = canvas -> matrices[canvas -> modelview_matrix] * homogenize(vertex);
 	vec3f camera_coordinates_point = vec3f(homo_cam/homo_cam[3]);
 

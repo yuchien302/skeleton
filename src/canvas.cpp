@@ -401,22 +401,19 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 {
 	// Done Assignment 1: Plot a pixel, calling the fragment shader.
 
-	int x = xyz.data[0];
-	int y = xyz.data[1];
-	int z = xyz.data[2];
-
 	/* DONE Assignment 3: Compare the z value against the depth buffer and
 	 * only render if its less. Then set the depth buffer.
 	 */
-	if(x<0 || x>=width || y<0 || y>=height || depth_buffer[(width*y + x)] < z)
-		return;
 
-	vec3f frag = shade_fragment(varying);
-	color_buffer[ 3* (width*y + x)] = 255 * frag.data[0];
-	color_buffer[ 3* (width*y + x) + 1] = 255 * frag.data[1];
-	color_buffer[ 3* (width*y + x) + 2] = 255* frag.data[2];
-	depth_buffer[(width*y + x)] = z;
-
+	int idx = xyz[1]*width + xyz[0];
+	if (xyz[0] >= 0 && xyz[0] < width && xyz[1] >= 0 && xyz[1] < height && xyz[2] <= depth_buffer[idx])
+	{
+		vec3f color = shade_fragment(varying);
+		color_buffer[idx*3 + 0] = (int)(color[0]*255.0);
+		color_buffer[idx*3 + 1] = (int)(color[1]*255.0);
+		color_buffer[idx*3 + 2] = (int)(color[2]*255.0);
+		depth_buffer[idx] = xyz[2];
+	}
 }
 
 /* plot_point
@@ -426,7 +423,6 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 void canvashdl::plot_point(vec3f v, vector<float> varying)
 {
 	// Done Assignment 1: Plot a point given in window coordinates.
-//	if( (v.data[0] < 1 || v.data[0]> -1) && (v.data[1] < 1 || v.data[1]> -1))
 	plot(to_pixel(v), varying);
 }
 vec5i canvashdl::pre_plot(vec3i v1_pixel, vec3i v2_pixel){

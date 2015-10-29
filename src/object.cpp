@@ -88,7 +88,7 @@ void objecthdl::draw(canvashdl *canvas)
  */
 void objecthdl::draw_bound(canvashdl *canvas)
 {
-	/* (untested) Done Assignment 1: Generate the geometry for the bounding box and send the necessary
+	/* DONE Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
 	 */
 	canvas->set_matrix(canvashdl::modelview_matrix);
@@ -150,7 +150,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
  */
 void objecthdl::draw_normals(canvashdl *canvas, bool face)
 {
-	/* (untested) Done Assignment 1: Generate the geometry to display the normals and send the necessary
+	/* DONE Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
 	vector<vec8f> geometry = vector<vec8f>();
