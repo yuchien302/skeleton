@@ -89,25 +89,24 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 
 	const vector<lighthdl*>* lights;
 	canvas -> get_uniform("lights", lights);
-
 	vec3f a = vec3f(0.0, 0.0, 0.0);
 	vec3f d = vec3f(0.0, 0.0, 0.0);
 	vec3f s = vec3f(0.0, 0.0, 0.0);
 
-	for(int i=0; i < lights->size(); i++){
+
+
+	for(int i=0; (lights != NULL) && (i<lights->size()); i++){
+
 		(*lights)[i] -> shade(a, d, s, camera_coordinates_point, camera_coordinates_normal, shininess);
-		//cout<<""<<i<<endl;
+
 	}
 
 	vec3f color = a*this->ambient +d*this ->diffuse +s*this->specular + this->emission ;
 	color = clamp(color, 0.0f, 1.0f);
-	//cout <<"shade_vertex" << color.data[0]<<endl;
+
 	varying.push_back(color.data[0]);
 	varying.push_back(color.data[1]);
 	varying.push_back(color.data[2]);
-	//varying.push_back(1.0);
-		//varying.push_back(1.0);
-		//varying.push_back(1.0);
 
 
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] *
