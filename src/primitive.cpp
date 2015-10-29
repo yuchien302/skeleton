@@ -160,57 +160,116 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 	/* Done Assignment 1: Generate the geometry and indices required to make a cylinder.
 	 * Calculate its bounding box.
 	 */
+
+//	rigid.push_back(rigidhdl());
+//	rigid[0].geometry.reserve(4*slices + 2);
+//
+//	//top circle
+//	rigid[0].geometry.push_back(vec8f(0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0));
+//	for (int i = 0; i < slices; i++){
+//		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+//		rigid[0].geometry.push_back(vec8f(radius * dir[0], height/2.0, radius * dir[1], dir[0], 0.0, dir[1], 0.0, 0.0));
+//	}
+//	//bottom circle
+//	for (int i = 0; i < slices; i++){
+//			vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+//			rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, radius * dir[1], dir[0], 0.0, dir[1], 0.0, 0.0));
+//	}
+//	// side
+//	for (int i = 0; i < slices; i++){
+//		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+//		rigid[0].geometry.push_back(vec8f(radius * dir[0], height/2.0, radius * dir[1], 0.0, 1.0, 0.0, 0.0, 0.0));
+//	}
+//
+//	for (int i = 0; i < slices; i++){
+//		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
+//		rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, radius * dir[1], 0.0, -1.0, 0.0, 0.0, 0.0));
+//	}
+//
+//	rigid[0].geometry.push_back(vec8f(0.0, -height/2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0));
+//
+//	//top circle
+//	for (int i = 0; i < slices; i++){
+//		rigid[0].indices.push_back(i+1);
+//		rigid[0].indices.push_back(((i+1)%slices) +1);
+//		rigid[0].indices.push_back(0);
+//	}
+//	//bottom circle
+//	for (int i = 0; i < slices; i++){
+//		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
+//		rigid[0].indices.push_back(i+1 + slices);
+//		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
+//	}
+//	// side
+//	for (int i = 0; i < slices; i++){
+//		rigid[0].indices.push_back(((i+1)%slices) +1 + 2*slices);
+//		rigid[0].indices.push_back(i+1 + 2*slices);
+//		rigid[0].indices.push_back(i+1 + 3*slices);
+//
+//		rigid[0].indices.push_back(((i+1)%slices) +1 + 2*slices);
+//		rigid[0].indices.push_back(i+1 + 3*slices);
+//		rigid[0].indices.push_back(((i+1)%slices) +1 + 3*slices);
+//	}
+//	bound = vec6f(-radius, radius, -height/ 2.0, height/2.0, -radius, radius);
 	rigid.push_back(rigidhdl());
-	rigid[0].geometry.reserve(4*slices + 2);
-
-	//top circle
-	rigid[0].geometry.push_back(vec8f(0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0));
-	for (int i = 0; i < slices; i++){
-		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-		rigid[0].geometry.push_back(vec8f(radius * dir[0], height/2.0, radius * dir[1], dir[0], 0.0, dir[1], 0.0, 0.0));
-	}
-	//bottom circle
-	for (int i = 0; i < slices; i++){
-			vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-			rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, radius * dir[1], dir[0], 0.0, dir[1], 0.0, 0.0));
-	}
-	// side
-	for (int i = 0; i < slices; i++){
-		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-		rigid[0].geometry.push_back(vec8f(radius * dir[0], height/2.0, radius * dir[1], 0.0, 1.0, 0.0, 0.0, 0.0));
-	}
-
-	for (int i = 0; i < slices; i++){
-		vec3f dir(cos(2.0*m_pi/slices*i), sin(2.0*m_pi/slices*i), 0.0);
-		rigid[0].geometry.push_back(vec8f(radius * dir[0], -height/2.0, radius * dir[1], 0.0, -1.0, 0.0, 0.0, 0.0));
-	}
 
 	rigid[0].geometry.push_back(vec8f(0.0, -height/2.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0));
+	for (int i = 0; i < slices; i++)
+		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
+								 -height/2.0,
+								 radius*sin(2*m_pi*(float)i/(float)slices),
+								 0.0, -1.0, 0.0, 0.0, 0.0));
 
-	//top circle
-	for (int i = 0; i < slices; i++){
-		rigid[0].indices.push_back(i+1);
-		rigid[0].indices.push_back(((i+1)%slices) +1);
+	for (int i = 0; i < slices; i++)
+		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
+								 -height/2.0,
+								 radius*sin(2*m_pi*(float)i/(float)slices),
+								 cos(2*m_pi*(float)i/(float)slices),
+								 0.0,
+								 sin(2*m_pi*(float)i/(float)slices), 0.0, 0.0));
+
+	for (int i = 0; i < slices; i++)
+		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
+								 height/2.0,
+								 radius*sin(2*m_pi*(float)i/(float)slices),
+								 cos(2*m_pi*(float)i/(float)slices),
+								 0.0,
+								 sin(2*m_pi*(float)i/(float)slices), 0.0, 0.0));
+
+	for (int i = 0; i < slices; i++)
+		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
+								 height/2.0,
+								 radius*sin(2*m_pi*(float)i/(float)slices),
+								 0.0, 1.0, 0.0, 0.0, 0.0));
+
+	rigid[0].geometry.push_back(vec8f(0.0, height/2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0));
+
+	for (int i = 0; i < slices; i++)
+	{
+		rigid[0].indices.push_back(1 + (i+1)%slices);
+		rigid[0].indices.push_back(1 + i);
 		rigid[0].indices.push_back(0);
 	}
-	//bottom circle
-	for (int i = 0; i < slices; i++){
-		rigid[0].indices.push_back(((i+1)%slices) +1 + slices);
-		rigid[0].indices.push_back(i+1 + slices);
-		rigid[0].indices.push_back(rigid[0].geometry.size() - 1);
-	}
-	// side
-	for (int i = 0; i < slices; i++){
-		rigid[0].indices.push_back(((i+1)%slices) +1 + 2*slices);
-		rigid[0].indices.push_back(i+1 + 2*slices);
-		rigid[0].indices.push_back(i+1 + 3*slices);
 
-		rigid[0].indices.push_back(((i+1)%slices) +1 + 2*slices);
-		rigid[0].indices.push_back(i+1 + 3*slices);
-		rigid[0].indices.push_back(((i+1)%slices) +1 + 3*slices);
-	}
-	bound = vec6f(-radius, radius, -height/ 2.0, height/2.0, -radius, radius);
+	for (int i = 0; i < slices; i++)
+	{
+		rigid[0].indices.push_back(1 + slices + i);
+		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
+		rigid[0].indices.push_back(1 + 2*slices + i);
 
+		rigid[0].indices.push_back(1 + 2*slices + i);
+		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
+		rigid[0].indices.push_back(1 + 2*slices + (i+1)%slices);
+	}
+
+	for (int i = 0; i < slices; i++)
+	{
+		rigid[0].indices.push_back(1 + 3*slices + i);
+		rigid[0].indices.push_back(1 + 3*slices + (i+1)%slices);
+		rigid[0].indices.push_back(1 + 4*slices);
+	}
+
+	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
 
 	// DONE Assignment 3: Set up the material properties for this object
 	rigid[0].material = "Material__1";
