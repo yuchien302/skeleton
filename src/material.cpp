@@ -201,6 +201,11 @@ materialhdl *phonghdl::clone() const
 customhdl::customhdl()
 {
 	type = "custom";
+	emission = vec3f(0.0, 0.0, 0.0);
+	ambient = vec3f(0.1, 0.1, 0.1);
+	diffuse = vec3f(1.0, 1.0, 1.0);
+	specular = vec3f(1.0, 1.0, 1.0);
+	shininess = 1.0;
 }
 
 customhdl::~customhdl()
@@ -219,6 +224,13 @@ vec3f customhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vec
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
 
+	varying.push_back(vertex[0]);
+	varying.push_back(vertex[1]);
+	varying.push_back(vertex[2]);
+	varying.push_back(normal[0]);
+	varying.push_back(normal[1]);
+	varying.push_back(normal[2]);
+
 	return point;
 }
 
@@ -229,14 +241,45 @@ vec3f customhdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 	 * is that the normals have been interpolated. Implement the none shading model, this just returns the
 	 * color of the material without lighting.
 	 */
+	const vector<lighthdl*>* lights;
+	canvas -> get_uniform("lights", lights);
+	vec3f a = vec3f(0.0, 0.0, 0.0);
+	vec3f d = vec3f(0.0, 0.0, 0.0);
+	vec3f s = vec3f(0.0, 0.0, 0.0);
 
 
-	return vec3f(1.0, 1.0, 1.0);
+	vec3f vertex = vec3f(varying[0], varying[1], varying[2]);
+	vec3f normal = vec3f(varying[3], varying[4], varying[5]);
+
+	for(int i=0; (lights != NULL) && (i<lights->size()); i++){
+
+		(*lights)[i] -> shade(a, d, s, vertex, normal, shininess);
+
+	}
+
+	vec3f color = a*this->ambient +d*this ->diffuse +s*this->specular + this->emission ;
+
+	color = clamp(color, 0.0f, 1.0f);
+
+	for(int i=0; i<3; i++){
+//		float salt = 0.00015 - 0.0003 * (rand() % 100);
+		float salt = 0.0;
+		color[0] = ceil(color[0] / 0.25) * 0.25 + salt;
+		color[1] = ceil(color[1] / 0.25) * 0.25 + salt;
+		color[2] = ceil(color[2] / 0.25) * 0.25 + salt;
+	}
+	color = clamp(color, 0.0f, 1.0f);
+	return color;
 }
 
 materialhdl *customhdl::clone() const
 {
 	customhdl *result = new customhdl();
 	result->type = type;
+	result->emission = emission;
+	result->ambient = ambient;
+	result->diffuse = diffuse;
+	result->specular = specular;
+	result->shininess = shininess;
 	return result;
 }
