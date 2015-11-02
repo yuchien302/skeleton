@@ -6,7 +6,6 @@
  */
 
 #include "object.h"
-#include "canvas.h"
 
 rigidhdl::rigidhdl()
 {
@@ -22,7 +21,7 @@ rigidhdl::~rigidhdl()
  *
  * Draw a rigid body.
  */
-void rigidhdl::draw(canvashdl *canvas)
+void rigidhdl::draw()
 {
 	// (untested) Done Assignment 1: Send the rigid body geometry to the renderer
 	//canvas
@@ -66,18 +65,22 @@ objecthdl::~objecthdl()
  * Draw the model. Don't forget to apply the transformations necessary
  * for position, orientation, and scale.
  */
-void objecthdl::draw(canvashdl *canvas)
+void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-	// DONE Assignment 1: Send transformations and geometry to the renderer to draw the object
-	canvas -> set_matrix(canvashdl::modelview_matrix);
-	before_draw(canvas);
-	for (int i = 0; i < rigid.size(); i++){
-		// DONE Assignment 3: Pass the material as a uniform into the renderer
-		canvas->uniform["current_material"] = material[rigid[i].material] ;
-		rigid[i].draw(canvas);
-	}
-	after_draw(canvas);
-
+//<<<<<<< HEAD
+//	// DONE Assignment 1: Send transformations and geometry to the renderer to draw the object
+//	canvas -> set_matrix(canvashdl::modelview_matrix);
+//	before_draw(canvas);
+//	for (int i = 0; i < rigid.size(); i++){
+//		// DONE Assignment 3: Pass the material as a uniform into the renderer
+//		canvas->uniform["current_material"] = material[rigid[i].material] ;
+//		rigid[i].draw(canvas);
+//	}
+//	after_draw(canvas);
+//
+//=======
+	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
+	// TODO Assignment 3: Pass the material as a uniform into the renderer
 }
 
 
@@ -86,52 +89,56 @@ void objecthdl::draw(canvashdl *canvas)
  * Create a representation for the bounding box and
  * render it.
  */
-void objecthdl::draw_bound(canvashdl *canvas)
+void objecthdl::draw_bound()
 {
 	/* DONE Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
 	 */
-	canvas->set_matrix(canvashdl::modelview_matrix);
-	before_draw(canvas);
-
-	vector<vec8f> geometry = vector<vec8f>();
-	vector<int> indices = vector<int>();
-
-	float xmin = bound.data[0];
-	float xmax = bound.data[1];
-	float ymin = bound.data[2];
-	float ymax = bound.data[3];
-	float zmin = bound.data[4];
-	float zmax = bound.data[5];
-
-
-	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-
-
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back((i+1)%4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i+4);
-		indices.push_back(((i+1)%4) + 4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back(i+4);
-	}
-
-	// DONE Assignment 3: clear the material in the uniform list
-	canvas -> uniform["current_material"] = NULL;
-	canvas -> draw_lines(geometry, indices);
-	after_draw(canvas);
+//<<<<<<< HEAD
+//	canvas->set_matrix(canvashdl::modelview_matrix);
+//	before_draw(canvas);
+//
+//	vector<vec8f> geometry = vector<vec8f>();
+//	vector<int> indices = vector<int>();
+//
+//	float xmin = bound.data[0];
+//	float xmax = bound.data[1];
+//	float ymin = bound.data[2];
+//	float ymax = bound.data[3];
+//	float zmin = bound.data[4];
+//	float zmax = bound.data[5];
+//
+//
+//	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
+//
+//
+//	for(int i = 0; i < 4; i++){
+//		indices.push_back(i);
+//		indices.push_back((i+1)%4);
+//	}
+//	for(int i = 0; i < 4; i++){
+//		indices.push_back(i+4);
+//		indices.push_back(((i+1)%4) + 4);
+//	}
+//	for(int i = 0; i < 4; i++){
+//		indices.push_back(i);
+//		indices.push_back(i+4);
+//	}
+//
+//	// DONE Assignment 3: clear the material in the uniform list
+//	canvas -> uniform["current_material"] = NULL;
+//	canvas -> draw_lines(geometry, indices);
+//	after_draw(canvas);
+//
+//=======
+	// TODO Assignment 3: clear the material in the uniform list
 
 }
 
@@ -141,7 +148,7 @@ void objecthdl::draw_bound(canvashdl *canvas)
  * If face is false, render the vertex normals. Otherwise,
  * calculate the normals for each face and render those.
  */
-void objecthdl::draw_normals(canvashdl *canvas, bool face)
+void objecthdl::draw_normals(bool face)
 {
 	/* DONE Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
@@ -156,62 +163,65 @@ void objecthdl::draw_normals(canvashdl *canvas, bool face)
 			//assert (rigid[i].geometry.size()%3 == 0);
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){
 
-				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
-				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
-				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
-				vec3f vec12 = point2 - point1;
-				vec3f vec13 = point3 - point1;
-				vec3f direction = norm(cross(vec13, vec12));
-				vec3f start = (point1+ point2+ point3) / float(3.0);
-				geometry.push_back(start);
-				geometry.push_back(start + ( normal_length * direction));
-
-				indices.push_back(index++);
-				indices.push_back(index++);
-			}
-		}
-		else{
-			for(int g = 0; g < rigid[i].geometry.size(); g++){
-
-				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
-
-				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
-
-				geometry.push_back(start);
-				geometry.push_back(start + ( normal_length * direction));
-				
-				indices.push_back(index++);
-				indices.push_back(index++);
-			}
-		}
-	}
-	before_draw(canvas);
-	// DONE Assignment 3: clear the material in the uniform list
-	canvas -> uniform["current_material"] = NULL;
-	canvas -> draw_lines(geometry, indices);
-	after_draw(canvas);
-
-}
-
-void objecthdl::before_draw(canvashdl *canvas){
-	canvas -> translate(position);
-
-	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-
-	canvas -> scale(vec3f(scale, scale, scale));
-}
-
-
-void objecthdl::after_draw(canvashdl *canvas){
-	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-
-	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-
-	canvas -> translate(-position);
+//<<<<<<< HEAD
+//				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
+//				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
+//				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
+//				vec3f vec12 = point2 - point1;
+//				vec3f vec13 = point3 - point1;
+//				vec3f direction = norm(cross(vec13, vec12));
+//				vec3f start = (point1+ point2+ point3) / float(3.0);
+//				geometry.push_back(start);
+//				geometry.push_back(start + ( normal_length * direction));
+//
+//				indices.push_back(index++);
+//				indices.push_back(index++);
+//			}
+//		}
+//		else{
+//			for(int g = 0; g < rigid[i].geometry.size(); g++){
+//
+//				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
+//
+//				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
+//
+//				geometry.push_back(start);
+//				geometry.push_back(start + ( normal_length * direction));
+//
+//				indices.push_back(index++);
+//				indices.push_back(index++);
+//			}
+//		}
+//	}
+//	before_draw(canvas);
+//	// DONE Assignment 3: clear the material in the uniform list
+//	canvas -> uniform["current_material"] = NULL;
+//	canvas -> draw_lines(geometry, indices);
+//	after_draw(canvas);
+//
+//}
+//
+//void objecthdl::before_draw(canvashdl *canvas){
+//	canvas -> translate(position);
+//
+//	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
+//	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
+//	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
+//
+//	canvas -> scale(vec3f(scale, scale, scale));
+//}
+//
+//
+//void objecthdl::after_draw(canvashdl *canvas){
+//	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
+//
+//	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
+//	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
+//	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
+//
+//	canvas -> translate(-position);
+//=======
+	// TODO Assignment 3: clear the material in the uniform list before rendering
 }
 
 

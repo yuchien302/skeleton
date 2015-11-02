@@ -15,7 +15,6 @@
 
 scenehdl::scenehdl()
 {
-	canvas = NULL;
 	active_camera = -1;
 	active_object = -1;
 	render_normals = none;
@@ -25,7 +24,17 @@ scenehdl::scenehdl()
 
 scenehdl::~scenehdl()
 {
+	for (int i = 0; i < (int)objects.size(); i++)
+		delete objects[i];
+	objects.clear();
 
+	for (int i = 0; i < (int)cameras.size(); i++)
+		delete cameras[i];
+	cameras.clear();
+
+	for (int i = 0; i < (int)lights.size(); i++)
+		delete lights[i];
+	lights.clear();
 }
 
 /* draw
@@ -39,11 +48,17 @@ void scenehdl::draw()
 	 * if enabled, draw the normals and the cameras.
 	 */
 
-//	cameras[active_camera] -> project(canvas);
-	cameras[active_camera] -> view(canvas);
-
-	/* DONE Assignment 3: Clear the uniform variables and pass the vector of
+//<<<<<<< HEAD
+////	cameras[active_camera] -> project(canvas);
+//	cameras[active_camera] -> view(canvas);
+//
+//	/* DONE Assignment 3: Clear the uniform variables and pass the vector of
+//	 * lights into the renderer as a uniform variable.
+//=======
+	/* TODO Assignment 3: Clear the uniform variables and pass the vector of
 	 * lights into the renderer as a uniform variable.
+	 * TODO Assignment 3: Update the light positions and directions
+	 * TODO Assignment 3: Render the lights
 	 */
 	canvas -> uniform.clear();
 	canvas -> uniform["lights"] = &lights;

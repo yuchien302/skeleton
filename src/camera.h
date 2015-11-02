@@ -6,7 +6,7 @@
  */
 
 #include "core/geometry.h"
-#include "canvas.h"
+#include "opengl.h"
 
 using namespace core;
 
@@ -29,8 +29,8 @@ struct camerahdl
 	objecthdl *focus;
 	float radius;
 
-	virtual void project(canvashdl *canvas) = 0;
-	void view(canvashdl *canvas);
+	virtual void project() = 0;
+	void view();
 };
 
 struct orthohdl : camerahdl
@@ -40,7 +40,7 @@ struct orthohdl : camerahdl
 
 	float left, right, bottom, top, front, back;
 
-	void project(canvashdl *canvas);
+	void project();
 };
 
 struct frustumhdl : camerahdl
@@ -50,7 +50,7 @@ struct frustumhdl : camerahdl
 
 	float left, right, bottom, top, front, back;
 
-	void project(canvashdl *canvas);
+	void project();
 };
 
 struct perspectivehdl : camerahdl
@@ -60,7 +60,7 @@ struct perspectivehdl : camerahdl
 
 	float fovy, aspect, front, back;
 
-	void project(canvashdl *canvas);
+	void project();
 };
 
 #endif

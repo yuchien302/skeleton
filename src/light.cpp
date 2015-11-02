@@ -7,7 +7,7 @@
 
 #include "light.h"
 #include "object.h"
-#include "canvas.h"
+#include "opengl.h"
 
 lighthdl::lighthdl()
 {
@@ -44,9 +44,10 @@ directionalhdl::~directionalhdl()
 
 }
 
-void directionalhdl::update(canvashdl *canvas)
+void directionalhdl::update()
 {
-	/* DONE Assignment 3: Update the direction of the light using the orientation of the attached model.
+
+	/* TODO Assignment 3: Update the direction of the light using the orientation of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply some initial direction vector by the normal matrix.
 	 */
@@ -62,10 +63,10 @@ void directionalhdl::update(canvashdl *canvas)
 
 }
 
-void directionalhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
+void directionalhdl::apply(string name, GLuint program)
 {
-	/* DONE Assignment 3: Implement a directional light. See the OpenGL Orange Book in the references section
-	 * of the course website. Its under the section about emulating the fixed function pipeline.
+
+	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for the directional light.
 	 */
 
 
@@ -99,9 +100,10 @@ pointhdl::~pointhdl()
 
 }
 
-void pointhdl::update(canvashdl *canvas)
+void pointhdl::update()
 {
-	/* DONE Assignment 3: Update the position of the light using the position of the attached model.
+
+	/* TODO Assignment 3: Update the position of the light using the position of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply the origin by the modelview matrix.
 	 */
@@ -117,11 +119,9 @@ void pointhdl::update(canvashdl *canvas)
 }
 
 
-
-void pointhdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
+void pointhdl::apply(string name, GLuint program)
 {
-	/* DONE Assignment 3: Implement a point light. See the OpenGL Orange Book in the references section
-	 * of the course website. Its under the section about emulating the fixed function pipeline.
+	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for point lights.
 	 */
 	vec3f toLight = position - vertex;
 	float d = mag(toLight);
@@ -166,9 +166,10 @@ spothdl::~spothdl()
 
 }
 
-void spothdl::update(canvashdl *canvas)
+void spothdl::update()
 {
-	/* DONE Assignment 3: Update both the direction and position of the light using the position and orientation
+
+	/* TODO Assignment 3: Update both the direction and position of the light using the position and orientation
 	 * of the attached model. See above.
 	 */
 	model ->before_draw(canvas);
@@ -182,10 +183,9 @@ void spothdl::update(canvashdl *canvas)
 	model ->after_draw(canvas);
 }
 
-void spothdl::shade(vec3f &ambient, vec3f &diffuse, vec3f &specular, vec3f vertex, vec3f normal, float shininess) const
+void spothdl::apply(string name, GLuint program)
 {
-	/* DONE Assignment 3: Implement a spot light. See the OpenGL Orange Book in the references section
-	 * of the course website. Its under the section about emulating the fixed function pipeline.
+	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for spot lights.
 	 */
 	vec3f VP = position - vertex;
 	float d = mag(VP);

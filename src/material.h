@@ -7,13 +7,14 @@
 
 #include "core/geometry.h"
 #include "standard.h"
+#include "opengl.h"
 
 using namespace core;
 
 #ifndef material_h
 #define material_h
 
-struct canvashdl;
+struct lighthdl;
 
 struct materialhdl
 {
@@ -22,8 +23,7 @@ struct materialhdl
 
 	string type;
 
-	virtual vec3f shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const = 0;
-	virtual vec3f shade_fragment(canvashdl *canvas, vector<float> &varying) const = 0;
+	virtual void apply(const vector<lighthdl*> &lights) = 0;
 	virtual materialhdl *clone() const = 0;
 };
 
@@ -32,8 +32,11 @@ struct whitehdl : materialhdl
 	whitehdl();
 	~whitehdl();
 
-	vec3f shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const;
-	vec3f shade_fragment(canvashdl *canvas, vector<float> &varying) const;
+	static GLuint vertex;
+	static GLuint fragment;
+	static GLuint program;
+
+	void apply(const vector<lighthdl*> &lights);
 	materialhdl *clone() const;
 };
 
@@ -48,8 +51,11 @@ struct gouraudhdl : materialhdl
 	vec3f specular;
 	float shininess;
 
-	vec3f shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const;
-	vec3f shade_fragment(canvashdl *canvas, vector<float> &varying) const;
+	static GLuint vertex;
+	static GLuint fragment;
+	static GLuint program;
+
+	void apply(const vector<lighthdl*> &lights);
 	materialhdl *clone() const;
 };
 
@@ -64,24 +70,42 @@ struct phonghdl : materialhdl
 	vec3f specular;
 	float shininess;
 
-	vec3f shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const;
-	vec3f shade_fragment(canvashdl *canvas, vector<float> &varying) const;
+	static GLuint vertex;
+	static GLuint fragment;
+	static GLuint program;
+
+	void apply(const vector<lighthdl*> &lights);
 	materialhdl *clone() const;
 };
+
 
 struct customhdl : materialhdl
 {
 	customhdl();
 	~customhdl();
 
-	vec3f emission;
-	vec3f ambient;
-	vec3f diffuse;
-	vec3f specular;
+	static GLuint vertex;
+	static GLuint fragment;
+	static GLuint program;
+
+	void apply(const vector<lighthdl*> &lights);
+	materialhdl *clone() const;
+};
+
+struct texturehdl : materialhdl
+{
+	texturehdl();
+	~texturehdl();
+
 	float shininess;
 
-	vec3f shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vector<float> &varying) const;
-	vec3f shade_fragment(canvashdl *canvas, vector<float> &varying) const;
+	static GLuint vertex;
+	static GLuint fragment;
+	static GLuint program;
+
+	static GLuint texture;
+
+	void apply(const vector<lighthdl*> &lights);
 	materialhdl *clone() const;
 };
 

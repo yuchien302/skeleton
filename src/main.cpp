@@ -7,7 +7,6 @@
 
 #include "opengl.h"
 #include "standard.h"
-#include "canvas.h"
 #include "scene.h"
 #include "camera.h"
 #include "model.h"
@@ -17,7 +16,6 @@
 
 int window_id;
 
-canvashdl canvas(750, 750);
 scenehdl scene;
 
 int mousex = 0, mousey = 0;
@@ -28,6 +26,13 @@ int canvas_menu_id;
 int object_menu_id;
 int light_menu_id;
 int camera_menu_id;
+
+
+int width = 750;
+int height = 750;
+
+string working_directory = "";
+
 
 namespace manipulate
 {
@@ -50,13 +55,12 @@ manipulate::type manipulator;
 
 bool keys[256];
 
-void init(string working_directory)
+void init()
 {
 	for (int i = 0; i < 256; i++)
 		keys[i] = false;
 
-	canvas.working_directory = working_directory;
-	scene.canvas = &canvas;
+
 	scene.cameras.push_back(new frustumhdl());
 	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
 
@@ -76,29 +80,30 @@ void init(string working_directory)
 	if (!scene.active_camera_valid())
 	{
 		scene.active_camera = scene.cameras.size()-1;
-		scene.cameras[scene.active_camera]->project(&canvas);
+		scene.cameras[scene.active_camera]->project();
 	}
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
+
+	glEnable(GL_DEPTH_TEST);
+
 }
 
 void displayfunc()
 {
-	canvas.clear_color_buffer();
-	canvas.clear_depth_buffer();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	scene.draw();
 	//vector<float> a = vector<float>();
 	//vec3i a = vec3i(100,200,300);
 
-	//canvas.plot_triangle(vec3f(-0.0,0.2,0.0), vector<float>(), vec3f(0.0,0.8,0.0), vector<float>(), vec3f(0.5,-0.2,0.0), vector<float>());
-
-	//canvas.plot_half_triangle(vec3i(200,300,400),vector<float>(), vec3i(250,400,400),vector<float>(),vec3i(400,800,400),vector<float>(),vector<float>());
-	canvas.swap_buffers();
+	glutSwapBuffers();
 }
 
 void reshapefunc(int w, int h)
 {
-	canvas.viewport(0, 0, w, h);
+	glViewport(0, 0, w, h);
+	width = w;
+	height = h;
 	glutPostRedisplay();
 }
 
@@ -115,15 +120,15 @@ void pmotionfunc(int x, int y)
 		mousey = y;
 
 		bool warp = false;
-		if (mousex > 3*canvas.get_width()/4 || mousex < canvas.get_width()/4)
+		if (mousex > 3*width/4 || mousex < width/4)
 		{
-			mousex = canvas.get_width()/2;
+			mousex = width/2;
 			warp = true;
 		}
 
-		if (mousey > 3*canvas.get_height()/4 || mousey < canvas.get_height()/4)
+		if (mousey > 3*height/4 || mousey < height/4)
 		{
-			mousey = canvas.get_height()/2;
+			mousey = height/2;
 			warp = true;
 		}
 
@@ -147,13 +152,33 @@ void pmotionfunc(int x, int y)
 		{
 			if (scene.cameras[scene.active_camera]->type == "ortho")
 			{
-				position = canvas.unproject(canvas.to_window(vec2i(x, y)));
+
+				GLdouble model[16];
+				GLdouble proj[16];
+				GLint view[4];
+				glGetDoublev(GL_MODELVIEW_MATRIX, model);
+				glGetDoublev(GL_PROJECTION_MATRIX, proj);
+				glGetIntegerv(GL_VIEWPORT, view);
+				vec<double, 3> p;
+				gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
+				position = p;
+
 				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
 			}
 			else
 			{
+
+				GLdouble model[16];
+				GLdouble proj[16];
+				GLint view[4];
+				glGetDoublev(GL_MODELVIEW_MATRIX, model);
+				glGetDoublev(GL_PROJECTION_MATRIX, proj);
+				glGetIntegerv(GL_VIEWPORT, view);
+				vec<double, 3> p;
+				gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
 				position = scene.cameras[scene.active_camera]->position;
-				direction = norm(canvas.unproject(canvas.to_window(vec2i(x, y))));
+				direction = norm(p - position);
+
 			}
 		}
 
@@ -166,7 +191,7 @@ void pmotionfunc(int x, int y)
 				bool is_light = false;
 				bool is_camera = false;
 
-				// Done Assignment 3: uncomment this
+
 				for (int j = 0; j < scene.lights.size() && !is_light; j++)
 					if (scene.lights[j] != NULL && scene.lights[j]->model == scene.objects[i])
 						is_light = true;
@@ -210,7 +235,7 @@ void pmotionfunc(int x, int y)
 			bool is_light = false;
 			bool is_camera = false;
 
-			// Done Assignment 3: uncomment this
+
 			for (int i = 0; i < scene.lights.size() && !is_light; i++)
 				if (scene.lights[i] != NULL && scene.active_object_valid() && scene.lights[i]->model == scene.objects[scene.active_object])
 					is_light = true;
@@ -257,13 +282,32 @@ void motionfunc(int x, int y)
 		{
 			if (scene.cameras[scene.active_camera]->type == "ortho")
 			{
-				position = canvas.unproject(canvas.to_window(vec2i(x, y)));
+
+				GLdouble model[16];
+				GLdouble proj[16];
+				GLint view[4];
+				glGetDoublev(GL_MODELVIEW_MATRIX, model);
+				glGetDoublev(GL_PROJECTION_MATRIX, proj);
+				glGetIntegerv(GL_VIEWPORT, view);
+				vec<double, 3> p;
+				gluUnProject(x, height-y, 0.0, model, proj, view, &p[0], &p[1], &p[2]);
+				position = p;
+
 				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
 			}
 			else
 			{
+
+				GLdouble model[16];
+				GLdouble proj[16];
+				GLint view[4];
+				glGetDoublev(GL_MODELVIEW_MATRIX, model);
+				glGetDoublev(GL_PROJECTION_MATRIX, proj);
+				glGetIntegerv(GL_VIEWPORT, view);
+				vec<double, 3> p;
+				gluUnProject(x, height-y, 0.0, model, proj, view, &p[0], &p[1], &p[2]);
 				position = scene.cameras[scene.active_camera]->position;
-				direction = norm(canvas.unproject(canvas.to_window(vec2i(x, y))));
+				direction = norm(p - position);
 			}
 		}
 
@@ -331,7 +375,9 @@ void motionfunc(int x, int y)
 				manipulator == manipulate::height ||
 				manipulator == manipulate::front ||
 				manipulator == manipulate::back)
-				scene.cameras[scene.active_camera]->project(&canvas);
+
+				scene.cameras[scene.active_camera]->project();
+
 		}
 
 		glutPostRedisplay();
@@ -380,32 +426,37 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+
+			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+
 			change = true;
 		}
 		if (keys['s'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+
+			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['a'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+
+			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['d'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['q'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['e'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+
+			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 	}
@@ -413,12 +464,14 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-			scene.cameras[scene.active_camera]->radius -= 0.25;
+
+			scene.cameras[scene.active_camera]->radius -= 0.025;
 			change = true;
 		}
 		if (keys['s'])
 		{
-			scene.cameras[scene.active_camera]->radius += 0.25;
+
+			scene.cameras[scene.active_camera]->radius += 0.025;
 			change = true;
 		}
 	}
@@ -453,13 +506,14 @@ void canvas_menu(int num)
 		if (path != NULL && strlen(path) > 0)
 			scene.objects.push_back(new modelhdl(path));
 	}
-	// Done Assignment 3: uncomment this
+
 	else if (num == 6)
 		scene.render_lights = !scene.render_lights;
 	else if (num == 7)
 	{
 		scene.lights.push_back(new directionalhdl());
 		scene.objects.push_back(new cylinderhdl(0.25, 1.0, 8));
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -476,12 +530,15 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new pointhdl());
 		scene.objects.push_back(new spherehdl(0.25, 4, 8));
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		scene.lights.back()->model = scene.objects.back();
 	}
 	else if (num == 9)
 	{
 		scene.lights.push_back(new spothdl());
 		scene.objects.push_back(new pyramidhdl(0.25, 1.0, 8));
+		((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
+
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -529,7 +586,8 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+
+			scene.cameras[scene.active_camera]->project();
 		}
 	}
 	else if (num == 19)
@@ -551,7 +609,9 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+
+			scene.cameras[scene.active_camera]->project();
+
 		}
 	}
 	else if (num == 20)
@@ -573,26 +633,29 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-			scene.cameras[scene.active_camera]->project(&canvas);
+
+			scene.cameras[scene.active_camera]->project();
 		}
 	}
 	else if (num == 21)
-		canvas.polygon_mode = canvashdl::point;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
 	else if (num == 22)
-		canvas.polygon_mode = canvashdl::line;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	else if (num == 23)
-		canvas.polygon_mode = canvashdl::fill;
-	// Done Assignment 3: uncomment this
-	else if (num == 25)
-		canvas.shade_model = canvashdl::flat;
-	else if (num == 26)
-		canvas.shade_model = canvashdl::smooth;
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	else if (num == 28)
-		canvas.culling = canvashdl::disable;
+		glDisable(GL_CULL_FACE);
 	else if (num == 29)
-		canvas.culling = canvashdl::backface;
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+	}
 	else if (num == 30)
-		canvas.culling = canvashdl::frontface;
+	{
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+	}
+
 	else if (num == 31)
 		scene.render_normals = scenehdl::none;
 	else if (num == 32)
@@ -611,7 +674,6 @@ void object_menu(int num)
 		{
 			if (scene.objects[scene.active_object] != NULL)
 			{
-				// Done Assignment 3: uncomment this
 				for (int i = 0; i < scene.lights.size(); )
 				{
 					if (scene.lights[i] != NULL && scene.lights[i]->model == scene.objects[scene.active_object])
@@ -649,7 +711,8 @@ void object_menu(int num)
 				scene.active_camera = i;
 
 		if (scene.active_camera_valid())
-			scene.cameras[scene.active_camera]->project(&canvas);
+
+			scene.cameras[scene.active_camera]->project();
 
 		glutPostRedisplay();
 	}
@@ -664,8 +727,8 @@ void object_menu(int num)
 		scene.cameras[scene.active_camera]->focus = scene.objects[scene.active_object];
 		scene.cameras[scene.active_camera]->radius = dist(scene.objects[scene.active_object]->position, scene.cameras[scene.active_camera]->position);
 	}
-	// TODO Assignment 4: uncomment this
-	/*else if (num == 6 && scene.active_object_valid())
+	else if (num == 6 && scene.active_object_valid())
+
 	{
 		for (map<string, materialhdl*>::iterator i = scene.objects[scene.active_object]->material.begin(); i != scene.objects[scene.active_object]->material.end(); i++)
 		{
@@ -674,8 +737,7 @@ void object_menu(int num)
 			i->second = new texturehdl();
 		}
 		glutPostRedisplay();
-	}*/
-	// Done Assignment 3: uncomment this
+	}
 	else if (num == 7 && scene.active_object_valid())
 	{
 		for (map<string, materialhdl*>::iterator i = scene.objects[scene.active_object]->material.begin(); i != scene.objects[scene.active_object]->material.end(); i++)
@@ -716,9 +778,11 @@ void object_menu(int num)
 		}
 		glutPostRedisplay();
 	}
+
+
 }
 
-// Done Assignment 3: uncomment this
+
 void color_menu(int num)
 {
 	for (int i = 0; i < scene.lights.size(); i++)
@@ -813,7 +877,6 @@ void create_menu()
     glutAddMenuEntry(" Model       ", 5);
 
 
-    // Done Assignment 3: uncomment this
     int lights_id = glutCreateMenu(canvas_menu);
     glutAddMenuEntry(" Toggle Draw ", 6);
 	glutAddMenuEntry(" Directional ", 7);
@@ -836,11 +899,8 @@ void create_menu()
 	int mode_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" Point       ", 21);
 	glutAddMenuEntry(" Line        ", 22);
-//	 Done Assignment 2: uncomment this
 	glutAddMenuEntry(" Fill        ", 23);
 
-
-	// Done Assignment 3: uncomment this
 	int ambient_id = glutCreateMenu(color_menu);
 	glutAddMenuEntry(" Red         ", 0);
 	glutAddMenuEntry(" Orange      ", 1);
@@ -892,11 +952,6 @@ void create_menu()
 	glutAddMenuEntry(" Range 3250  ",  11);
 
 
-	int shading_id = glutCreateMenu(canvas_menu);
-	glutAddMenuEntry(" Flat        ", 25);
-	glutAddMenuEntry(" Smooth      ", 26);
-
-	// Done Assignment 2: uncomment this
 	int culling_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 28);
 	glutAddMenuEntry(" Back        ", 29);
@@ -909,28 +964,24 @@ void create_menu()
 
     canvas_menu_id = glutCreateMenu(canvas_menu);
     glutAddSubMenu  (" Objects     ", objects_id);
-    // Done Assignment 3: uncomment this
+
     glutAddSubMenu  (" Lights      ", lights_id);
     glutAddSubMenu  (" Cameras     ", camera_id);
     glutAddSubMenu  (" Polygon     ", mode_id);
-    // Done Assignment 3: uncomment this
-    glutAddSubMenu  (" Shading     ", shading_id);
-    // Done Assignment 2: uncomment this
     glutAddSubMenu  (" Culling     ", culling_id);
     glutAddSubMenu  (" Normals     ", normal_id);
     glutAddMenuEntry(" Quit        ", 0);
 
-    // DOne Assignment 3: uncomment this
+
     int material_menu_id = glutCreateMenu(object_menu);
-	glutAddMenuEntry(" White       ", 10);
-	glutAddMenuEntry(" Gouraud     ", 9);
-	glutAddMenuEntry(" Phong       ", 8);
-	glutAddMenuEntry(" Custom      ", 7);
-    // TODO Assignment 4: uncomment this
-	//glutAddMenuEntry(" Texture     ", 6);
+    glutAddMenuEntry(" White       ", 10);
+    glutAddMenuEntry(" Gouraud     ", 9);
+    glutAddMenuEntry(" Phong       ", 8);
+    glutAddMenuEntry(" Custom       ", 7);
+    glutAddMenuEntry(" Texture     ", 6);
 
     object_menu_id = glutCreateMenu(object_menu);
-    // Done Assignment 3: uncomment this
+
     glutAddSubMenu  (" Material    ", material_menu_id);
     glutAddMenuEntry(" Set Focus   ", 5);
     glutAddMenuEntry(" Translate   ", 1);
@@ -938,7 +989,7 @@ void create_menu()
     glutAddMenuEntry(" Scale       ", 3);
     glutAddMenuEntry(" Delete      ", 0);
 
-    // Done Assignment 3: uncomment this
+
     light_menu_id = glutCreateMenu(object_menu);
     glutAddSubMenu  (" Ambient     ", ambient_id);
 	glutAddSubMenu  (" Diffuse     ", diffuse_id);
@@ -972,7 +1023,7 @@ int main(int argc, char **argv)
 #endif
 	glutInitDisplayMode(display_mode);
 
-	glutInitWindowSize(750, 750);
+	glutInitWindowSize(width, height);
 	glutInitWindowPosition(0, 0);
 	window_id = glutCreateWindow("Assignment");
 
@@ -989,8 +1040,9 @@ int main(int argc, char **argv)
 	cout << "Status: Using OpenGL " << glGetString(GL_VERSION) << endl;
 	cout << "Status: Using GLSL " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 
+	working_directory = string(argv[0]).substr(0, string(argv[0]).find_last_of("/\\")) + "/";
 
-	init(string(argv[0]).substr(0, string(argv[0]).find_last_of("/\\")) + "/");
+	init();
 	create_menu();
 
 	glutReshapeFunc(reshapefunc);

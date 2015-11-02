@@ -210,6 +210,12 @@ void modelhdl::load_mtl(string filename)
 					material[current_material] = new gouraudhdl();
 				else if (type == "phong")
 					material[current_material] = new phonghdl();
+
+				else if (type == "custom")
+					material[current_material] = new customhdl();
+				else if (type == "texture")
+					material[current_material] = new texturehdl();
+
 			}
 			else if (command == "Ke" && type == "gouraud")
 				iss >> ((gouraudhdl*)material[current_material])->emission[0] >> ((gouraudhdl*)material[current_material])->emission[1] >> ((gouraudhdl*)material[current_material])->emission[2];
