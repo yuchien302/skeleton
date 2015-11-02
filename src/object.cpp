@@ -25,7 +25,8 @@ void rigidhdl::draw()
 {
 	// (untested) Done Assignment 1: Send the rigid body geometry to the renderer
 	//canvas
-	canvas -> draw_triangles(geometry, indices);
+	//  TODO: Use OpenGL
+//	canvas -> draw_triangles(geometry, indices);
 
 }
 
@@ -161,7 +162,9 @@ void objecthdl::draw_normals(bool face)
 	for (int i = 0; i < rigid.size(); i++){
 		if(face){
 			//assert (rigid[i].geometry.size()%3 == 0);
-			for(int n = 0; n < rigid[i].indices.size()/3; n++){
+			for(int n = 0; n < rigid[i].indices.size()/3; n++){}
+		}
+	}
 
 //<<<<<<< HEAD
 //				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);

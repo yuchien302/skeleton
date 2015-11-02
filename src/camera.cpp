@@ -25,7 +25,7 @@ camerahdl::~camerahdl()
 
 void camerahdl::view()
 {
-	/* Done Assignment 1: Do the necessary modelview transformations to move
+	/* TODO Assignment 1: Do the necessary modelview transformations to move
 	 * the camera into place.
 	 */
 	
@@ -38,9 +38,9 @@ void camerahdl::view()
 		eye = at - ror3(vec3f(0.0, 0.0, -radius), orientation);
 	}
 
-	canvas -> set_matrix(canvashdl::modelview_matrix);
-	canvas -> load_identity();
-	canvas -> look_at(eye, at, up);
+//	canvas -> set_matrix(canvashdl::modelview_matrix);
+//	canvas -> load_identity();
+//	canvas -> look_at(eye, at, up);
 
 	if (model != NULL) {
 		model->position = position;
@@ -67,10 +67,10 @@ orthohdl::~orthohdl()
 
 void orthohdl::project()
 {
-	// Done Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
-	canvas -> set_matrix(canvashdl::projection_matrix);
-	canvas -> load_identity();
-	canvas -> ortho(left, right, bottom, top, front, back);
+	// TODO Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
+//	canvas -> set_matrix(canvashdl::projection_matrix);
+//	canvas -> load_identity();
+//	canvas -> ortho(left, right, bottom, top, front, back);
 }
 
 frustumhdl::frustumhdl()
@@ -91,10 +91,10 @@ frustumhdl::~frustumhdl()
 
 void frustumhdl::project()
 {
-	// Done Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
-	canvas -> set_matrix(canvashdl::projection_matrix);
-	canvas -> load_identity();
-	canvas -> frustum(left, right, bottom, top, front, back);
+	// TODO Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
+//	canvas -> set_matrix(canvashdl::projection_matrix);
+//	canvas -> load_identity();
+//	canvas -> frustum(left, right, bottom, top, front, back);
 }
 
 perspectivehdl::perspectivehdl()
@@ -113,8 +113,8 @@ perspectivehdl::~perspectivehdl()
 
 void perspectivehdl::project()
 {
-	// Done Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
-	canvas -> set_matrix(canvashdl::projection_matrix);
-	canvas -> load_identity();
-	canvas -> perspective(fovy, aspect, front, back);
+	// TODO Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
+//	canvas -> set_matrix(canvashdl::projection_matrix);
+//	canvas -> load_identity();
+//	canvas -> perspective(fovy, aspect, front, back);
 }

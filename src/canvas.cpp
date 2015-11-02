@@ -378,9 +378,10 @@ vec3f canvashdl::shade_vertex(vec8f v, vector<float> &varying)
 	vec3f position = position_homo / position_homo[3];
 	vec3f normal = (mat3f) matrices[normal_matrix] * ( vec3f(v[3], v[4], v[5]) );
 
-	vec3f window_position = m -> shade_vertex(this, position, normal, varying);
-
-	return window_position;
+	//  TODO: Use OpenGL
+//	vec3f window_position = m -> shade_vertex(this, position, normal, varying);
+//	return window_position;
+	return vec3f(0.0, 0.0, 0.0);
 }
 
 /* shade_fragment
@@ -398,8 +399,9 @@ vec3f canvashdl::shade_fragment(vector<float> varying)
 	if( m == NULL) {
 		m = new whitehdl();
 	}
-
-	return m -> shade_fragment(this, varying);
+	//  TODO: Use OpenGL
+//	return m -> shade_fragment(this, varying);
+	return vec3f(0.0, 0.0, 0.0);
 	/* DONE Assignment 3: Get the material from the list of uniform variables and
 	 * call its fragment shader.
 	 */
