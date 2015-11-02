@@ -688,7 +688,7 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 			}
 			plot(vec3i(x,xy_plot1.data[1], (int)(ratio*(float)zend + (1.0f -ratio)*(float)zstart)), varying_result);
 			ratio = (ratio <= 1.0f)? ratio+step: 1.0f;
-
+cout<<"fffff"<<endl;
 		}
 	//check if we finish half
 	}while(xy_plot1.data[1] != s2.data[1]);
