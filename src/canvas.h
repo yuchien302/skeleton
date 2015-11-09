@@ -55,9 +55,9 @@ private:
 	vec5i pre_plot(vec3i, vec3i);
 	vec2i beforeBreseham (int octant, int x, int y);
 	vec2i afterBreseham(int octnat, int x, int y);
-	void bresenham(int, int, int, int, int, int, int, vector<float>, vector<float>);
+	void bresenham(int, int, int, int, int, int, int, vector<float>, vector<float>, vector<float> ave_varying);
 	vector<float> bresenham_halftri(int &x, int &y, int &z_now,int &d, int xmin, int xmax, int zmin, int zmax, int octant
-			   	   	   	 , int delta_x, int delta_y, vector<float> v1_varying, vector<float> v2_varying);
+			   	   	   	 , int delta_x, int delta_y, vector<float> v1_varying, vector<float> v2_varying, vector<float> ave_varying);
 
 	bool is_inside(vec8f point, vec6f plane);
 	vec3f intersect_point(vec8f point1, vec8f point2, vec6f plane);

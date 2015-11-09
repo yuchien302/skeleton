@@ -420,7 +420,7 @@ void canvashdl::plot(vec3i xyz, vector<float> varying)
 
 	int idx = xyz[1]*width + xyz[0];
 	//cout << depth_buffer[idx] <<" z:"<< xyz[2] <<endl;
-	if (xyz[0] >= 0 && xyz[0] < width && xyz[1] >= 0 && xyz[1] < height && xyz[2] <= depth_buffer[idx])
+	if (xyz[0] >= 0 && xyz[0] < width && xyz[1] >= 0 && xyz[1] < height && (xyz[2]) <= depth_buffer[idx])
 	{
 		vec3f color = shade_fragment(varying);
 		color_buffer[idx*3 + 0] = (int)(color[0]*255.0);
@@ -468,7 +468,7 @@ vec5i canvashdl::pre_plot(vec3i v1_pixel, vec3i v2_pixel){
 	return vec5i(v1_t.data[0], v2_t.data[0], v1_t.data[1], v2_t.data[1], octant);
 }
 
-void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int octant, vector<float> v1_varying, vector<float> v2_varying){
+void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int zmin, int zmax, int octant, vector<float> v1_varying, vector<float> v2_varying, vector<float> ave_varying){
 	//Breseham's algorithm for plot line
 	int delta_y = ymax - ymin;
 	int delta_x = xmax - xmin;
@@ -490,24 +490,36 @@ void canvashdl::bresenham(int xmin, int xmax, int ymin, int ymax, int zmin, int 
 		assert (ratio <= 1 && ratio >= 0);
 		vec2i xy_plot = afterBreseham(octant, x, y);
 
+		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], (int)(ratio*(float)zmax + (1.0f- ratio)*(float)zmin));
 		// use plot method
 		vector<float> varying_result = vector<float>();
-		assert(v1_varying.size() == v2_varying.size());
-		for (int i = 0; i < v1_varying.size(); i++){
-			varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
+		if (shade_model != canvashdl::flat){
+
+
+			assert(v1_varying.size() == v2_varying.size());
+			for (int i = 0; i < v1_varying.size(); i++){
+				varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
+			}
+			plot(xyz, varying_result);
+		}
+		else{
+			plot(xyz, ave_varying);
 		}
 		//cout <<"z: "<<zmin<<","<<zmax<<endl;
-		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], (int)(ratio*(float)zmax + (1.0f- ratio)*(float)zmin));
+
 		//cout << xyz << endl;
-		plot(xyz, varying_result);
+
+
 	}
 }
-vector<float> canvashdl::bresenham_halftri(int &x, int &y, int &z_now, int &d, int xmin,int xmax, int zmin, int zmax, int octant, int delta_x, int delta_y, vector<float> v1_varying, vector<float> v2_varying){
+vector<float> canvashdl::bresenham_halftri(int &x, int &y, int &z_now, int &d, int xmin,int xmax, int zmin, int zmax, int octant, int delta_x, int delta_y, vector<float> v1_varying, vector<float> v2_varying, vector<float> ave_varying){
 	//Breseham's algorithm for plot line
 
 
 	bool octant_flag = (octant ==0 || octant == 3 || octant == 4 || octant == 7);
 	bool stop_flag = false;
+	//vector<float> varying_result = vector<float>();
+	float ratio = (float)(x-xmin)/(float)(delta_x);
 	vector<float> varying_result = vector<float>();
 	while(x < xmax){
 		x++; if(!octant_flag) stop_flag = true;
@@ -518,22 +530,42 @@ vector<float> canvashdl::bresenham_halftri(int &x, int &y, int &z_now, int &d, i
 			d += 2*delta_y - 2*delta_x;
 			y++; if(octant_flag) stop_flag = true;
 		}
-		float ratio = (float)(x-xmin)/(float)(delta_x);
-		vector<float> varying_result = vector<float>();
-		assert(v1_varying.size() == v2_varying.size());
-		for (int i = 0; i < v1_varying.size(); i++){
-			varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
-		}
+
 		// tranform the cordinate back to original octant
 		vec2i xy_plot = afterBreseham(octant, x, y);
 		z_now = (int)(ratio*(float)zmax + (1.0-ratio)*(float)zmin);
 		vec3i xyz = vec3i(xy_plot.data[0], xy_plot.data[1], z_now);
-		// use plot method
-		plot(xyz, varying_result);
-		if (stop_flag) return varying_result;
-	}
 
-	return v1_varying;
+		if(shade_model != canvashdl::flat){
+
+			assert(v1_varying.size() == v2_varying.size());
+			for (int i = 0; i < v1_varying.size(); i++){
+				varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
+			}
+
+
+		// use plot method
+			plot(xyz, varying_result);
+		}
+		else{
+			plot(xyz, ave_varying);
+		}
+		if (stop_flag) return (shade_model != canvashdl::flat)?varying_result:ave_varying;
+	}
+	if(shade_model != canvashdl::flat){
+
+				assert(v1_varying.size() == v2_varying.size());
+				for (int i = 0; i < v1_varying.size(); i++){
+					varying_result.push_back(ratio*(v2_varying[i]) + (1.0-ratio)*v1_varying[i]);
+				}
+
+
+			// use plot method
+
+			}
+	return (shade_model != canvashdl::flat)?varying_result:ave_varying;
+//	return (shade_model != canvashdl::flat)?varying_result:ave_varying;
+
 }
 /* plot_line
  *
@@ -557,7 +589,7 @@ void canvashdl::plot_line(vec3f v1, vector<float> v1_varying, vec3f v2, vector<f
 
 	// DONE Assignment 3: Interpolate the varying values before passing them into plot.
 	bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
-		  xyminmaxoctant.data[2], xyminmaxoctant.data[3], v1_pixel.data[2], v2_pixel.data[2], xyminmaxoctant.data[4],  v1_varying, v2_varying);
+		  xyminmaxoctant.data[2], xyminmaxoctant.data[3], v1_pixel.data[2], v2_pixel.data[2], xyminmaxoctant.data[4],  v1_varying, v2_varying, v1_varying);
 	//}
 	//else{
 		//bresenham(xyminmaxoctant.data[0], xyminmaxoctant.data[1],
@@ -660,10 +692,15 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 	int z2_now = 0;
 	do{
 		// plot one edge return if y++
-		vector<float> varying_1 = bresenham_halftri(x1, y1, z1_now, d1, xmin1, xmax1, z1, z2, octant1, delta_x1, delta_y1, v1_varying, v2_varying);
+		vector<float> varying_1 = bresenham_halftri(x1, y1, z1_now, d1, xmin1, xmax1, z1, z2, octant1, delta_x1, delta_y1, v1_varying, v2_varying, ave_varying);
+		//if (shade_model == canvashdl::flat) varying_1 = ave_varying;
+
+
 		// plot one edge return if y++
-		vector<float> varying_2 = bresenham_halftri(x2, y2, z2_now, d2, xmin2, xmax2, z1, z3, octant2, delta_x2, delta_y2, v1_varying, v3_varying);
+		vector<float> varying_2 = bresenham_halftri(x2, y2, z2_now, d2, xmin2, xmax2, z1, z3, octant2, delta_x2, delta_y2, v1_varying, v3_varying, ave_varying);
 		// fill the scanline
+		//if (shade_model == canvashdl::flat) varying_2 = ave_varying;
+
 		xy_plot1 = afterBreseham(octant1, x1, y1);
 		xy_plot2 = afterBreseham(octant2, x2, y2);
 
@@ -681,14 +718,16 @@ void canvashdl::plot_half_triangle(vec3i s1, vector<float> v1_varying, vec3i s2,
 		float step = 1.0f/(float)(xend - xstart);
 		float ratio = 0.0f;
 		for(int x = xstart; x <= xend; x++){
-
-			vector<float> varying_result = vector<float>();
-			for (int i = 0; i < varying_start.size(); i++){
-				varying_result.push_back(ratio*(varying_end[i]) + (1.0-ratio)*varying_start[i]);
+			if(shade_model != canvashdl::flat){
+				vector<float> varying_result = vector<float>();
+				for (int i = 0; i < varying_start.size(); i++){
+					varying_result.push_back(ratio*(varying_end[i]) + (1.0-ratio)*varying_start[i]);
+				}
+				plot(vec3i(x,xy_plot1.data[1], (int)(ratio*(float)zend + (1.0f -ratio)*(float)zstart)), varying_result);
 			}
-			plot(vec3i(x,xy_plot1.data[1], (int)(ratio*(float)zend + (1.0f -ratio)*(float)zstart)), varying_result);
+			else
+				plot(vec3i(x,xy_plot1.data[1], (int)(ratio*(float)zend + (1.0f -ratio)*(float)zstart)), ave_varying);
 			ratio = (ratio <= 1.0f)? ratio+step: 1.0f;
-cout<<"fffff"<<endl;
 		}
 	//check if we finish half
 	}while(xy_plot1.data[1] != s2.data[1]);
@@ -709,7 +748,7 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 	 * take into account the polygon mode. You should be able to render the
 	 * triangle as 3 points or 3 lines.
 	 */
-	
+
 	if(polygon_mode == canvashdl::point){
 		plot_point(v1, v1_varying);
 		plot_point(v2, v2_varying);
@@ -721,12 +760,15 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 		plot_line(v3, v3_varying, v1, v1_varying);
 	}
 	else if(polygon_mode == canvashdl::fill){
-		plot_line(v1, v1_varying, v2, v2_varying);
-		plot_line(v2, v2_varying, v3, v3_varying);
-		plot_line(v3, v3_varying, v1, v1_varying);
+
 		vec3i v1_pixel = to_pixel(v1);
 		vec3i v2_pixel = to_pixel(v2);
 		vec3i v3_pixel = to_pixel(v3);
+
+		vector<float> vv1 = v1_varying;
+		vector<float> vv2 = v2_varying;
+		vector<float> vv3 = v3_varying;
+
 
 
 		// DONE Assignment 2: Calculate the average varying vector for flat shading and call plot_half_triangle as needed.
@@ -739,7 +781,10 @@ void canvashdl::plot_triangle(vec3f v1, vector<float> v1_varying, vec3f v2, vect
 		if (v2_pixel.data[1] != v3_pixel.data[1]){
 			plot_half_triangle(v3_pixel, v3_varying, v2_pixel, v2_varying, v1_pixel, v1_varying, ave_varying);
 		}
-
+		if (shade_model == canvashdl::flat) vv1 = vv2 = vv3 = ave_varying;
+		plot_line(v1, vv1, v2, vv2);
+		plot_line(v2, vv2, v3, vv3);
+		plot_line(v3, vv3, v1, vv1);
 
 	}
 

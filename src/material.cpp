@@ -33,13 +33,15 @@ vec3f whitehdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, vect
 	// DONE Assignment 3: Move your solid color shader from the canvas to here.
 	vec4f point = canvas -> matrices[canvas -> projection_matrix] * homogenize(vertex);
 	point = point / point.data[3];
-
+	varying.push_back(1.0);
+	varying.push_back(1.0);
+	varying.push_back(1.0);
 	return point;
 }
 
 vec3f whitehdl::shade_fragment(canvashdl *canvas, vector<float> &varying) const
 {
-	return vec3f(1.0, 1.0, 1.0);
+	return vec3f(varying[0], varying[1], varying[2]);
 }
 
 materialhdl *whitehdl::clone() const
@@ -86,7 +88,7 @@ vec3f gouraudhdl::shade_vertex(canvashdl *canvas, vec3f vertex, vec3f normal, ve
 
 	}
 
-	vec3f color = a*this->ambient +d*this ->diffuse +s*this->specular + this->emission ;
+	vec3f color = a*this->ambient + d*this ->diffuse + s*this->specular + this->emission ;
 
 	varying.push_back(color.data[0]);
 	varying.push_back(color.data[1]);

@@ -23,6 +23,12 @@ trianglehdl::trianglehdl()
 	rigid[0].indices.push_back(1);
 	rigid[0].indices.push_back(2);
 
+
+	bound = vec6f(-0.5, 0.5, -0.5, 0.5, -0.5, 0.5);
+
+	// DONE Assignment 3: Set up the material properties for this object
+	rigid[0].material = "Material__1";
+	material["Material__1"] = new whitehdl();
 }
 
 trianglehdl::~trianglehdl()
