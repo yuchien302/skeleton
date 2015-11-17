@@ -47,26 +47,13 @@ void scenehdl::draw()
 	/* DONE Assignment 1: Draw all of the objects, and
 	 * if enabled, draw the normals and the cameras.
 	 */
-
-//<<<<<<< HEAD
-////	cameras[active_camera] -> project(canvas);
-//	cameras[active_camera] -> view(canvas);
-//
-//	/* DONE Assignment 3: Clear the uniform variables and pass the vector of
-//	 * lights into the renderer as a uniform variable.
-//=======
-	/* TODO Assignment 3: Clear the uniform variables and pass the vector of
-	 * lights into the renderer as a uniform variable.
-	 * TODO Assignment 3: Update the light positions and directions
-	 * TODO Assignment 3: Render the lights
-	 */
-//	canvas -> uniform.clear();
-//	canvas -> uniform["lights"] = &lights;
+	cameras[active_camera] -> project();
+	cameras[active_camera] -> view();
 
 
 	// DONE Assignment 3: Update the light positions and directions
 	for (int i=0; i < lights.size(); i++){
-//		lights[i] -> update(canvas);
+		lights[i] -> update();
 	}
 
 	for (int i = 0; i < objects.size(); i++) {
@@ -93,13 +80,13 @@ void scenehdl::draw()
 		}
 
 		if( (!is_camera && !is_light) || (is_camera && render_cameras) || (is_light && render_lights) ){
-//			objects[i] -> draw(canvas);
+			objects[i] -> draw(lights);
 
-//			if(render_normals)
-//				objects[i] -> draw_normals(canvas, render_normals==scenehdl::face);
+			if(render_normals)
+				objects[i] -> draw_normals(render_normals==scenehdl::face);
 
-//			if(i == active_object)
-//				objects[i] -> draw_bound(canvas);
+			if(i == active_object)
+				objects[i] -> draw_bound();
 		}
 	}
 
