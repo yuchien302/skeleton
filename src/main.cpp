@@ -93,8 +93,6 @@ void displayfunc()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	scene.draw();
-	//vector<float> a = vector<float>();
-	//vec3i a = vec3i(100,200,300);
 
 	glutSwapBuffers();
 }
