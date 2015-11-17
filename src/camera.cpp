@@ -25,7 +25,7 @@ camerahdl::~camerahdl()
 
 void camerahdl::view()
 {
-	/* TODO Assignment 1: Do the necessary modelview transformations to move
+	/* Done Assignment 1: Do the necessary modelview transformations to move
 	 * the camera into place.
 	 */
 	
