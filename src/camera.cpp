@@ -67,10 +67,11 @@ orthohdl::~orthohdl()
 
 void orthohdl::project()
 {
-	// TODO Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
-//	canvas -> set_matrix(canvashdl::projection_matrix);
-//	canvas -> load_identity();
-//	canvas -> ortho(left, right, bottom, top, front, back);
+	// DONE Assignment 1: Use the canvashdl::ortho function to set up an orthographic projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(left, right, bottom, top, front, back);
+
 }
 
 frustumhdl::frustumhdl()
@@ -91,10 +92,10 @@ frustumhdl::~frustumhdl()
 
 void frustumhdl::project()
 {
-	// TODO Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
-//	canvas -> set_matrix(canvashdl::projection_matrix);
-//	canvas -> load_identity();
-//	canvas -> frustum(left, right, bottom, top, front, back);
+	// DONE Assignment 1: Use the canvashdl::frustum function to set up a perspective projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glFrustum(left, right, bottom, top, front, back);
 }
 
 perspectivehdl::perspectivehdl()
@@ -113,8 +114,8 @@ perspectivehdl::~perspectivehdl()
 
 void perspectivehdl::project()
 {
-	// TODO Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
-//	canvas -> set_matrix(canvashdl::projection_matrix);
-//	canvas -> load_identity();
-//	canvas -> perspective(fovy, aspect, front, back);
+	// DONE Assignment 1: Use the canvashdl::perspective function to set up a perspective projection
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(fovy, aspect, front, back);
 }
