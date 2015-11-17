@@ -38,9 +38,9 @@ void camerahdl::view()
 		eye = at - ror3(vec3f(0.0, 0.0, -radius), orientation);
 	}
 
-//	canvas -> set_matrix(canvashdl::modelview_matrix);
-//	canvas -> load_identity();
-//	canvas -> look_at(eye, at, up);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 	if (model != NULL) {
 		model->position = position;
