@@ -165,7 +165,6 @@ void objecthdl::draw_normals(bool face)
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){}
 		}
 	}
-
 //<<<<<<< HEAD
 //				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
 //				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
@@ -204,27 +203,24 @@ void objecthdl::draw_normals(bool face)
 //
 //}
 //
-//void objecthdl::before_draw(canvashdl *canvas){
-//	canvas -> translate(position);
-//
-//	canvas -> rotate(orientation[0], vec3f(1.0, 0.0, 0.0));
-//	canvas -> rotate(orientation[1], vec3f(0.0, 1.0, 0.0));
-//	canvas -> rotate(orientation[2], vec3f(0.0, 0.0, 1.0));
-//
-//	canvas -> scale(vec3f(scale, scale, scale));
-//}
-//
-//
-//void objecthdl::after_draw(canvashdl *canvas){
-//	canvas -> scale(vec3f(1.0/scale, 1.0/scale, 1.0/scale));
-//
-//	canvas -> rotate(-orientation[2], vec3f(0.0, 0.0, 1.0));
-//	canvas -> rotate(-orientation[1], vec3f(0.0, 1.0, 0.0));
-//	canvas -> rotate(-orientation[0], vec3f(1.0, 0.0, 0.0));
-//
-//	canvas -> translate(-position);
-//=======
-	// TODO Assignment 3: clear the material in the uniform list before rendering
+// TODO Assignment 3: clear the material in the uniform list before rendering
+}
+void objecthdl::before_draw(){
+	glTranslatef(position[0], position[1], position[2]);
+	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
+	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
+	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
+}
+
+void objecthdl::after_draw(){
+	glScalef(1.0/scale, 1.0/scale, 1.0/scale);
+	glRotatef(radtodeg(-orientation[2]), 0.0, 0.0, 1.0);
+	glRotatef(radtodeg(-orientation[1]), 0.0, 1.0, 0.0);
+	glRotatef(radtodeg(-orientation[0]), 1.0, 0.0, 0.0);
+	glTranslatef(-position[0], -position[1], -position[2]);
+
+
 }
 
 
