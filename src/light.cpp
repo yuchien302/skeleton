@@ -69,7 +69,6 @@ void directionalhdl::apply(string name, GLuint program)
 	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for the directional light.
 	 */
 
-
 //	float pf = 0.0; // power factor
 //	float nDotVP = max(0.0f, dot(normal, norm(direction)));
 //
@@ -111,10 +110,10 @@ void pointhdl::update()
 	//				  homogenize(model -> position));
 
 
-//	model ->before_draw(canvas);
+	model ->before_draw();
 //	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
 //	position = vec3f (homo_pos/homo_pos[3]);
-//	model ->after_draw(canvas);
+	model ->after_draw();
 
 }
 
@@ -123,25 +122,6 @@ void pointhdl::apply(string name, GLuint program)
 {
 	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for point lights.
 	 */
-//	vec3f toLight = position - vertex;
-//	float d = mag(toLight);
-//	toLight = toLight/d;
-//	vec3f toEye = norm(-vertex);
-//	normal = norm(normal);
-//	float diff_cosine = max((float)0.0, (float)dot(normal, toLight));
-//	float spec_base = max((float)0.0, (float)dot(normal, norm(toLight+toEye)));
-//	float spec_pf;
-//
-//	if(diff_cosine == 0)
-//		spec_pf = 0;
-//	else
-//		spec_pf = pow(spec_base, shininess);
-//
-//	float decay = 1.0 / (attenuation[0] + attenuation[1]*d + attenuation[2]*d*d);
-//
-//	ambient += this->ambient * decay;
-//	diffuse += this->diffuse * diff_cosine * decay;
-//	specular += this->specular * spec_pf * decay;
 
 }
 
