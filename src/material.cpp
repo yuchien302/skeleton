@@ -52,6 +52,12 @@ whitehdl::whitehdl()
 		 * this class. So you only have to initialize them once when the first instance of
 		 * the class is created.
 		 */
+		vertex = load_shader_file(working_directory + "res/white.vx", GL_VERTEX_SHADER);
+		fragment = load_shader_file(working_directory + "res/white.ft", GL_FRAGMENT_SHADER);
+		program = glCreateProgram();
+		glAttachShader(program, vertex);
+		glAttachShader(program, fragment);
+		glLinkProgram(program);
 	}
 
 }
