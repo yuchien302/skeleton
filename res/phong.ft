@@ -1,0 +1,17 @@
+#include "light.glsl"
+
+uniform vec3 emission;
+uniform vec3 ambient;
+uniform vec3 diffuse;
+uniform vec3 specular;
+uniform float shininess;
+
+varying vec3 eye_space_vertex;
+varying vec3 eye_space_normal;
+
+void main()
+{
+	vec3 normal = normalize(eye_space_normal);
+	
+	gl_FragColor = vec4(lighting(emission, ambient, diffuse, specular, shininess, eye_space_vertex, normal), 1.0);
+}
