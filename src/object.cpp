@@ -23,10 +23,17 @@ rigidhdl::~rigidhdl()
  */
 void rigidhdl::draw()
 {
-	// (untested) Done Assignment 1: Send the rigid body geometry to the renderer
-	//canvas
-	//  TODO: Use OpenGL
-//	canvas -> draw_triangles(geometry, indices);
+	// Done Assignment 1: Send the rigid body geometry to the renderer
+	vector<vec3f> vertices;
+	for(int i =0; i<geometry.size(); i++){
+		vertices.push_back(geometry[i]);
+	}
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, vertices.data());
+	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glUseProgram(0);
 
 }
 
@@ -68,20 +75,16 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-//<<<<<<< HEAD
-//	// DONE Assignment 1: Send transformations and geometry to the renderer to draw the object
-//	canvas -> set_matrix(canvashdl::modelview_matrix);
-//	before_draw(canvas);
-//	for (int i = 0; i < rigid.size(); i++){
-//		// DONE Assignment 3: Pass the material as a uniform into the renderer
-//		canvas->uniform["current_material"] = material[rigid[i].material] ;
-//		rigid[i].draw(canvas);
-//	}
-//	after_draw(canvas);
-//
-//=======
 	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
 	// TODO Assignment 3: Pass the material as a uniform into the renderer
+	glMatrixMode(GL_MODELVIEW);
+	before_draw();
+	for (int i = 0; i < rigid.size(); i++){
+		// DONE Assignment 3: Pass the material as a uniform into the renderer
+		material[rigid[i].material] -> apply(lights);
+		rigid[i].draw();
+	}
+	after_draw();
 }
 
 
@@ -95,51 +98,53 @@ void objecthdl::draw_bound()
 	/* DONE Assignment 1: Generate the geometry for the bounding box and send the necessary
 	 * transformations and geometry to the renderer
 	 */
-//<<<<<<< HEAD
-//	canvas->set_matrix(canvashdl::modelview_matrix);
-//	before_draw(canvas);
-//
-//	vector<vec8f> geometry = vector<vec8f>();
-//	vector<int> indices = vector<int>();
-//
-//	float xmin = bound.data[0];
-//	float xmax = bound.data[1];
-//	float ymin = bound.data[2];
-//	float ymax = bound.data[3];
-//	float zmin = bound.data[4];
-//	float zmax = bound.data[5];
-//
-//
-//	geometry.push_back(vec8f(xmax, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmin, ymax, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmin, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmax, ymin, zmax, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmax, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmin, ymax, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmin, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//	geometry.push_back(vec8f(xmax, ymin, zmin, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0));
-//
-//
-//	for(int i = 0; i < 4; i++){
-//		indices.push_back(i);
-//		indices.push_back((i+1)%4);
-//	}
-//	for(int i = 0; i < 4; i++){
-//		indices.push_back(i+4);
-//		indices.push_back(((i+1)%4) + 4);
-//	}
-//	for(int i = 0; i < 4; i++){
-//		indices.push_back(i);
-//		indices.push_back(i+4);
-//	}
-//
-//	// DONE Assignment 3: clear the material in the uniform list
-//	canvas -> uniform["current_material"] = NULL;
-//	canvas -> draw_lines(geometry, indices);
-//	after_draw(canvas);
-//
-//=======
-	// TODO Assignment 3: clear the material in the uniform list
+
+	glMatrixMode(GL_MODELVIEW);
+	before_draw();
+	vector<vec3f> vertices = vector<vec3f>();
+	vector<int> indices = vector<int>();
+
+	float xmin = bound.data[0];
+	float xmax = bound.data[1];
+	float ymin = bound.data[2];
+	float ymax = bound.data[3];
+	float zmin = bound.data[4];
+	float zmax = bound.data[5];
+
+
+	vertices.push_back(vec3f(xmax, ymax, zmax));
+	vertices.push_back(vec3f(xmin, ymax, zmax));
+	vertices.push_back(vec3f(xmin, ymin, zmax));
+	vertices.push_back(vec3f(xmax, ymin, zmax));
+	vertices.push_back(vec3f(xmax, ymax, zmin));
+	vertices.push_back(vec3f(xmin, ymax, zmin));
+	vertices.push_back(vec3f(xmin, ymin, zmin));
+	vertices.push_back(vec3f(xmax, ymin, zmin));
+
+
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back((i+1)%4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i+4);
+		indices.push_back(((i+1)%4) + 4);
+	}
+	for(int i = 0; i < 4; i++){
+		indices.push_back(i);
+		indices.push_back(i+4);
+	}
+
+	materialhdl* m = new whitehdl();
+	vector<lighthdl*> lights;
+	m -> apply(lights);
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, vertices.data());
+	glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glUseProgram(0);
+
+	after_draw();
 
 }
 
@@ -219,8 +224,6 @@ void objecthdl::after_draw(){
 	glRotatef(radtodeg(-orientation[1]), 0.0, 1.0, 0.0);
 	glRotatef(radtodeg(-orientation[0]), 1.0, 0.0, 0.0);
 	glTranslatef(-position[0], -position[1], -position[2]);
-
-
 }
 
 
