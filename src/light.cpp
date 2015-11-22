@@ -68,8 +68,19 @@ void directionalhdl::update()
 void directionalhdl::apply(string name, GLuint program)
 {
 
-	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for the directional light.
+	/* DONE Assignment 4: Pass all necessary uniforms to the shaders for the directional light.
 	 */
+	GLint ambient_hdl = glGetUniformLocation(program, (name + ".ambient").c_str());
+	GLint diffuse_hdl = glGetUniformLocation(program, (name + ".diffuse").c_str());
+	GLint specular_hdl = glGetUniformLocation(program, (name + ".specular").c_str());
+
+	GLint direction_hdl = glGetUniformLocation(program, (name + ".direction").c_str());
+
+	glUniform3f(ambient_hdl, ambient[0], ambient[1], ambient[2]);
+	glUniform3f(diffuse_hdl, diffuse[0], diffuse[1], diffuse[2]);
+	glUniform3f(specular_hdl, specular[0], specular[1], specular[2]);
+
+	glUniform3f(direction_hdl, direction[0], direction[1], direction[2]);
 
 }
 
@@ -110,8 +121,24 @@ void pointhdl::update()
 
 void pointhdl::apply(string name, GLuint program)
 {
-	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for point lights.
+	/* DONE Assignment 4: Pass all necessary uniforms to the shaders for point lights.
 	 */
+
+	GLint ambient_hdl = glGetUniformLocation(program, (name + ".ambient").c_str());
+	GLint diffuse_hdl = glGetUniformLocation(program, (name + ".diffuse").c_str());
+	GLint specular_hdl = glGetUniformLocation(program, (name + ".specular").c_str());
+
+	GLint attenuation_hdl = glGetUniformLocation(program, (name + ".attenuation").c_str());
+
+	GLint position_hdl = glGetUniformLocation(program, (name + ".position").c_str());
+
+	glUniform3f(ambient_hdl, ambient[0], ambient[1], ambient[2]);
+	glUniform3f(diffuse_hdl, diffuse[0], diffuse[1], diffuse[2]);
+	glUniform3f(specular_hdl, specular[0], specular[1], specular[2]);
+
+	glUniform3f(attenuation_hdl, attenuation[0], attenuation[1], attenuation[2]);
+
+	glUniform3f(position_hdl, position[0], position[1], position[2]);
 
 }
 
@@ -160,32 +187,26 @@ void spothdl::apply(string name, GLuint program)
 {
 	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for spot lights.
 	 */
-//	vec3f VP = position - vertex;
-//	float d = mag(VP);
-//	VP = norm(VP);
-//	vec3f eye = norm(vertex);
-//
-//	float attenuate = 1.0 / (attenuation[0] + attenuation[1] * d + attenuation[2] * d * d);
-//
-//	float spotDot =  dot(-VP, norm(direction));
-//
-//	if (spotDot < cutoff)
-//		attenuate = 0.0f;
-//	else
-//		attenuate *= ((float)pow(spotDot, exponent));
-//
-//	vec3f halfVector = norm(VP + eye);
-//	float nDotVP = max(0.0f, dot(normal, VP));
-//	float nDotHV = max(0.0f, dot(normal, halfVector));
-//	float pf;
-//
-//	if (nDotVP == 0.0f)
-//		pf = 0.0f;
-//	else
-//		pf = pow(nDotHV, shininess);
-//
-//	ambient  += this->ambient * attenuate;
-//	diffuse  += this->diffuse * nDotVP * attenuate;
-//	specular += this->specular * pf * attenuate;
+	GLint ambient_hdl = glGetUniformLocation(program, (name + ".ambient").c_str());
+	GLint diffuse_hdl = glGetUniformLocation(program, (name + ".diffuse").c_str());
+	GLint specular_hdl = glGetUniformLocation(program, (name + ".specular").c_str());
+
+	GLint attenuation_hdl = glGetUniformLocation(program, (name + ".attenuation").c_str());
+	GLint cutoff_hdl = glGetUniformLocation(program, (name + ".cutoff").c_str());
+	GLint exponent_hdl = glGetUniformLocation(program, (name + ".exponent").c_str());
+
+	GLint position_hdl = glGetUniformLocation(program, (name + ".position").c_str());
+	GLint direction_hdl = glGetUniformLocation(program, (name + ".direction").c_str());
+
+	glUniform3f(ambient_hdl, ambient[0], ambient[1], ambient[2]);
+	glUniform3f(diffuse_hdl, diffuse[0], diffuse[1], diffuse[2]);
+	glUniform3f(specular_hdl, specular[0], specular[1], specular[2]);
+
+	glUniform3f(attenuation_hdl, attenuation[0], attenuation[1], attenuation[2]);
+	glUniform1f(cutoff_hdl, cutoff);
+	glUniform1f(exponent_hdl, exponent);
+
+	glUniform3f(position_hdl, position[0], position[1], position[2]);
+	glUniform3f(direction_hdl, direction[0], direction[1], direction[2]);
 
 }
