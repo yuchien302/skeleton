@@ -185,7 +185,7 @@ void spothdl::update()
 
 void spothdl::apply(string name, GLuint program)
 {
-	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for spot lights.
+	/* DONE Assignment 4: Pass all necessary uniforms to the shaders for spot lights.
 	 */
 	GLint ambient_hdl = glGetUniformLocation(program, (name + ".ambient").c_str());
 	GLint diffuse_hdl = glGetUniformLocation(program, (name + ".diffuse").c_str());

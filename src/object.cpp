@@ -79,8 +79,8 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-	// TODO Assignment 1: Send transformations and geometry to the renderer to draw the object
-	// TODO Assignment 3: Pass the material as a uniform into the renderer
+	// DONE Assignment 1: Send transformations and geometry to the renderer to draw the object
+	// DONE Assignment 3: Pass the material as a uniform into the renderer
 	glMatrixMode(GL_MODELVIEW);
 	before_draw();
 	for (int i = 0; i < rigid.size(); i++){
@@ -174,46 +174,8 @@ void objecthdl::draw_normals(bool face)
 			for(int n = 0; n < rigid[i].indices.size()/3; n++){}
 		}
 	}
-//<<<<<<< HEAD
-//				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
-//				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
-//				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
-//				vec3f vec12 = point2 - point1;
-//				vec3f vec13 = point3 - point1;
-//				vec3f direction = norm(cross(vec13, vec12));
-//				vec3f start = (point1+ point2+ point3) / float(3.0);
-//				geometry.push_back(start);
-//				geometry.push_back(start + ( normal_length * direction));
-//
-//				indices.push_back(index++);
-//				indices.push_back(index++);
-//			}
-//		}
-//		else{
-//			for(int g = 0; g < rigid[i].geometry.size(); g++){
-//
-//				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
-//
-//				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
-//
-//				geometry.push_back(start);
-//				geometry.push_back(start + ( normal_length * direction));
-//
-//				indices.push_back(index++);
-//				indices.push_back(index++);
-//			}
-//		}
-//	}
-//	before_draw(canvas);
-//	// DONE Assignment 3: clear the material in the uniform list
-//	canvas -> uniform["current_material"] = NULL;
-//	canvas -> draw_lines(geometry, indices);
-//	after_draw(canvas);
-//
-//}
-//
-// TODO Assignment 3: clear the material in the uniform list before rendering
 }
+
 void objecthdl::before_draw(){
 	glTranslatef(position[0], position[1], position[2]);
 	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
