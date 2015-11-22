@@ -103,8 +103,6 @@ void objecthdl::draw_bound()
 	 * transformations and geometry to the renderer
 	 */
 
-	glMatrixMode(GL_MODELVIEW);
-	before_draw();
 	vector<vec3f> vertices = vector<vec3f>();
 	vector<int> indices = vector<int>();
 
@@ -139,9 +137,12 @@ void objecthdl::draw_bound()
 		indices.push_back(i+4);
 	}
 
+	glMatrixMode(GL_MODELVIEW);
+	before_draw();
+
 	materialhdl* m = new whitehdl();
-	vector<lighthdl*> lights;
-	m -> apply(lights);
+	m -> apply(vector<lighthdl*>());
+
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, vertices.data());
 	glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
@@ -163,17 +164,58 @@ void objecthdl::draw_normals(bool face)
 	/* DONE Assignment 1: Generate the geometry to display the normals and send the necessary
 	 * transformations and geometry to the renderer
 	 */
-	vector<vec8f> geometry = vector<vec8f>();
+	vector<vec3f> normals = vector<vec3f>();
 	vector<int> indices = vector<int>();
 	int index = 0;
 	float normal_length = 0.1;
 
 	for (int i = 0; i < rigid.size(); i++){
 		if(face){
-			//assert (rigid[i].geometry.size()%3 == 0);
-			for(int n = 0; n < rigid[i].indices.size()/3; n++){}
+			for(int n = 0; n < rigid[i].indices.size()/3; n++){
+
+				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
+				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
+				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
+				vec3f vec12 = point2 - point1;
+				vec3f vec13 = point3 - point1;
+				vec3f direction = norm(cross(vec13, vec12));
+				vec3f start = (point1+ point2+ point3) / float(3.0);
+				normals.push_back(start);
+				normals.push_back(start + ( normal_length * direction));
+
+				indices.push_back(index++);
+				indices.push_back(index++);
+			}
+		}
+		else{
+			for(int g = 0; g < rigid[i].geometry.size(); g++){
+
+				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
+
+				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
+
+				normals.push_back(start);
+				normals.push_back(start + ( normal_length * direction));
+
+				indices.push_back(index++);
+				indices.push_back(index++);
+			}
 		}
 	}
+
+	glMatrixMode(GL_MODELVIEW);
+	before_draw();
+
+	materialhdl* m = new whitehdl();
+	m -> apply(vector<lighthdl*>());
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, normals.data());
+	glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+	glDisableClientState(GL_VERTEX_ARRAY);
+	glUseProgram(0);
+
+	after_draw();
 }
 
 void objecthdl::before_draw(){
