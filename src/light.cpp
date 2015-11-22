@@ -47,19 +47,21 @@ directionalhdl::~directionalhdl()
 void directionalhdl::update()
 {
 
-	/* TODO Assignment 3: Update the direction of the light using the orientation of the attached model.
+	/* DONE Assignment 3: Update the direction of the light using the orientation of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply some initial direction vector by the normal matrix.
 	 */
-//	model ->before_draw(canvas);
-//
-//	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
-//	vec3f position = homo_pos/homo_pos[3];
-//
-//	vec4f homo_direction = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, -1.0, 1.0);
-//	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
-//
-//	model ->after_draw(canvas);
+	model ->before_draw();
+	mat4f modelview;
+	glGetFloatv(GL_TRANSPOSE_MODELVIEW_MATRIX, (float*)modelview.data);
+
+	vec4f homo_pos = modelview * vec4f(0.0, 0.0, 0.0, 1.0);
+	vec3f position = vec3f (homo_pos/homo_pos[3]);
+
+	vec4f homo_direction = modelview * vec4f(0.0, 0.0, -1.0, 1.0);
+	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
+
+	model ->after_draw();
 
 }
 
@@ -69,17 +71,6 @@ void directionalhdl::apply(string name, GLuint program)
 	/* TODO Assignment 4: Pass all necessary uniforms to the shaders for the directional light.
 	 */
 
-//	float pf = 0.0; // power factor
-//	float nDotVP = max(0.0f, dot(normal, norm(direction)));
-//
-//	if (nDotVP == 0.0)
-//		pf = 0.0;
-//	else
-//		pf = pow(nDotVP, shininess);
-//
-//	ambient  += this->ambient;
-//	diffuse  += this->diffuse * nDotVP;
-//	specular += this->specular * pf;
 }
 
 pointhdl::pointhdl() : lighthdl(white*0.1f, white*0.5f, white)
@@ -102,19 +93,18 @@ pointhdl::~pointhdl()
 void pointhdl::update()
 {
 
-	/* TODO Assignment 3: Update the position of the light using the position of the attached model.
+	/* DONE Assignment 3: Update the position of the light using the position of the attached model.
 	 * The easiest thing is to do translations and rotations like you were going to render the object, and
 	 * then just multiply the origin by the modelview matrix.
 	 */
-	//	position = vec3f (canvas -> matrices[canvas -> modelview_matrix] *
-	//				  homogenize(model -> position));
-
 
 	model ->before_draw();
-//	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
-//	position = vec3f (homo_pos/homo_pos[3]);
-	model ->after_draw();
+	mat4f modelview;
+	glGetFloatv(GL_TRANSPOSE_MODELVIEW_MATRIX, (float*)modelview.data);
 
+	vec4f homo_pos = modelview * vec4f(0.0, 0.0, 0.0, 1.0);
+	position = vec3f (homo_pos/homo_pos[3]);
+	model ->after_draw();
 }
 
 
@@ -149,18 +139,21 @@ spothdl::~spothdl()
 void spothdl::update()
 {
 
-	/* TODO Assignment 3: Update both the direction and position of the light using the position and orientation
+	/* DONE Assignment 3: Update both the direction and position of the light using the position and orientation
 	 * of the attached model. See above.
 	 */
-//	model ->before_draw(canvas);
-//
-//	vec4f homo_pos = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, 0.0, 1.0);
-//	position = homo_pos/homo_pos[3];
-//
-//	vec4f homo_direction = canvas -> matrices[canvas -> modelview_matrix] * vec4f(0.0, 0.0, -1.0, 1.0);
-//	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
-//
-//	model ->after_draw(canvas);
+	model ->before_draw();
+	mat4f modelview;
+	glGetFloatv(GL_TRANSPOSE_MODELVIEW_MATRIX, (float*)modelview.data);
+
+	vec4f homo_pos = modelview * vec4f(0.0, 0.0, 0.0, 1.0);
+	position = vec3f (homo_pos/homo_pos[3]);
+
+	vec4f homo_direction = modelview * vec4f(0.0, 0.0, -1.0, 1.0);
+	direction = norm(vec3f(homo_direction/homo_direction[3]) - position);
+
+	model ->after_draw();
+
 }
 
 void spothdl::apply(string name, GLuint program)
