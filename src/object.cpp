@@ -25,14 +25,18 @@ void rigidhdl::draw()
 {
 	// Done Assignment 1: Send the rigid body geometry to the renderer
 	vector<vec3f> vertices;
+	vector<vec3f> normal;
 	for(int i =0; i<geometry.size(); i++){
 		vertices.push_back(geometry[i]);
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, vertices.data());
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
+	glNormalPointer(GL_FLOAT, sizeof(GLfloat)*8, geometry.data()+3);
 	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
 	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 	glUseProgram(0);
 
 }
