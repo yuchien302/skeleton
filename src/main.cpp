@@ -424,37 +424,32 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-
-			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
-
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['s'])
 		{
-
-			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['a'])
 		{
-
-			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['d'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['q'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.005f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['e'])
 		{
-
-			scene.cameras[scene.active_camera]->position += 0.005f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 	}
@@ -462,14 +457,12 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-
-			scene.cameras[scene.active_camera]->radius -= 0.025;
+			scene.cameras[scene.active_camera]->radius -= 0.25;
 			change = true;
 		}
 		if (keys['s'])
 		{
-
-			scene.cameras[scene.active_camera]->radius += 0.025;
+			scene.cameras[scene.active_camera]->radius += 0.25;
 			change = true;
 		}
 	}
