@@ -94,6 +94,7 @@ struct customhdl : materialhdl
 	static GLuint fragment;
 	static GLuint program;
 
+
 	void apply(const vector<lighthdl*> &lights);
 	materialhdl *clone() const;
 };

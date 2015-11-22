@@ -339,6 +339,33 @@ texturehdl::texturehdl()
 		 * this class. So you only have to initialize them once when the first instance of
 		 * the class is created.
 		 */
+		glEnable(GL_TEXTURE_2D);
+		glGenTextures(1, &texture);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		//unsigned height = width = 660;
+
+		unsigned width, height;
+		vector<unsigned char>image;
+		//decode
+		unsigned error = lodepng::decode(image, width, height, "res/texture.png");
+		cout << width<<height<<endl;
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
+				GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
+		//glGenerateMipmap(GL_TEXTURE_2D);
+		vertex = load_shader_file(working_directory + "res/texture.vx", GL_VERTEX_SHADER);
+		fragment = load_shader_file(working_directory + "res/texture.ft", GL_FRAGMENT_SHADER);
+		program = glCreateProgram();
+
+		glAttachShader(program, vertex);
+		glAttachShader(program, fragment);
+		glLinkProgram(program);
 	}
 }
 
@@ -350,6 +377,35 @@ texturehdl::~texturehdl()
 void texturehdl::apply(const vector<lighthdl*> &lights)
 {
 	// TODO Assignment 4: Apply the shader program and pass it the necessary uniform values
+
+	glUseProgram(program);
+	int num_p = 0, num_d = 0, num_s = 0;
+	for(int i=0; i<lights.size(); i++){
+		if(lights[i] -> type == "point"){
+			lights[i] -> apply("plights[" + to_string(num_p) + "]", program);
+			num_p++;
+		}
+		else if(lights[i] -> type == "directional"){
+			lights[i] -> apply("dlights[" + to_string(num_d) + "]", program);
+			num_d++;
+		}
+		else if(lights[i] -> type == "spot"){
+			lights[i] -> apply("slights[" + to_string(num_s) + "]", program);
+			num_s++;
+		}
+	}
+
+	GLint num_plights = glGetUniformLocation(program, "num_plights");
+	GLint num_dlights = glGetUniformLocation(program, "num_dlights");
+	GLint num_slights = glGetUniformLocation(program, "num_slights");
+
+
+	GLint shininess_hdl = glGetUniformLocation(program, "shininess");
+
+	glUniform1i(num_plights, num_p);
+	glUniform1i(num_dlights, num_d);
+	glUniform1i(num_slights, num_s);
+	glUniform1f(shininess_hdl, shininess);
 }
 
 materialhdl *texturehdl::clone() const
