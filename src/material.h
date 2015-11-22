@@ -84,6 +84,12 @@ struct customhdl : materialhdl
 	customhdl();
 	~customhdl();
 
+	vec3f emission;
+	vec3f ambient;
+	vec3f diffuse;
+	vec3f specular;
+	float shininess;
+
 	static GLuint vertex;
 	static GLuint fragment;
 	static GLuint program;
