@@ -1,0 +1,19 @@
+#version 120
+
+#include "light.glsl"
+
+uniform float shininess;
+
+uniform sampler2D tex;
+
+varying vec3 eye_space_vertex;
+varying vec3 eye_space_normal;
+varying vec2 tex_coord;
+
+void main()
+{
+	vec3 normal = normalize(eye_space_normal);
+	vec3 color = texture2D(tex, tex_coord).xyz;
+	
+	gl_FragColor = vec4(lighting(vec3(0.0, 0.0, 0.0), color, color, color, color.x, eye_space_vertex, normal), 1.0);
+}

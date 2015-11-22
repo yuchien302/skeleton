@@ -34,9 +34,16 @@ void rigidhdl::draw()
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
 	glNormalPointer(GL_FLOAT, sizeof(GLfloat)*8, geometry.data()+3);
+	//cout<<material<<endl;
+	//if ( material == "texture"){
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat)*8, geometry.data()+6);
+		//cout<<"omg"<<endl;
+	//}
 	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	glUseProgram(0);
 
 }
