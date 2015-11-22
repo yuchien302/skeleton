@@ -112,7 +112,46 @@ gouraudhdl::~gouraudhdl()
 
 void gouraudhdl::apply(const vector<lighthdl*> &lights)
 {
+
+	glUseProgram(program);
 	// TODO Assignment 4: Apply the shader program and pass it the necessary uniform values
+	int num_p = 0, num_d = 0, num_s = 0;
+	for(int i=0; i<lights.size(); i++){
+		if(lights[i] -> type == "point"){
+			lights[i] -> apply("plights[" + to_string(num_p) + "]", program);
+			num_p++;
+		}
+		else if(lights[i] -> type == "directional"){
+			lights[i] -> apply("dlights[" + to_string(num_d) + "]", program);
+			num_d++;
+		}
+		else if(lights[i] -> type == "spot"){
+			lights[i] -> apply("slights[" + to_string(num_s) + "]", program);
+			num_s++;
+		}
+
+
+	}
+	cout << num_p << " " << num_d << " " << num_s << endl;
+	GLint num_plights = glGetUniformLocation(program, "num_plights");
+	GLint num_dlights = glGetUniformLocation(program, "num_dlights");
+	GLint num_slights = glGetUniformLocation(program, "num_slights");
+
+	GLint emission_hdl = glGetUniformLocation(program, "emission");
+	GLint ambient_hdl = glGetUniformLocation(program, "ambient");
+	GLint diffuse_hdl = glGetUniformLocation(program, "diffuse");
+	GLint specular_hdl = glGetUniformLocation(program, "specular");
+	GLint shininess_hdl = glGetUniformLocation(program, "shininess");
+
+	glUniform1i(num_plights, num_p);
+	glUniform1i(num_dlights, num_d);
+	glUniform1i(num_slights, num_s);
+	glUniform3f(emission_hdl, emission[0], emission[1], emission[2]);
+	glUniform3f(ambient_hdl, ambient[0], ambient[1], ambient[2]);
+	glUniform3f(diffuse_hdl, diffuse[0], diffuse[1], diffuse[2]);
+	glUniform3f(specular_hdl, specular[0], specular[1], specular[2]);
+	glUniform1f(shininess_hdl, shininess);
+
 }
 
 materialhdl *gouraudhdl::clone() const
