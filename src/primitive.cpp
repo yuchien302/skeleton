@@ -83,7 +83,6 @@ boxhdl::boxhdl(float width, float height, float depth)
 	rigid[0].indices.push_back(1);
 	rigid[0].indices.push_back(0);
 	for(int i = 4; i < 20; i+=4){
-		cout<<i<<endl;
 		rigid[0].indices.push_back(i);
 
 		rigid[0].indices.push_back(i+1);
@@ -166,8 +165,6 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 		rigid[0].indices.push_back((levels-2)*(slices+1) + i + slices);
 		rigid[0].indices.push_back((levels-2)*(slices+1) + (i+1) + slices);
 	}
-	cout<<rigid[0].geometry.size()<<endl;
-	cout<<2*slices+ (levels-1)*slices + levels<<endl;
 	bound = vec6f(-radius, radius, -radius, radius, -radius, radius);
 
 	rigid[0].material = "default";

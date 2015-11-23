@@ -343,13 +343,11 @@ texturehdl::texturehdl()
 		glGenTextures(1, &texture);
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
-		//unsigned height = width = 660;
 
 		unsigned width, height;
 		vector<unsigned char>image;
 		//decode
 		unsigned error = lodepng::decode(image, width, height, "res/texture.png");
-		cout << width<<height<<endl;
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0,
 				GL_RGBA, GL_UNSIGNED_BYTE, &image[0]);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
