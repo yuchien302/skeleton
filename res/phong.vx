@@ -1,12 +1,12 @@
-varying vec3 eye_space_vertex;
-varying vec3 eye_space_normal;
+varying vec3 vertex;
+varying vec3 normal;
 
 void main()
 {
-	vec4 vertex = gl_ModelViewMatrix*gl_Vertex;
+	vec4 world_position = gl_ModelViewMatrix * gl_Vertex;
 
-	eye_space_vertex = vertex.xyz;
-	eye_space_normal = gl_NormalMatrix*gl_Normal;
+	vertex = world_position.xyz / world_position.w;
+	normal = normalize(gl_NormalMatrix * gl_Normal);
 
-	gl_Position = gl_ProjectionMatrix*vertex;
+	gl_Position = gl_ProjectionMatrix * world_position;
 }

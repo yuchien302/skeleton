@@ -10,14 +10,12 @@ varying vec4 color;
 
 void main()
 {
-	vec4 vertex = gl_ModelViewMatrix*gl_Vertex;
+	vec4 world_position = gl_ModelViewMatrix * gl_Vertex;
 
-	vec3 eye_space_vertex;
-	vec3 eye_space_normal;
-	eye_space_vertex = vertex.xyz;
-	eye_space_normal = gl_NormalMatrix*gl_Normal;
+	vec3 vertex = world_position.xyz / world_position.w;
+	vec3 normal = normalize(gl_NormalMatrix * gl_Normal);
 	
-	color = vec4(lighting(emission, ambient, diffuse, specular, shininess, eye_space_vertex, eye_space_normal), 1.0);
+	color = vec4(lighting(emission, ambient, diffuse, specular, shininess, vertex, normal), 1.0);
 
-	gl_Position = gl_ProjectionMatrix*vertex;
+	gl_Position = gl_ProjectionMatrix * world_position;
 }
