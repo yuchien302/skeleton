@@ -24,27 +24,27 @@ rigidhdl::~rigidhdl()
 void rigidhdl::draw()
 {
 	// Done Assignment 1: Send the rigid body geometry to the renderer
-	vector<vec3f> vertices;
-	vector<vec3f> normal;
-	for(int i =0; i<geometry.size(); i++){
-		vertices.push_back(geometry[i]);
-	}
+//	vector<vec3f> vertices;
+//	vector<vec3f> normal;
+//	for(int i =0; i<geometry.size(); i++){
+//		vertices.push_back(geometry[i]);
+//	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*8, geometry.data());
-	glNormalPointer(GL_FLOAT, sizeof(GLfloat)*8, geometry.data()+3);
+	glVertexPointer(3, GL_FLOAT, sizeof(float)*8, (float*) geometry.data());
+	glNormalPointer(GL_FLOAT, sizeof(float)*8, (float*) geometry.data()+3);
 	//cout<<material<<endl;
 	//if ( material == "texture"){
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-		glTexCoordPointer(2, GL_FLOAT, sizeof(GLfloat)*8, geometry.data()+6);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(float)*8, (float*) geometry.data()+6);
 		//cout<<"omg"<<endl;
 	//}
 	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	glUseProgram(0);
+//	glUseProgram(0);
 
 }
 
@@ -226,6 +226,7 @@ void objecthdl::draw_normals(bool face)
 }
 
 void objecthdl::before_draw(){
+	glPushMatrix();
 	glTranslatef(position[0], position[1], position[2]);
 	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
 	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
@@ -234,11 +235,12 @@ void objecthdl::before_draw(){
 }
 
 void objecthdl::after_draw(){
-	glScalef(1.0/scale, 1.0/scale, 1.0/scale);
-	glRotatef(radtodeg(-orientation[2]), 0.0, 0.0, 1.0);
-	glRotatef(radtodeg(-orientation[1]), 0.0, 1.0, 0.0);
-	glRotatef(radtodeg(-orientation[0]), 1.0, 0.0, 0.0);
-	glTranslatef(-position[0], -position[1], -position[2]);
+	glPopMatrix();
+//	glScalef(1.0/scale, 1.0/scale, 1.0/scale);
+//	glRotatef(radtodeg(-orientation[2]), 0.0, 0.0, 1.0);
+//	glRotatef(radtodeg(-orientation[1]), 0.0, 1.0, 0.0);
+//	glRotatef(radtodeg(-orientation[0]), 1.0, 0.0, 0.0);
+//	glTranslatef(-position[0], -position[1], -position[2]);
 }
 
 

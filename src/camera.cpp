@@ -71,7 +71,7 @@ void orthohdl::project()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(left, right, bottom, top, front, back);
-
+	glMatrixMode(GL_MODELVIEW);
 }
 
 frustumhdl::frustumhdl()
@@ -96,6 +96,7 @@ void frustumhdl::project()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glFrustum(left, right, bottom, top, front, back);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 perspectivehdl::perspectivehdl()
@@ -118,4 +119,5 @@ void perspectivehdl::project()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(fovy, aspect, front, back);
+	glMatrixMode(GL_MODELVIEW);
 }
