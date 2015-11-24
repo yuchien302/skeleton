@@ -34,8 +34,9 @@ void camerahdl::view()
 	vec3f up = ror3(vec3f(0.0, 1.0, 0.0), orientation);
 
 	if(focus != NULL){
-		at = focus ->position;
+		at = focus -> position;
 		eye = at - ror3(vec3f(0.0, 0.0, -radius), orientation);
+		position = eye;
 	}
 
 	glMatrixMode(GL_MODELVIEW);
