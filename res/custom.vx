@@ -1,0 +1,12 @@
+varying vec3 vertex;
+varying vec3 normal;
+
+void main()
+{
+	vec4 world_position = gl_ModelViewMatrix * gl_Vertex;
+
+	vertex = world_position.xyz / world_position.w;
+	normal = normalize(gl_NormalMatrix * gl_Normal);
+
+	gl_Position = gl_ProjectionMatrix * world_position;
+}

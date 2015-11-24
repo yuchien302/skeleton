@@ -1,0 +1,19 @@
+#include "light.glsl"
+
+uniform vec3 emission;
+uniform vec3 ambient;
+uniform vec3 diffuse;
+uniform vec3 specular;
+uniform float shininess;
+
+varying vec3 vertex;
+varying vec3 normal;
+
+void main()
+{
+	vec3 color = lighting(emission, ambient, diffuse, specular, shininess, vertex, normal);
+	color = ceil(color / 0.25) * 0.25;
+	color = clamp(color, 0.0, 1.0);
+	
+	gl_FragColor = vec4(color, 1.0);
+}
