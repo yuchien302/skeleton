@@ -334,7 +334,7 @@ texturehdl::texturehdl()
 
 	if (vertex == 0 && fragment == 0 && program == 0)
 	{
-		/* TODO Assignment 4: Load and link the shaders and load the texture Keep in mind that vertex, fragment,
+		/* DONE Assignment 4: Load and link the shaders and load the texture Keep in mind that vertex, fragment,
 		 * and program are static variables meaning they are *shared across all instances of
 		 * this class. So you only have to initialize them once when the first instance of
 		 * the class is created.
@@ -374,7 +374,7 @@ texturehdl::~texturehdl()
 
 void texturehdl::apply(const vector<lighthdl*> &lights)
 {
-	// TODO Assignment 4: Apply the shader program and pass it the necessary uniform values
+	// DONE Assignment 4: Apply the shader program and pass it the necessary uniform values
 
 	glUseProgram(program);
 	int num_p = 0, num_d = 0, num_s = 0;
