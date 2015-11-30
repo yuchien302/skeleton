@@ -377,6 +377,10 @@ void texturehdl::apply(const vector<lighthdl*> &lights)
 	// DONE Assignment 4: Apply the shader program and pass it the necessary uniform values
 
 	glUseProgram(program);
+	glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture);
+
 	int num_p = 0, num_d = 0, num_s = 0;
 	for(int i=0; i<lights.size(); i++){
 		if(lights[i] -> type == "point"){
@@ -397,13 +401,16 @@ void texturehdl::apply(const vector<lighthdl*> &lights)
 	GLint num_dlights = glGetUniformLocation(program, "num_dlights");
 	GLint num_slights = glGetUniformLocation(program, "num_slights");
 
-
 	GLint shininess_hdl = glGetUniformLocation(program, "shininess");
+
+	GLint tex_hdl = glGetUniformLocation(program, "tex");
+
 
 	glUniform1i(num_plights, num_p);
 	glUniform1i(num_dlights, num_d);
 	glUniform1i(num_slights, num_s);
 	glUniform1f(shininess_hdl, shininess);
+	glUniform1i(tex_hdl, 0);
 }
 
 materialhdl *texturehdl::clone() const
