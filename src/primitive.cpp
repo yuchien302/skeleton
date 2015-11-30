@@ -161,7 +161,7 @@ spherehdl::spherehdl(float radius, int levels, int slices)
 
 	for (int i = 0; i < slices; i++)
 	{
-		rigid[0].indices.push_back(rigid[0].geometry.size() - 1 -i);
+		rigid[0].indices.push_back(rigid[0].geometry.size() - slices+i);
 		rigid[0].indices.push_back((levels-2)*(slices+1) + i + slices);
 		rigid[0].indices.push_back((levels-2)*(slices+1) + (i+1) + slices);
 	}
@@ -195,21 +195,21 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 								 radius*sin(2*m_pi*(float)i/(float)slices),
 								 0.0, -1.0, 0.0, (cos(2*m_pi*(float)i/(float)slices)+1.0)/2.0, (sin(2*m_pi*(float)i/(float)slices)+1.0)/2.0 ));
 		//rigid[0].geometry.push_back(vec8f(0,-height/2.0, 0, 0, -1, 0, ))
-	for (int i = 0; i < slices; i++)
+	for (int i = 0; i < slices+1; i++)
 		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
 								 -height/2.0,
 								 radius*sin(2*m_pi*(float)i/(float)slices),
 								 cos(2*m_pi*(float)i/(float)slices),
 								 0.0,
-								 sin(2*m_pi*(float)i/(float)slices), 2*m_pi*i/slices - (int)(2*m_pi*i/slices), 0.0));
+								 sin(2*m_pi*(float)i/(float)slices), (float)i/slices , 0.0));
 
-	for (int i = 0; i < slices; i++)
+	for (int i = 0; i < slices+1; i++)
 		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
 								 height/2.0,
 								 radius*sin(2*m_pi*(float)i/(float)slices),
 								 cos(2*m_pi*(float)i/(float)slices),
 								 0.0,
-								 sin(2*m_pi*(float)i/(float)slices), 2*m_pi*i/slices - (int)(2*m_pi*i/slices), 1.0));
+								 sin(2*m_pi*(float)i/(float)slices), (float)i/slices, 1.0));
 
 	for (int i = 0; i < slices; i++)
 		rigid[0].geometry.push_back(vec8f(radius*cos(2*m_pi*(float)i/(float)slices),
@@ -229,19 +229,19 @@ cylinderhdl::cylinderhdl(float radius, float height, int slices)
 	for (int i = 0; i < slices; i++)
 	{
 		rigid[0].indices.push_back(1 + slices + i);
-		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 2*slices + i);
+		rigid[0].indices.push_back(1 + slices + (i+1));
+		rigid[0].indices.push_back(2 + 2*slices + i);
 
-		rigid[0].indices.push_back(1 + 2*slices + i);
-		rigid[0].indices.push_back(1 + slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 2*slices + (i+1)%slices);
+		rigid[0].indices.push_back(2 + 2*slices + i);
+		rigid[0].indices.push_back(1 + slices + (i+1));
+		rigid[0].indices.push_back(2 + 2*slices + (i+1));
 	}
 
 	for (int i = 0; i < slices; i++)
 	{
-		rigid[0].indices.push_back(1 + 3*slices + i);
-		rigid[0].indices.push_back(1 + 3*slices + (i+1)%slices);
-		rigid[0].indices.push_back(1 + 4*slices);
+		rigid[0].indices.push_back(3 + 3*slices + i);
+		rigid[0].indices.push_back(3 + 3*slices + (i+1)%slices);
+		rigid[0].indices.push_back(3 + 4*slices);
 	}
 
 	bound = vec6f(-radius, radius, -height/2.0, height/2.0, -radius, radius);
