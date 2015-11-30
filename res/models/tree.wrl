@@ -1,0 +1,232 @@
+#VRML V2.0 utf8
+
+NavigationInfo {
+    avatarSize 0
+}
+Collision {
+    collide FALSE
+    children [
+	Group {
+	    children [
+		Group {
+		    children [
+			Group {
+			    children [
+				Shape {
+				    appearance
+					Appearance {
+					    material
+						Material {
+						    diffuseColor	0.5 0.5 0.5
+						}
+					}
+				    geometry
+					Cone {
+					    bottomRadius	0.2
+					    height	5
+					}
+				}
+			    ]
+			},
+			Transform {
+			    translation	0 -0.5 0
+			    children [
+				Shape {
+				    appearance
+					Appearance {
+					    material
+						DEF _v2%0 Material {
+						    diffuseColor	0 0.5 0.5
+						}
+					}
+				    geometry
+					Cone {
+					    bottomRadius	0.7
+					    height	2
+					}
+				},
+				Transform {
+				    translation	0 0.25 0
+				    children [
+					Shape {
+					    appearance
+						Appearance {
+						    material USE _v2%0
+						}
+					    geometry
+						Cone {
+						    bottomRadius	0.65
+						    height	1.75
+						}
+					},
+					Transform {
+					    translation	0 0.25 0
+					    children [
+						Shape {
+						    appearance
+							Appearance {
+							    material USE _v2%0
+							}
+						    geometry
+							Cone {
+							    bottomRadius	0.6
+							    height	1.5
+							}
+						},
+						Transform {
+						    translation	0 0.25 0
+						    children [
+							Shape {
+							    appearance
+								Appearance {
+								    material USE _v2%0
+								}
+							    geometry
+								Cone {
+								    bottomRadius	0.55
+								    height	1.25
+								}
+							},
+							Transform {
+							    translation	0 0.25 0
+							    children [
+								Shape {
+								    appearance
+									Appearance {
+									    material USE _v2%0
+									}
+								    geometry
+									Cone {
+									    bottomRadius	0.5
+									    height	1
+									}
+								},
+								Transform {
+								    translation	0 0.25 0
+								    children [
+									Shape {
+									    appearance
+										Appearance {
+										    material USE _v2%0
+										}
+									    geometry
+										Cone {
+										    bottomRadius	0.45
+										    height	0.75
+										}
+									},
+									Transform {
+									    translation	0 0.25 0
+									    children [
+										Shape {
+										    appearance
+											Appearance {
+											    material USE _v2%0
+											}
+										    geometry
+											Cone {
+											    bottomRadius	0.4
+											    height	0.7
+											}
+										},
+										Transform {
+										    translation	0 0.25 0
+										    children [
+											Shape {
+											    appearance
+												Appearance {
+												    material USE _v2%0
+												}
+											    geometry
+												Cone {
+												    bottomRadius	0.35
+												    height	0.65
+												}
+											},
+											Transform {
+											    translation	0 0.25 0
+											    children [
+												Shape {
+												    appearance
+													Appearance {
+													    material USE _v2%0
+													}
+												    geometry
+													Cone {
+													    bottomRadius	0.3
+													    height	0.6
+													}
+												},
+												Transform {
+												    translation	0 0.25 0
+												    children [
+													Shape {
+													    appearance
+														Appearance {
+														    material USE _v2%0
+														}
+													    geometry
+														Cone {
+														    bottomRadius	0.25
+														    height	0.55
+														}
+													},
+													Transform {
+													    translation	0 0.25 0
+													    children [
+														Shape {
+														    appearance
+															Appearance {
+															    material USE _v2%0
+															}
+														    geometry
+															Cone {
+															    bottomRadius	0.2
+															    height	0.5
+															}
+														},
+														Transform {
+														    translation	0 0.25 0
+														    children [
+															Shape {
+															    appearance
+																Appearance {
+																    material USE _v2%0
+																}
+															    geometry
+																Cone {
+																    bottomRadius	0.1
+																    height	0.45
+																}
+															}
+														    ]
+														}
+													    ]
+													}
+												    ]
+												}
+											    ]
+											}
+										    ]
+										}
+									    ]
+									}
+								    ]
+								}
+							    ]
+							}
+						    ]
+						}
+					    ]
+					}
+				    ]
+				}
+			    ]
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

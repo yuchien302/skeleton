@@ -7,7 +7,7 @@
 
 #include "core/geometry.h"
 #include "core/color.h"
-#include "standard.h"
+#include "common/standard.h"
 #include "opengl.h"
 using namespace core;
 

@@ -1,0 +1,26 @@
+#VRML V2.0 utf8
+
+NavigationInfo {
+    avatarSize 0
+}
+Collision {
+    collide FALSE
+    children [
+	Group {
+	    children [
+		Shape {
+		    appearance
+			Appearance {
+			    material
+				DEF _DefMat Material {
+				}
+			}
+		    geometry
+			Box {
+			}
+		}
+	    ]
+	}
+    ]
+}
+

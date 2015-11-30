@@ -23,12 +23,17 @@
 
 #include "vector.h"
 #include "matrix.h"
+#include "quaternion.h"
 
 #ifndef geometry_h
 #define geometry_h
 
 namespace core
 {
+typedef quat<float> quatf;
+
+typedef quat<double> quatd;
+
 typedef vec<float,  1>	vec1f;
 typedef vec<float,  2>	vec2f;
 typedef vec<float,  3>	vec3f;
@@ -41,6 +46,19 @@ typedef vec<float,  9>	vec9f;
 typedef vec<float,  10>	vec10f;
 typedef vec<float,  11>	vec11f;
 typedef vec<float,  12>	vec12f;
+
+typedef vec<double,  1>	vec1d;
+typedef vec<double,  2>	vec2d;
+typedef vec<double,  3>	vec3d;
+typedef vec<double,  4>	vec4d;
+typedef vec<double,  5>	vec5d;
+typedef vec<double,  6>	vec6d;
+typedef vec<double,  7>	vec7d;
+typedef vec<double,  8>	vec8d;
+typedef vec<double,  9>	vec9d;
+typedef vec<double,  10>	vec10d;
+typedef vec<double,  11>	vec11d;
+typedef vec<double,  12>	vec12d;
 
 typedef vec<int,    1>	vec1i;
 typedef vec<int,    2>	vec2i;

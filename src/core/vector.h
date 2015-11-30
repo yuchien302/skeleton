@@ -26,6 +26,7 @@
 #include <string>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "../common/hash.h"
 
 #ifndef vector_h
 #define vector_h
@@ -56,11 +57,10 @@ struct vec
 		for (int i = 0; i < m; i++)
 			data[i] = (t)v.data[i];
 		for (int i = m; i < s; i++)
-			data[i] = 0;
+			data[i] = (t)0;
 	}
 
-	template <class t2>
-	vec(t2 first, ...)
+	vec(t first, ...)
 	{
 		va_list arguments;
 		int i;
@@ -68,28 +68,20 @@ struct vec
 		va_start(arguments, first);
 		data[0] = first;
 		for (i = 1; i < s; i++)
-			data[i] = (t)va_arg(arguments, t2);
+			data[i] = va_arg(arguments, t);
 		va_end(arguments);
 	}
-
-	vec(float first, ...)
-	{
-		va_list arguments;
-		int i;
-
-		va_start(arguments, first);
-		data[0] = first;
-		for (i = 1; i < s; i++)
-			data[i] = (t)va_arg(arguments, double);
-		va_end(arguments);
-	}
-
 
 	~vec()
 	{
 	}
 
 	t data[s];
+
+	void hash(hasher h) const
+	{
+		h.put(data, s);
+	}
 
 	template <class t2>
 	operator vec<t2, s>()
@@ -107,7 +99,7 @@ struct vec
 		for (int i = 0; i < m; i++)
 			data[i] = (t)v.data[i];
 		for (int i = m; i < s; i++)
-			data[i] = 0;
+			data[i] = (t)0;
 		return *this;
 	}
 
@@ -118,7 +110,7 @@ struct vec
 		for (int i = 0; i < m; i++)
 			data[i] = v[i];
 		for (int i = m; i < s; i++)
-			data[i] = 0;
+			data[i] = (t)0;
 		return *this;
 	}
 
@@ -180,15 +172,15 @@ struct vec
 		for (int i = a; i < b; i++)
 			result.data[i-a] = data[i];
 		for (int i = b-a; i < s; i++)
-			result[i] = 0;
+			result[i] = (t)0;
 		return result;
 	}
 
-	template <int s2>
-	void set(int a, int b, vec<t, s2> v)
+	template <class t2, int s2>
+	void set(int a, int b, vec<t2, s2> v)
 	{
 		for (int i = a; i < b; i++)
-			data[i] = v.data[i-a];
+			data[i] = (float)v.data[i-a];
 	}
 
 	t &operator[](int index)
@@ -217,7 +209,216 @@ struct vec
 		for (i = 0; i < s; i++)
 			data[i] = (t)v;
 	}
+
+	bool nan()
+	{
+		for (int i = 0; i < s; i++)
+			if (data[i] != data[i])
+				return true;
+
+		return false;
+	}
 };
+
+template <int s>
+struct vec<float, s>
+{
+	vec()
+	{
+	}
+
+	template <class t2>
+	vec(const t2 v[s])
+	{
+		int i;
+
+		for (i = 0; i < s; i++)
+			data[i] = (float)v[i];
+	}
+
+	template <class t2, int s2>
+	vec(vec<t2, s2> v)
+	{
+		int m = min(s, s2);
+		for (int i = 0; i < m; i++)
+			data[i] = (float)v.data[i];
+		for (int i = m; i < s; i++)
+			data[i] = 0;
+	}
+
+	vec(float first, ...)
+	{
+		va_list arguments;
+		int i;
+
+		va_start(arguments, first);
+		data[0] = first;
+		for (i = 1; i < s; i++)
+			data[i] = (float)va_arg(arguments, double);
+		va_end(arguments);
+	}
+
+	~vec()
+	{
+	}
+
+	float data[s];
+
+	void hash(hasher h) const
+	{
+		h.put(data, s);
+	}
+
+	template <class t2>
+	operator vec<t2, s>()
+	{
+		vec<t2, s> ret;
+		for (int i = 0; i < s; i++)
+			ret[i] = (t2)data[i];
+		return ret;
+	}
+
+	template <class t2, int s2>
+	vec<float, s> &operator=(vec<t2, s2> v)
+	{
+		int m = min(s, s2);
+		for (int i = 0; i < m; i++)
+			data[i] = (float)v.data[i];
+		for (int i = m; i < s; i++)
+			data[i] = 0.0f;
+		return *this;
+	}
+
+	template <class t2, int s2>
+	vec<float, s> &operator=(const t2 v[s2])
+	{
+		int m = min(s, s2);
+		for (int i = 0; i < m; i++)
+			data[i] = v[i];
+		for (int i = m; i < s; i++)
+			data[i] = 0.0f;
+		return *this;
+	}
+
+	template <class t2>
+	vec<float, s> &operator+=(vec<t2, s> v)
+	{
+		*this = *this + v;
+		return *this;
+	}
+
+	template <class t2>
+	vec<float, s> &operator-=(vec<t2, s> v)
+	{
+		*this = *this - v;
+		return *this;
+	}
+
+	template <class t2>
+	vec<float, s> &operator*=(vec<t2, s> v)
+	{
+		*this = *this * v;
+		return *this;
+	}
+
+	template <class t2>
+	vec<float, s> &operator/=(vec<t2, s> v)
+	{
+		*this = *this / v;
+		return *this;
+	}
+
+	vec<float, s> &operator+=(float f)
+	{
+		*this = *this + f;
+		return *this;
+	}
+
+	vec<float, s> &operator-=(float f)
+	{
+		*this = *this - f;
+		return *this;
+	}
+
+	vec<float, s> &operator*=(float f)
+	{
+		*this = *this * f;
+		return *this;
+	}
+
+	vec<float, s> &operator/=(float f)
+	{
+		*this = *this / f;
+		return *this;
+	}
+
+	vec<float, s> operator()(int a, int b) const
+	{
+		vec<float, s> result;
+		for (int i = a; i < b; i++)
+			result.data[i-a] = data[i];
+		for (int i = b-a; i < s; i++)
+			result[i] = 0.0f;
+		return result;
+	}
+
+	template <class t2, int s2>
+	void set(int a, int b, vec<t2, s2> v)
+	{
+		for (int i = a; i < b; i++)
+			data[i] = (float)v.data[i-a];
+	}
+
+	float &operator[](int index)
+	{
+		return data[index];
+	}
+
+	float operator[](int index) const
+	{
+		return data[index];
+	}
+
+	vec<float, s> &swap(int a, int b)
+	{
+		float temp = data[a];
+		data[a] = data[b];
+		data[b] = temp;
+		return *this;
+	}
+
+	template <class t2>
+	void fill(t2 v)
+	{
+		int i;
+
+		for (i = 0; i < s; i++)
+			data[i] = (float)v;
+	}
+
+	bool nan()
+	{
+		for (int i = 0; i < s; i++)
+			if (data[i] != data[i])
+				return true;
+
+		return false;
+	}
+};
+
+template <class t, int s>
+bool operator<(vec<t, s> a, vec<t, s> b)
+{
+	for (int i = 0; i < s; i++)
+	{
+		if (a[i] < b[i])
+			return true;
+		else if (a[i] > b[i])
+			return false;
+	}
+
+	return false;
+}
 
 template <class t, int s>
 std::ostream &operator<<(std::ostream &f, vec<t, s> v)
@@ -666,27 +867,11 @@ vec<t, s> rol3(vec<t, s> v, vec <at, s> a)
 	return y;
 }
 
-/* slerp
- * (spherical linear interpolation)
- *
- * This calculates a spherical linear interpolation between two
- * vectors v1 and v2 using p as the percentage angle from v1 to
- * v2.
- */
-template <class t, int s>
-vec<t, s> slerp(vec<t, s> v1, vec<t, s> v2, t p)
-{
-	double omega = acos((double)dot(v1, v2));
-	double somega = sin(omega);
-	vec <t, s> ret = v1*sin(omega - p*omega) + v2*sin(p*omega);
-	return ret/somega;
-}
-
 /* mag
  * (magnitude)
  *
  * Calculates the magnitude of a vector v
- * |v| = sqrt(v•v)
+ * |v| = sqrt(vï¿½v)
  */
 template <class t, int s>
 t mag(vec<t, s> v)
@@ -698,7 +883,7 @@ t mag(vec<t, s> v)
  * (magnitude^2)
  *
  * Calculates the squared magnitude of a vector v
- * |v|^2 = v•v
+ * |v|^2 = vï¿½v
  */
 template <class t, int s>
 t mag2(vec<t, s> v)
@@ -713,7 +898,7 @@ t mag2(vec<t, s> v)
  * (magnitude^2)
  *
  * Calculates the squared magnitude of a vector v
- * |v|^2 = v•v
+ * |v|^2 = vï¿½v
  */
 template <class t>
 t mag2(vec<t, 2> v)
@@ -725,7 +910,7 @@ t mag2(vec<t, 2> v)
  * (magnitude^2)
  *
  * Calculates the squared magnitude of a vector v
- * |v|^2 = v•v
+ * |v|^2 = vï¿½v
  */
 template <class t>
 t mag2(vec<t, 3> v)
@@ -737,7 +922,7 @@ t mag2(vec<t, 3> v)
  * (magnitude^2)
  *
  * Calculates the squared magnitude of a vector v
- * |v|^2 = v•v
+ * |v|^2 = vï¿½v
  */
 template <class t>
 t mag2(vec<t, 4> v)
@@ -749,7 +934,7 @@ t mag2(vec<t, 4> v)
  * (dot product)
  *
  * Calculates the dot product of two vectors v1 and v2
- * v1•v2 = (v1.x*v2.x + v1.y*v2.y + v1.z*v2.z + ...)
+ * v1ï¿½v2 = (v1.x*v2.x + v1.y*v2.y + v1.z*v2.z + ...)
  */
 template <class t1, class t2, int s1, int s2>
 t1 dot(vec<t1, s1> v1, vec<t2, s2> v2)
@@ -757,12 +942,8 @@ t1 dot(vec<t1, s1> v1, vec<t2, s2> v2)
 	t1 result = 0;
 
 	int m = min(s1, s2);
-	for (int i = 0; i < m; i++){
-		if(v1.data[i] == 0 || v2.data[i] == 0) {
-			continue;
-		}
-		result += v1.data[i] * v2.data[i];
-	}
+	for (int i = 0; i < m; i++)
+		result += v1.data[i]*v2.data[i];
 	return result;
 }
 
@@ -834,6 +1015,48 @@ vec<t, 4> homogenize(vec<t, s> v, int offset = 0)
 	result[2] = v[offset+2];
 	result[3] = (t)1;
 	return result;
+}
+
+/* lerp
+ * (inear interpolation)
+ *
+ * This calculates a linear interpolation between two
+ * vectors v1 and v2 using p as the percentage angle from v1 to
+ * v2.
+ */
+template <class t, int s>
+vec<t, s> lerp(vec<t, s> v1, vec<t, s> v2, t p)
+{
+	// TODO Assignment 5: implement linear interpolation
+	return v1;
+}
+
+/* slerp
+ * (linear interpolation)
+ *
+ * This calculates a linear interpolation between two
+ * vectors v1 and v2 using p as the percentage angle from v1 to
+ * v2.
+ */
+template <class t, int s>
+vec<t, s> slerp(vec<t, s> v0, vec<t, s> v1, t p)
+{
+	// TODO Assignment 5: not necessary, but may be useful if you want to play with other interpolation methods
+	return v0;
+}
+
+template <class t, int s>
+vec<t, s> hermite(vec<t, s> v0, vec<t, s> v1, vec<t, s> m0, vec<t, s> m1, t p)
+{
+	// TODO Assignment 5: implement hermite cubic interpolation
+	return v0;
+}
+
+template <class t, int s>
+vec<t, s> catmullrom(vec<t, s> v0, vec<t, s> v1, vec<t, s> v2, vec<t, s> v3, t p, t a)
+{
+	// TODO Assignment 5: implement catmull rom interpolation
+	return v0;
 }
 
 }

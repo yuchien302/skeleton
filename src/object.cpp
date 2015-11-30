@@ -9,7 +9,6 @@
 
 rigidhdl::rigidhdl()
 {
-
 }
 
 rigidhdl::~rigidhdl()
@@ -17,44 +16,141 @@ rigidhdl::~rigidhdl()
 
 }
 
+vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step, int method)
+{
+	if (frame >= positions.size() || positions[frame].size() == 0)
+		return vec3f(0.0f, 0.0f, 0.0f);
+	else if (pos < positions[frame].begin()->first)
+		return positions[frame].begin()->second;
+
+	if (method == 0) // none
+	{
+		// TODO Assignment 5: implement position frame sampling
+	}
+	else if (method == 1) // lerp
+	{
+		// TODO Assignment 5: use linear interpolation between position frames
+	}
+	else if (method == 2) // hermite
+	{
+		// TODO Assignment 5: use hermite interpolation between position frames
+	}
+	else if (method == 3) // catmull rom
+	{
+		// TODO Assignment 5: use catmull rom interpolation between position frames
+	}
+	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
+
+	return positions[frame].begin()->second;
+}
+
+vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double step, int method)
+{
+	if (frame >= orientations.size() || orientations[frame].size() == 0)
+		return vec4d(0.0f, 0.0f, 1.0f, 0.0f);
+	else if (pos < orientations[frame].begin()->first)
+		return orientations[frame].begin()->second;
+
+	if (method == 0) // none
+	{
+		// TODO Assignment 5: implement orientation frame sampling
+	}
+	if (method == 1) // lerp
+	{
+		// TODO Assignment 5: use linear interpolation between orientation frames
+	}
+	else if (method == 2) // slerp
+	{
+		// TODO Assignment 5: use spherical linear interpolation between orientation frames
+	}
+	else if (method == 3) // squad
+	{
+		// TODO Assignment 5: use spherical quadratic interpolation between orientation frames
+	}
+	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
+
+	return orientations[frame].begin()->second;
+}
+
 /* draw
  *
  * Draw a rigid body.
  */
-void rigidhdl::draw()
+void rigidhdl::draw(double pos, double fraction, double step, int position_interpolator, int orientation_interpolator)
 {
-	// Done Assignment 1: Send the rigid body geometry to the renderer
+	glPushMatrix();
+	for (int i = 0; i < (int)name.size(); i++)
+	{
+		if (i < (int)positions.size())
+		{
+			vec3f position = get_position(i, pos, fraction, step, position_interpolator);
+			glTranslatef(position[0], position[1], position[2]);
+		}
+
+		if (i < (int)center.size())
+			glTranslatef(center[i][0], center[i][1], center[i][2]);
+
+		if (i < (int)orientations.size())
+		{
+			vec4d orientation = get_orientation(i, pos, fraction, step, orientation_interpolator);
+			glRotatef(radtodeg(orientation[3]), orientation[0], orientation[1], orientation[2]);
+		}
+
+		if (i < (int)scale_orientation.size())
+			glRotatef(radtodeg(scale_orientation[i][3]), scale_orientation[i][0], scale_orientation[i][1], scale_orientation[i][2]);
+
+		if (i < (int)scale.size())
+			glScalef(scale[i][0], scale[i][1], scale[i][2]);
+
+		if (i < (int)scale_orientation.size())
+			glRotatef(radtodeg(-scale_orientation[i][3]), scale_orientation[i][0], scale_orientation[i][1], scale_orientation[i][2]);
+
+		if (i < (int)center.size())
+			glTranslatef(-center[i][0], -center[i][1], -center[i][2]);
+	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_NORMAL_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	glVertexPointer(3, GL_FLOAT, sizeof(float)*8, (float*) geometry.data());
-	glNormalPointer(GL_FLOAT, sizeof(float)*8, (float*) geometry.data()+3);
-	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*8, (float*) geometry.data()+6);
+	glVertexPointer(3, GL_FLOAT, sizeof(float)*8, ((float*)geometry.data()));
+	glNormalPointer(GL_FLOAT, sizeof(float)*8, ((float*)geometry.data()) + 3);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*8, ((float*)geometry.data()) + 6);
 
 	glDrawElements(GL_TRIANGLES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+
 	glDisableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_NORMAL_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
+	glPopMatrix();
 }
 
 objecthdl::objecthdl()
 {
-	position = vec3f(0.0, 0.0, 0.0);
-	orientation = vec3f(0.0, 0.0, 0.0);
-	bound = vec6f(1.0e6, -1.0e6, 1.0e6, -1.0e6, 1.0e6, -1.0e6);
+	position = vec3f(0.0f, 0.0f, 0.0f);
+	orientation = vec3f(0.0f, 0.0f, 0.0f);
+	bound = vec6f(1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f);
 	scale = 1.0;
+	start_time = 0.0f;
+	minstep = 0.0;
+	animation_length = 1.0;
+	position_interpolator = 0;
+	orientation_interpolator = 0;
 }
 
 objecthdl::objecthdl(const objecthdl &o)
 {
+	animation_length = o.animation_length;
+	minstep = o.minstep;
 	position = o.position;
 	orientation = o.orientation;
 	bound = o.bound;
 	scale = o.scale;
 	rigid = o.rigid;
+	start_time = o.start_time;
+	position_interpolator = o.position_interpolator;
+	orientation_interpolator = o.orientation_interpolator;
 	for (map<string, materialhdl*>::const_iterator i = o.material.begin(); i != o.material.end(); i++)
 		material.insert(pair<string, materialhdl*>(i->first, i->second->clone()));
 }
@@ -78,18 +174,45 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-	// DONE Assignment 1: Send transformations and geometry to the renderer to draw the object
-	// DONE Assignment 3: Pass the material as a uniform into the renderer
-	glMatrixMode(GL_MODELVIEW);
-	before_draw();
-	for (int i = 0; i < rigid.size(); i++){
-		// DONE Assignment 3: Pass the material as a uniform into the renderer
-		material[rigid[i].material] -> apply(lights);
-		rigid[i].draw();
-	}
-	after_draw();
-}
+	/* TODO Assignment 5: get the current time and use that to calculate the pos and fraction values and to update
+	 * the start_time.
+	 *
+	 * Here are the variables you'll need to work with. They are all member variables of objecthdl.
+	 *
+	 * start_time		is the time at which the current animation was started in seconds. This needs to be updated
+	 * 					every time the animation finishes in order to start a new animation.
+	 * animation_length is the total length of the animation in seconds. This is given by the *.wrl model file
+	 * minstep 			is the minimum step size in sections between two frames in seconds. This is given by the GUI.
+	 *
+	 * pos		is a multiple of minstep/animation_length that specifies the current location in
+	 * 			the animation as a percentage of animation_length.
+	 * fraction is the fractional part of the current location in the animation. Its an
+	 * 			interpolator with a value between 0.0 and 1.0 where 1.0 is the next frame.
+	 */
 
+	glPushMatrix();
+	glTranslatef(position[0], position[1], position[2]);
+	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
+	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
+	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
+
+	for (int i = 0; i < rigid.size(); i++)
+	{
+
+		if (material.find(rigid[i].material) != material.end())
+			material[rigid[i].material]->apply(lights);
+		else {
+			cout << rigid[i].material << endl;
+			whitehdl().apply(lights);
+		}
+
+		// The first three numbers here are pos, fraction, and step
+		rigid[i].draw(0.0, 0.0, 0.0, position_interpolator, orientation_interpolator);
+	}
+
+	glPopMatrix();
+}
 
 /* draw_bound
  *
@@ -98,58 +221,66 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
  */
 void objecthdl::draw_bound()
 {
-	/* DONE Assignment 1: Generate the geometry for the bounding box and send the necessary
-	 * transformations and geometry to the renderer
-	 */
+	glPushMatrix();
+	glTranslatef(position[0], position[1], position[2]);
+	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
+	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
+	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
 
-	vector<vec3f> vertices = vector<vec3f>();
-	vector<int> indices = vector<int>();
+	bound[0] -= 0.005;
+	bound[1] += 0.005;
+	bound[2] -= 0.005;
+	bound[3] += 0.005;
+	bound[4] -= 0.005;
+	bound[5] += 0.005;
 
-	float xmin = bound.data[0];
-	float xmax = bound.data[1];
-	float ymin = bound.data[2];
-	float ymax = bound.data[3];
-	float zmin = bound.data[4];
-	float zmax = bound.data[5];
-
-
-	vertices.push_back(vec3f(xmax, ymax, zmax));
-	vertices.push_back(vec3f(xmin, ymax, zmax));
-	vertices.push_back(vec3f(xmin, ymin, zmax));
-	vertices.push_back(vec3f(xmax, ymin, zmax));
-	vertices.push_back(vec3f(xmax, ymax, zmin));
-	vertices.push_back(vec3f(xmin, ymax, zmin));
-	vertices.push_back(vec3f(xmin, ymin, zmin));
-	vertices.push_back(vec3f(xmax, ymin, zmin));
-
-
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back((i+1)%4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i+4);
-		indices.push_back(((i+1)%4) + 4);
-	}
-	for(int i = 0; i < 4; i++){
-		indices.push_back(i);
-		indices.push_back(i+4);
+	vector<vec8f> bound_geometry;
+	vector<int> bound_indices;
+	bound_geometry.reserve(8);
+	bound_geometry.push_back(vec8f(bound[0], bound[2], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[1], bound[2], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[1], bound[3], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[0], bound[3], bound[4], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[0], bound[2], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[1], bound[2], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[1], bound[3], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_geometry.push_back(vec8f(bound[0], bound[3], bound[5], 0.0, 0.0, 0.0, 0.0, 0.0));
+	bound_indices.reserve(24);
+	for (int i = 0; i < 4; i++)
+	{
+		bound_indices.push_back(i);
+		bound_indices.push_back((i+1)%4);
+		bound_indices.push_back(4+i);
+		bound_indices.push_back(4+(i+1)%4);
+		bound_indices.push_back(i);
+		bound_indices.push_back(4+i);
 	}
 
-	glMatrixMode(GL_MODELVIEW);
-	before_draw();
-
-	materialhdl* m = new whitehdl();
-	m -> apply(vector<lighthdl*>());
+	whitehdl().apply(vector<lighthdl*>());
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, vertices.data());
-	glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(float)*8, ((float*)bound_geometry.data()));
+	glNormalPointer(GL_FLOAT, sizeof(float)*8, ((float*)bound_geometry.data()) + 3);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(float)*8, ((float*)bound_geometry.data()) + 6);
+
+	glDrawElements(GL_LINES, (int)bound_indices.size(), GL_UNSIGNED_INT, bound_indices.data());
+
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glUseProgram(0);
+	glDisableClientState(GL_NORMAL_ARRAY);
+	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-	after_draw();
+	glPopMatrix();
 
+	bound[0] += 0.005;
+	bound[1] -= 0.005;
+	bound[2] += 0.005;
+	bound[3] -= 0.005;
+	bound[4] += 0.005;
+	bound[5] -= 0.005;
 }
 
 /* draw_normals
@@ -160,62 +291,92 @@ void objecthdl::draw_bound()
  */
 void objecthdl::draw_normals(bool face)
 {
-	/* DONE Assignment 1: Generate the geometry to display the normals and send the necessary
-	 * transformations and geometry to the renderer
-	 */
-	vector<vec3f> normals = vector<vec3f>();
-	vector<int> indices = vector<int>();
-	int index = 0;
-	float normal_length = 0.1;
+	float radius = 0.0;
+	for (int i = 0; i < 6; i++)
+		if (abs(bound[i]) > radius)
+			radius = abs(bound[i]);
 
-	for (int i = 0; i < rigid.size(); i++){
-		if(face){
-			for(int n = 0; n < rigid[i].indices.size()/3; n++){
+	vector<vec8f> normal_geometry;
+	vector<int> normal_indices;
 
-				vec3f point1 = vec3f(rigid[i].geometry[rigid[i].indices[3*n]].data[0], rigid[i].geometry[rigid[i].indices[3*n]].data[1], rigid[i].geometry[rigid[i].indices[3*n]].data[2]);
-				vec3f point2 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+1]].data[0], rigid[i].geometry[rigid[i].indices[3*n+1]].data[1], rigid[i].geometry[rigid[i].indices[3*n+1]].data[2]);
-				vec3f point3 = vec3f(rigid[i].geometry[rigid[i].indices[3*n+2]].data[0], rigid[i].geometry[rigid[i].indices[3*n+2]].data[1], rigid[i].geometry[rigid[i].indices[3*n+2]].data[2]);
-				vec3f vec12 = point2 - point1;
-				vec3f vec13 = point3 - point1;
-				vec3f direction = norm(cross(vec13, vec12));
-				vec3f start = (point1+ point2+ point3) / float(3.0);
-				normals.push_back(start);
-				normals.push_back(start + ( normal_length * direction));
+	glPushMatrix();
+	glTranslatef(position[0], position[1], position[2]);
+	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
+	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
+	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
+	glScalef(scale, scale, scale);
 
-				indices.push_back(index++);
-				indices.push_back(index++);
+	for (int i = 0; i < rigid.size(); i++)
+	{
+		if (!face)
+		{
+			for (int j = 0; j < rigid[i].geometry.size(); j++)
+			{
+				normal_indices.push_back(normal_geometry.size());
+				normal_geometry.push_back(rigid[i].geometry[j]);
+				normal_geometry.back().set(3,6,vec3f(0.0, 0.0, 0.0));
+				normal_indices.push_back(normal_geometry.size());
+				normal_geometry.push_back(rigid[i].geometry[j]);
+				normal_geometry.back().set(0,3,(vec3f)(normal_geometry.back()(0,3) + radius*0.1f*normal_geometry.back()(3,6)));
+				normal_geometry.back().set(3,6,vec3f(0.0, 0.0, 0.0));
 			}
 		}
-		else{
-			for(int g = 0; g < rigid[i].geometry.size(); g++){
-
-				vec3f start = vec3f(rigid[i].geometry[g].data[0], rigid[i].geometry[g].data[1], rigid[i].geometry[g].data[2]);
-
-				vec3f direction = vec3f(rigid[i].geometry[g].data[3], rigid[i].geometry[g].data[4], rigid[i].geometry[g].data[5]);
-
-				normals.push_back(start);
-				normals.push_back(start + ( normal_length * direction));
-
-				indices.push_back(index++);
-				indices.push_back(index++);
+		else
+		{
+			for (int j = 0; j < rigid[i].indices.size(); j+=3)
+			{
+				vec3f normal = norm((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](3,6) +
+									(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](3,6) +
+									(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](3,6));
+				vec3f center = ((vec3f)rigid[i].geometry[rigid[i].indices[j + 0]](0,3) +
+								(vec3f)rigid[i].geometry[rigid[i].indices[j + 1]](0,3) +
+								(vec3f)rigid[i].geometry[rigid[i].indices[j + 2]](0,3))/3.0f;
+				normal_indices.push_back(normal_geometry.size());
+				normal_geometry.push_back(vec8f(center));
+				normal_geometry.back().set(3,8,vec5f(0.0, 0.0, 0.0, 0.0, 0.0));
+				normal_indices.push_back(normal_geometry.size());
+				normal_geometry.push_back(vec8f(center + radius*0.1f*normal));
+				normal_geometry.back().set(3,8,vec5f(0.0, 0.0, 0.0, 0.0, 0.0));
 			}
 		}
+
+		whitehdl().apply(vector<lighthdl*>());
+
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glEnableClientState(GL_NORMAL_ARRAY);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		glVertexPointer(3, GL_FLOAT, sizeof(float)*8, ((float*)normal_geometry.data()));
+		glNormalPointer(GL_FLOAT, sizeof(float)*8, ((float*)normal_geometry.data()) + 3);
+		glTexCoordPointer(2, GL_FLOAT, sizeof(float)*8, ((float*)normal_geometry.data()) + 6);
+
+		glDrawElements(GL_LINES, (int)normal_indices.size(), GL_UNSIGNED_INT, normal_indices.data());
+
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_NORMAL_ARRAY);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+		normal_geometry.clear();
+		normal_indices.clear();
 	}
 
-	glMatrixMode(GL_MODELVIEW);
-	before_draw();
-
-	materialhdl* m = new whitehdl();
-	m -> apply(vector<lighthdl*>());
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glVertexPointer(3, GL_FLOAT, sizeof(GLfloat)*3, normals.data());
-	glDrawElements(GL_LINES, (int)indices.size(), GL_UNSIGNED_INT, indices.data());
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glUseProgram(0);
-
-	after_draw();
+	glPopMatrix();
 }
+
+objecthdl &objecthdl::operator=(objecthdl o)
+{
+	rigid = o.rigid;
+	for (map<string, materialhdl*>::iterator i = o.material.begin(); i != o.material.end(); i++)
+		material.insert(pair<string, materialhdl*>(i->first, i->second->clone()));
+	position = o.position;
+	orientation = o.orientation;
+	scale = o.scale;
+	bound = o.bound;
+	animation_length = o.animation_length;
+	minstep = o.minstep;
+	return *this;
+}
+
 
 void objecthdl::before_draw(){
 	glPushMatrix();
@@ -226,8 +387,8 @@ void objecthdl::before_draw(){
 	glScalef(scale, scale, scale);
 }
 
+
 void objecthdl::after_draw(){
 	glPopMatrix();
 }
-
 

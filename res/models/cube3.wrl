@@ -1,0 +1,69 @@
+#VRML V2.0 utf8
+
+NavigationInfo {
+    avatarSize 0
+}
+Collision {
+    collide FALSE
+    children [
+	Transform {
+	    rotation	0 1 0  0.4
+	    children [
+		Transform {
+		    rotation	1 0 0  0.785398
+		    children [
+			Shape {
+			    appearance
+				Appearance {
+				    material
+					DEF _v2%0 Material {
+					    diffuseColor	0 1 0
+					}
+				}
+			    geometry
+				Box {
+				}
+			}
+		    ]
+		},
+		Transform {
+		    children [
+			Transform {
+			    rotation	0 1 0  0.785398
+			    children [
+				Shape {
+				    appearance
+					Appearance {
+					    material USE _v2%0
+					}
+				    geometry
+					Box {
+					}
+				}
+			    ]
+			},
+			Transform {
+			    children [
+				Transform {
+				    rotation	0 0 1  0.785398
+				    children [
+					Shape {
+					    appearance
+						Appearance {
+						    material USE _v2%0
+						}
+					    geometry
+						Box {
+						}
+					}
+				    ]
+				}
+			    ]
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

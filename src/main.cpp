@@ -6,7 +6,7 @@
  */
 
 #include "opengl.h"
-#include "standard.h"
+#include "common/standard.h"
 #include "scene.h"
 #include "camera.h"
 #include "model.h"
@@ -27,12 +27,10 @@ int object_menu_id;
 int light_menu_id;
 int camera_menu_id;
 
-
 int width = 750;
 int height = 750;
 
 string working_directory = "";
-
 
 namespace manipulate
 {
@@ -47,7 +45,8 @@ namespace manipulate
 		width = 5,
 		height = 6,
 		front = 7,
-		back = 8
+		back = 8,
+		stepsize = 9
 	};
 }
 
@@ -60,10 +59,8 @@ void init()
 	for (int i = 0; i < 256; i++)
 		keys[i] = false;
 
-
 	scene.cameras.push_back(new frustumhdl());
 	scene.objects.push_back(new pyramidhdl(1.0, 1.0, 8));
-
 	for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 		for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 		{
@@ -76,7 +73,6 @@ void init()
 	swap(scene.objects.back()->bound[3], scene.objects.back()->bound[5]);
 
 	scene.cameras.back()->model = scene.objects.back();
-
 	if (!scene.active_camera_valid())
 	{
 		scene.active_camera = scene.cameras.size()-1;
@@ -85,7 +81,6 @@ void init()
 	scene.cameras[scene.active_camera]->position[2] = 10.0;
 
 	glEnable(GL_DEPTH_TEST);
-
 }
 
 void displayfunc()
@@ -105,6 +100,7 @@ void reshapefunc(int w, int h)
 	glutPostRedisplay();
 }
 
+bool warp = false;
 void pmotionfunc(int x, int y)
 {
 	if (bound)
@@ -117,26 +113,32 @@ void pmotionfunc(int x, int y)
 		mousex = x;
 		mousey = y;
 
-		bool warp = false;
+		bool set_warp = false;
 		if (mousex > 3*width/4 || mousex < width/4)
 		{
 			mousex = width/2;
-			warp = true;
+			set_warp = true;
 		}
 
 		if (mousey > 3*height/4 || mousey < height/4)
 		{
 			mousey = height/2;
-			warp = true;
+			set_warp = true;
 		}
 
-		if (warp)
-			glutWarpPointer(mousex, mousey);
+		if (!set_warp)
+			warp = false;
 
-		if (scene.active_camera_valid())
+		if (scene.active_camera_valid() && !warp)
 		{
 			scene.cameras[scene.active_camera]->orientation[1] -= (float)deltax/500.0;
 			scene.cameras[scene.active_camera]->orientation[0] -= (float)deltay/500.0;
+		}
+
+		if (set_warp)
+		{
+			glutWarpPointer(mousex, mousey);
+			warp = true;
 		}
 
 		glutPostRedisplay();
@@ -146,38 +148,31 @@ void pmotionfunc(int x, int y)
 		vec3f direction;
 		vec3f position;
 
-		if (scene.active_camera_valid())
+		if (scene.cameras[scene.active_camera]->type == "ortho")
 		{
-			if (scene.cameras[scene.active_camera]->type == "ortho")
-			{
-
-				GLdouble model[16];
-				GLdouble proj[16];
-				GLint view[4];
-				glGetDoublev(GL_MODELVIEW_MATRIX, model);
-				glGetDoublev(GL_PROJECTION_MATRIX, proj);
-				glGetIntegerv(GL_VIEWPORT, view);
-				vec<double, 3> p;
-				gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
-				position = p;
-
-				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
-			}
-			else
-			{
-
-				GLdouble model[16];
-				GLdouble proj[16];
-				GLint view[4];
-				glGetDoublev(GL_MODELVIEW_MATRIX, model);
-				glGetDoublev(GL_PROJECTION_MATRIX, proj);
-				glGetIntegerv(GL_VIEWPORT, view);
-				vec<double, 3> p;
-				gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
-				position = scene.cameras[scene.active_camera]->position;
-				direction = norm(p - position);
-
-			}
+			GLdouble model[16];
+			GLdouble proj[16];
+			GLint view[4];
+			glGetDoublev(GL_MODELVIEW_MATRIX, model);
+			glGetDoublev(GL_PROJECTION_MATRIX, proj);
+			glGetIntegerv(GL_VIEWPORT, view);
+			vec<double, 3> p;
+			gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
+			position = p;
+			direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
+		}
+		else
+		{
+			GLdouble model[16];
+			GLdouble proj[16];
+			GLint view[4];
+			glGetDoublev(GL_MODELVIEW_MATRIX, model);
+			glGetDoublev(GL_PROJECTION_MATRIX, proj);
+			glGetIntegerv(GL_VIEWPORT, view);
+			vec<double, 3> p;
+			gluUnProject(x, height-y, 0.0f, model, proj, view, &p[0], &p[1], &p[2]);
+			position = scene.cameras[scene.active_camera]->position;
+			direction = norm(p - position);
 		}
 
 		int old_active_object = scene.active_object;
@@ -188,7 +183,6 @@ void pmotionfunc(int x, int y)
 			{
 				bool is_light = false;
 				bool is_camera = false;
-
 
 				for (int j = 0; j < scene.lights.size() && !is_light; j++)
 					if (scene.lights[j] != NULL && scene.lights[j]->model == scene.objects[i])
@@ -232,7 +226,6 @@ void pmotionfunc(int x, int y)
 		{
 			bool is_light = false;
 			bool is_camera = false;
-
 
 			for (int i = 0; i < scene.lights.size() && !is_light; i++)
 				if (scene.lights[i] != NULL && scene.active_object_valid() && scene.lights[i]->model == scene.objects[scene.active_object])
@@ -280,7 +273,6 @@ void motionfunc(int x, int y)
 		{
 			if (scene.cameras[scene.active_camera]->type == "ortho")
 			{
-
 				GLdouble model[16];
 				GLdouble proj[16];
 				GLint view[4];
@@ -290,12 +282,10 @@ void motionfunc(int x, int y)
 				vec<double, 3> p;
 				gluUnProject(x, height-y, 0.0, model, proj, view, &p[0], &p[1], &p[2]);
 				position = p;
-
 				direction = ror3(vec3f(0.0f, 0.0f, 1.0f), scene.cameras[scene.active_camera]->orientation);
 			}
 			else
 			{
-
 				GLdouble model[16];
 				GLdouble proj[16];
 				GLint view[4];
@@ -320,6 +310,12 @@ void motionfunc(int x, int y)
 				scene.objects[scene.active_object]->orientation += vec3f(-(float)deltay/100.0, (float)deltax/100.0, 0.0);
 			else if (manipulator == manipulate::scale)
 				scene.objects[scene.active_object]->scale += (float)deltay/100.0;
+			else if (manipulator == manipulate::stepsize)
+			{
+				scene.objects[scene.active_object]->minstep += (float)deltay/100.0;
+				if (scene.objects[scene.active_object]->minstep < 0.0)
+					scene.objects[scene.active_object]->minstep = 0.0;
+			}
 
 			for (int i = 0; i < scene.cameras.size(); i++)
 				if (scene.cameras[i]->model == scene.objects[scene.active_object])
@@ -373,9 +369,7 @@ void motionfunc(int x, int y)
 				manipulator == manipulate::height ||
 				manipulator == manipulate::front ||
 				manipulator == manipulate::back)
-
 				scene.cameras[scene.active_camera]->project();
-
 		}
 
 		glutPostRedisplay();
@@ -424,32 +418,32 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.05f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['s'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.05f*ror3(vec3f(0.0, 0.0, 1.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['a'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.05f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['d'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.05f*ror3(vec3f(1.0, 0.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['q'])
 		{
-			scene.cameras[scene.active_camera]->position += -0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += -0.05f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 		if (keys['e'])
 		{
-			scene.cameras[scene.active_camera]->position += 0.25f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
+			scene.cameras[scene.active_camera]->position += 0.05f*ror3(vec3f(0.0, 1.0, 0.0), scene.cameras[scene.active_camera]->orientation);
 			change = true;
 		}
 	}
@@ -457,18 +451,18 @@ void idlefunc()
 	{
 		if (keys['w'])
 		{
-			scene.cameras[scene.active_camera]->radius -= 0.25;
+			scene.cameras[scene.active_camera]->radius -= 0.025;
 			change = true;
 		}
 		if (keys['s'])
 		{
-			scene.cameras[scene.active_camera]->radius += 0.25;
+			scene.cameras[scene.active_camera]->radius += 0.025;
 			change = true;
 		}
 	}
 
-	if (change)
-		glutPostRedisplay();
+	//if (change)
+	glutPostRedisplay();
 }
 
 void menustatusfunc(int status, int x, int y)
@@ -491,20 +485,22 @@ void canvas_menu(int num)
 		scene.objects.push_back(new pyramidhdl(1.0, 1.0, 20));
 	else if (num == 5)
 	{
-		const char* filters[1];
+		const char* filters[2];
 		filters[0] = "*.obj";
-		const char *path = tinyfd_openFileDialog("Load a Model", "", 1, filters, 0);
-		if (path != NULL && strlen(path) > 0)
+		filters[1] = "*.wrl";
+		const char *path = tinyfd_openFileDialog("Load a Model", "", 2, filters, 0);
+		if (path != NULL && path[0] != '\0')
+		{
+			string pathstr = path;
 			scene.objects.push_back(new modelhdl(path));
+		}
 	}
-
 	else if (num == 6)
 		scene.render_lights = !scene.render_lights;
 	else if (num == 7)
 	{
 		scene.lights.push_back(new directionalhdl());
 		scene.objects.push_back(new cylinderhdl(0.25, 1.0, 8));
-		//((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -521,15 +517,12 @@ void canvas_menu(int num)
 	{
 		scene.lights.push_back(new pointhdl());
 		scene.objects.push_back(new spherehdl(0.25, 4, 8));
-		//((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
 		scene.lights.back()->model = scene.objects.back();
 	}
 	else if (num == 9)
 	{
 		scene.lights.push_back(new spothdl());
 		scene.objects.push_back(new pyramidhdl(0.25, 1.0, 8));
-		//((phonghdl*)scene.objects.back()->material["default"])->emission = vec3f(1.0, 1.0, 1.0);
-
 		for (int k = 0; k < scene.objects.back()->rigid.size(); k++)
 			for (int i = 0; i < scene.objects.back()->rigid[k].geometry.size(); i++)
 			{
@@ -577,7 +570,6 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-
 			scene.cameras[scene.active_camera]->project();
 		}
 	}
@@ -600,9 +592,7 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-
 			scene.cameras[scene.active_camera]->project();
-
 		}
 	}
 	else if (num == 20)
@@ -624,7 +614,6 @@ void canvas_menu(int num)
 		if (!scene.active_camera_valid())
 		{
 			scene.active_camera = scene.cameras.size()-1;
-
 			scene.cameras[scene.active_camera]->project();
 		}
 	}
@@ -646,7 +635,6 @@ void canvas_menu(int num)
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 	}
-
 	else if (num == 31)
 		scene.render_normals = scenehdl::none;
 	else if (num == 32)
@@ -702,7 +690,6 @@ void object_menu(int num)
 				scene.active_camera = i;
 
 		if (scene.active_camera_valid())
-
 			scene.cameras[scene.active_camera]->project();
 
 		glutPostRedisplay();
@@ -719,7 +706,6 @@ void object_menu(int num)
 		scene.cameras[scene.active_camera]->radius = dist(scene.objects[scene.active_object]->position, scene.cameras[scene.active_camera]->position);
 	}
 	else if (num == 6 && scene.active_object_valid())
-
 	{
 		for (map<string, materialhdl*>::iterator i = scene.objects[scene.active_object]->material.begin(); i != scene.objects[scene.active_object]->material.end(); i++)
 		{
@@ -769,10 +755,25 @@ void object_menu(int num)
 		}
 		glutPostRedisplay();
 	}
-
-
+	else if (num == 11)
+		manipulator = manipulate::stepsize;
+	else if (num == 12 && scene.active_object_valid())
+		scene.objects[scene.active_object]->position_interpolator = 0;
+	else if (num == 13 && scene.active_object_valid())
+		scene.objects[scene.active_object]->position_interpolator = 1;
+	else if (num == 14 && scene.active_object_valid())
+		scene.objects[scene.active_object]->position_interpolator = 2;
+	else if (num == 15 && scene.active_object_valid())
+		scene.objects[scene.active_object]->position_interpolator = 3;
+	else if (num == 20 && scene.active_object_valid())
+		scene.objects[scene.active_object]->orientation_interpolator = 0;
+	else if (num == 21 && scene.active_object_valid())
+		scene.objects[scene.active_object]->orientation_interpolator = 1;
+	else if (num == 22 && scene.active_object_valid())
+		scene.objects[scene.active_object]->orientation_interpolator = 2;
+	else if (num == 23 && scene.active_object_valid())
+		scene.objects[scene.active_object]->orientation_interpolator = 3;
 }
-
 
 void color_menu(int num)
 {
@@ -942,7 +943,6 @@ void create_menu()
 	glutAddMenuEntry(" Range 600   ",  10);
 	glutAddMenuEntry(" Range 3250  ",  11);
 
-
 	int culling_id = glutCreateMenu(canvas_menu);
 	glutAddMenuEntry(" None        ", 28);
 	glutAddMenuEntry(" Back        ", 29);
@@ -955,14 +955,12 @@ void create_menu()
 
     canvas_menu_id = glutCreateMenu(canvas_menu);
     glutAddSubMenu  (" Objects     ", objects_id);
-
     glutAddSubMenu  (" Lights      ", lights_id);
     glutAddSubMenu  (" Cameras     ", camera_id);
     glutAddSubMenu  (" Polygon     ", mode_id);
     glutAddSubMenu  (" Culling     ", culling_id);
     glutAddSubMenu  (" Normals     ", normal_id);
     glutAddMenuEntry(" Quit        ", 0);
-
 
     int material_menu_id = glutCreateMenu(object_menu);
     glutAddMenuEntry(" White       ", 10);
@@ -971,15 +969,29 @@ void create_menu()
     glutAddMenuEntry(" Custom       ", 7);
     glutAddMenuEntry(" Texture     ", 6);
 
+    // DONE Assignment 5: enable the interpolation and step size menu options
+    int translation_interpolator_menu_id = glutCreateMenu(object_menu);
+    glutAddMenuEntry(" None        ", 12);
+    glutAddMenuEntry(" LERP        ", 13);
+    glutAddMenuEntry(" Hermite     ", 14);
+    glutAddMenuEntry(" Catmull Rom ", 15);
+
+    int rotation_interpolator_menu_id = glutCreateMenu(object_menu);
+	glutAddMenuEntry(" None  ", 20);
+	glutAddMenuEntry(" LERP  ", 21);
+	glutAddMenuEntry(" SLERP ", 22);
+	glutAddMenuEntry(" SQUAD ", 23);
+
     object_menu_id = glutCreateMenu(object_menu);
-
-    glutAddSubMenu  (" Material    ", material_menu_id);
-    glutAddMenuEntry(" Set Focus   ", 5);
-    glutAddMenuEntry(" Translate   ", 1);
-    glutAddMenuEntry(" Rotate      ", 2);
-    glutAddMenuEntry(" Scale       ", 3);
-    glutAddMenuEntry(" Delete      ", 0);
-
+    glutAddSubMenu  (" Material            ", material_menu_id);
+    glutAddSubMenu  (" Translation Interp  ", translation_interpolator_menu_id);
+    glutAddSubMenu  (" Rotation Interp     ", rotation_interpolator_menu_id);
+    glutAddMenuEntry(" Set Focus           ", 5);
+    glutAddMenuEntry(" Translate           ", 1);
+    glutAddMenuEntry(" Rotate              ", 2);
+    glutAddMenuEntry(" Scale               ", 3);
+    glutAddMenuEntry(" Step Size           ", 11);
+    glutAddMenuEntry(" Delete              ", 0);
 
     light_menu_id = glutCreateMenu(object_menu);
     glutAddSubMenu  (" Ambient     ", ambient_id);

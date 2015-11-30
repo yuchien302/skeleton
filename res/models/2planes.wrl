@@ -1,0 +1,58 @@
+#VRML V2.0 utf8
+
+NavigationInfo {
+    avatarSize 0
+}
+Collision {
+    collide FALSE
+    children [
+	Group {
+	    children [
+		Group {
+		    children [
+			Shape {
+			    appearance
+				Appearance {
+				    material
+					Material {
+					    diffuseColor	0 0 1
+					}
+				}
+			    geometry
+				IndexedFaceSet {
+				    coord
+					Coordinate {
+					    point	[ 0 0 0,
+							      2 0 0,
+							      2 2 0,
+							      0 2 0,
+							      2 2 1,
+							      2 0 1,
+							      0 0 -1,
+							      0 2 -1 ]
+					}
+				    color
+					Color {
+					    color	[ 0 0 1,
+							      1 1 1,
+							      0 0 0,
+							      0 0.6 1,
+							      0 0 0.5,
+							      0.5 0.5 0.5,
+							      0 0 0.5 ]
+					}
+				    colorPerVertex	FALSE
+				    solid	FALSE
+				    creaseAngle	0.5
+				    coordIndex	[ 0, 1, 2, 3, -1, 4, 5, 6,
+						      7, -1 ]
+				    colorIndex	[ 0, 1 ]
+				}
+			}
+		    ]
+		}
+	    ]
+	}
+    ]
+}
+

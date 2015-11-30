@@ -1,0 +1,80 @@
+#VRML V2.0 utf8
+		Shape {
+			geometry Sphere { radius 1.000000 } 
+			appearance Appearance {
+				material Material { diffuseColor 0.000000 0.000000 0.000000 }
+			}
+		}
+
+Transform {
+	rotation 0 0 -1 0.814827
+	translation 1.992752 1.342997 1.992752
+	children [
+Transform {
+	rotation -1.393713 1.314006 0.000000 2.356194
+	children [
+		Shape {
+			geometry Cylinder {
+				bottom TRUE
+				side TRUE
+				top TRUE
+				height 1.915476
+				radius 1.000000
+			}
+			appearance Appearance {
+				material Material { diffuseColor 1.000000 0.000000 0.000000 }
+			}
+		}
+	]
+}
+	]
+}
+
+Transform {
+	rotation 0 0 -1 0.814827
+	translation 0.750000 3.000000 0.750000
+	children [
+Transform {
+	rotation -0.727607 0.685994 0.000000 2.356194
+	children [
+		Shape {
+			geometry Cone {
+				bottom TRUE
+				height 2.915476
+				bottomRadius 1.000000
+			}
+			appearance Appearance {
+				material Material { diffuseColor 1.000000 0.000000 0.000000 }
+			}
+		}
+	]
+}
+	]
+}
+
+Transform {
+	rotation 0 0 -1 0.814827
+	translation 2.742752 0.342997 2.742752
+	children [
+Transform {
+	rotation -0.727607 0.685994 0.000000 2.356194
+	children [
+Transform {
+	rotation 1 0 0 3.141593
+	children [
+		Shape {
+			geometry Cone {
+				bottom TRUE
+				height 1.000000
+				bottomRadius 1.000000
+			}
+			appearance Appearance {
+				material Material { diffuseColor 1.000000 0.000000 0.000000 }
+			}
+		}
+	]
+}
+	]
+}
+	]
+}

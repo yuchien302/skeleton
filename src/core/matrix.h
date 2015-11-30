@@ -48,15 +48,14 @@ struct mat
 			for (int j = 0; j < mh; j++)
 				data[i][j] = m.data[i][j];
 			for (int j = mh; j < h2; j++)
-				data[i][j] = 0;
+				data[i][j] = (t)0;
 		}
 		for (int i = mv; i < v2; i++)
 			for (int j = 0; j < h2; j++)
-				data[i][j] = 0;
+				data[i][j] = (t)0;
 	}
 
-	template <class t2>
-	mat(t2 first, ...)
+	mat(t first, ...)
 	{
 		va_list arguments;
 
@@ -64,19 +63,7 @@ struct mat
 		data[0][0] = first;
 		for (int i = 0; i < v; i++)
 			for (int j = (i == 0 ? 1 : 0); j < h; j++)
-				data[i][j] = (t)va_arg(arguments, t2);
-		va_end(arguments);
-	}
-
-	mat(float first, ...)
-	{
-		va_list arguments;
-
-		va_start(arguments, first);
-		data[0][0] = first;
-		for (int i = 0; i < v; i++)
-			for (int j = (i == 0 ? 1 : 0); j < h; j++)
-				data[i][j] = (t)va_arg(arguments, double);
+				data[i][j] = va_arg(arguments, t);
 		va_end(arguments);
 	}
 
@@ -108,11 +95,11 @@ struct mat
 			for (int j = 0; j < mh; j++)
 				data[i][j] = m.data[i][j];
 			for (int j = mh; j < h2; j++)
-				data[i][j] = 0;
+				data[i][j] = (t)0;
 		}
 		for (int i = mv; i < v2; i++)
 			for (int j = 0; j < h2; j++)
-				data[i][j] = 0;
+				data[i][j] = (t)0;
 		return *this;
 	}
 
@@ -178,7 +165,8 @@ struct mat
 		return data[index];
 	}
 
-	void set_row(int r, vec<t, h> m)
+	template <class t2>
+	void set_row(int r, vec<t2, h> m)
 	{
 		data[r] = m;
 	}
@@ -191,8 +179,8 @@ struct mat
 		return result;
 	}
 
-	template <int s2>
-	void set_row(int a, int b, mat<t, s2, h> m)
+	template <class t2, int s2>
+	void set_row(int a, int b, mat<t2, s2, h> m)
 	{
 		for (int i = a; i < b; i++)
 			data[i] = m.data[i-a];
@@ -207,12 +195,13 @@ struct mat
 
 		for (int i = b-a; i < v; i++)
 			for (int j = 0; j < h; j++)
-				result.data[i][j] = 0;
+				result.data[i][j] = (t)0;
 
 		return result;
 	}
 
-	void set_col(int c, vec<t, v> m)
+	template <class t2>
+	void set_col(int c, vec<t2, v> m)
 	{
 		for (int i = 0; i < v; i++)
 			data[i][c] = m[i];
@@ -228,8 +217,8 @@ struct mat
 		return result;
 	}
 
-	template <int s2>
-	void set_col(int a, int b, mat<t, s2, v> m)
+	template <class t2, int s2>
+	void set_col(int a, int b, mat<t2, s2, v> m)
 	{
 		for (int i = a; i < b; i++)
 			for (int j = 0; j < v; j++)
@@ -246,17 +235,17 @@ struct mat
 
 		for (int i = 0; i < v; i++)
 			for (int j = b-a; j < h; j++)
-				result.data[i][j] = 0;
+				result.data[i][j] = (t)0;
 
 		return result;
 	}
 
-	template <int v2, int h2>
-	void set(int va, int vb, int ha, int hb, mat<t, v2, h2> m)
+	template <class t2, int v2, int h2>
+	void set(int va, int vb, int ha, int hb, mat<t2, v2, h2> m)
 	{
 		for (int i = va; i < vb; i++)
 			for (int j = ha; j < hb; j++)
-				data[i][j] = m.data[i-va][j-ha];
+				data[i][j] = (t)m.data[i-va][j-ha];
 	}
 
 	mat<t, v, h> operator()(int va, int vb, int ha, int hb) const
@@ -268,11 +257,11 @@ struct mat
 
 		for (int i = vb-va; i < v; i++)
 			for (int j = 0; j < h; j++)
-				result.data[i][j] = 0;
+				result.data[i][j] = (t)0;
 
 		for (int i = 0; i < v; i++)
 			for (int j = hb-ha; j < h; j++)
-				result.data[i][j] = 0;
+				result.data[i][j] = (t)0;
 
 		return result;
 	}
@@ -299,6 +288,273 @@ struct mat
 	mat<t, v, h> &swapc(int a, int b)
 	{
 		t temp;
+		for (int i = 0; i < h; i++)
+		{
+			temp = data[i].data[a];
+			data[i].data[a] = data[i].data[b];
+			data[i].data[b] = temp;
+		}
+		return *this;
+	}
+};
+
+template <int v, int h>
+struct mat<float, v, h>
+{
+	mat()
+	{
+	}
+
+	template <int v2, int h2>
+	mat(mat<float, v2, h2> m)
+	{
+		int mv = min(v, v2);
+		int mh = min(h, h2);
+		for (int i = 0; i < mv; i++)
+		{
+			for (int j = 0; j < mh; j++)
+				data[i][j] = m.data[i][j];
+			for (int j = mh; j < h2; j++)
+				data[i][j] = 0.0f;
+		}
+		for (int i = mv; i < v2; i++)
+			for (int j = 0; j < h2; j++)
+				data[i][j] = 0.0f;
+	}
+
+	mat(float first, ...)
+	{
+		va_list arguments;
+
+		va_start(arguments, first);
+		data[0][0] = first;
+		for (int i = 0; i < v; i++)
+			for (int j = (i == 0 ? 1 : 0); j < h; j++)
+				data[i][j] = (float)va_arg(arguments, double);
+		va_end(arguments);
+	}
+
+	~mat()
+	{
+
+	}
+
+	template<class t2>
+	operator mat<t2, v, h>()
+	{
+		mat<t2, v, h> result;
+		for (int i = 0; i < v; i++)
+			for (int j = 0; j < h; j++)
+				result.data[i][j] = (t2)data[i][j];
+
+		return result;
+	}
+
+	vec<float, h> data[v];
+
+	template <int v2, int h2>
+	mat<float, v, h> &operator=(mat<float, v2, h2> m)
+	{
+		int mv = min(v, v2);
+		int mh = min(h, h2);
+		for (int i = 0; i < mv; i++)
+		{
+			for (int j = 0; j < mh; j++)
+				data[i][j] = m.data[i][j];
+			for (int j = mh; j < h2; j++)
+				data[i][j] = 0.0f;
+		}
+		for (int i = mv; i < v2; i++)
+			for (int j = 0; j < h2; j++)
+				data[i][j] = 0.0f;
+		return *this;
+	}
+
+	template <class t2>
+	mat<float, v, h> &operator+=(mat<t2, v, h> m)
+	{
+		*this = *this + m;
+		return *this;
+	}
+
+	template <class t2>
+	mat<float, v, h> &operator-=(mat<t2, v, h> m)
+	{
+		*this = *this - m;
+		return *this;
+	}
+
+	template <class t2>
+	mat<float, v, h> &operator*=(mat<t2, h, v> m)
+	{
+		*this = *this * m;
+		return *this;
+	}
+
+	template <class t2>
+	mat<float, v, h> &operator/=(mat<t2, h, v> m)
+	{
+		*this = *this / m;
+		return *this;
+	}
+
+	mat<float, v, h> &operator+=(float f)
+	{
+		*this = *this + f;
+		return *this;
+	}
+
+	mat<float, v, h> &operator-=(float f)
+	{
+		*this = *this - f;
+		return *this;
+	}
+
+	mat<float, v, h> &operator*=(float f)
+	{
+		*this = *this * f;
+		return *this;
+	}
+
+	mat<float, v, h> &operator/=(float f)
+	{
+		*this = *this / f;
+		return *this;
+	}
+
+	vec<float, h> &operator[](int index)
+	{
+		return data[index];
+	}
+
+	vec<float, h> operator[](int index) const
+	{
+		return data[index];
+	}
+
+	template <class t2>
+	void set_row(int r, vec<t2, h> m)
+	{
+		data[r] = m;
+	}
+
+	vec<float, h> row(int r) const
+	{
+		vec<float, h> result;
+		for (int i = 0; i < h; i++)
+			result[i] = data[r][i];
+		return result;
+	}
+
+	template <class t2, int s2>
+	void set_row(int a, int b, mat<t2, s2, h> m)
+	{
+		for (int i = a; i < b; i++)
+			data[i] = m.data[i-a];
+	}
+
+	mat<float, v, h> row(int a, int b) const
+	{
+		mat<float, v, h> result;
+		for (int i = a; i < b; i++)
+			for (int j = 0; j < h; j++)
+				result.data[i-a][j] = data[i][j];
+
+		for (int i = b-a; i < v; i++)
+			for (int j = 0; j < h; j++)
+				result.data[i][j] = 0.0f;
+
+		return result;
+	}
+
+	template <class t2>
+	void set_col(int c, vec<t2, v> m)
+	{
+		for (int i = 0; i < v; i++)
+			data[i][c] = m[i];
+	}
+
+	vec<float, v> col(int c) const
+	{
+		vec<float, v> result;
+
+		for (int i = 0; i < v; i++)
+			result[i] = data[i][c];
+
+		return result;
+	}
+
+	template <class t2, int s2>
+	void set_col(int a, int b, mat<t2, s2, v> m)
+	{
+		for (int i = a; i < b; i++)
+			for (int j = 0; j < v; j++)
+				data[j][i] = m.data[i-a][j];
+	}
+
+	mat<float, v, h> col(int a, int b) const
+	{
+		mat<float, v, h> result;
+
+		for (int i = 0; i < v; i++)
+			for (int j = a; j < b; j++)
+				result.data[i][j-a] = data[i][j];
+
+		for (int i = 0; i < v; i++)
+			for (int j = b-a; j < h; j++)
+				result.data[i][j] = 0.0f;
+
+		return result;
+	}
+
+	template <class t2, int v2, int h2>
+	void set(int va, int vb, int ha, int hb, mat<t2, v2, h2> m)
+	{
+		for (int i = va; i < vb; i++)
+			for (int j = ha; j < hb; j++)
+				data[i][j] = (float)m.data[i-va][j-ha];
+	}
+
+	mat<float, v, h> operator()(int va, int vb, int ha, int hb) const
+	{
+		mat<float, v, h> result;
+		for (int i = va; i < vb; i++)
+			for (int j = ha; j < hb; j++)
+				result.data[i-va][j-ha] = data[i][j];
+
+		for (int i = vb-va; i < v; i++)
+			for (int j = 0; j < h; j++)
+				result.data[i][j] = 0.0f;
+
+		for (int i = 0; i < v; i++)
+			for (int j = hb-ha; j < h; j++)
+				result.data[i][j] = 0.0f;
+
+		return result;
+	}
+
+	mat<float, v-1, h-1> remove(int y, int x)
+	{
+		mat<float, v-1, h-1> result;
+
+		for (int i = 0; i < v-1; i++)
+			for (int j = 0; j < h-1; j++)
+				result[i][j] = data[i + (i >= y)][j + (j >= x)];
+
+		return result;
+	}
+
+	mat<float, v, h> &swapr(int a, int b)
+	{
+		vec<float, h> temp = data[a];
+		data[a] = data[b];
+		data[b] = temp;
+		return *this;
+	}
+
+	mat<float, v, h> &swapc(int a, int b)
+	{
+		float temp;
 		for (int i = 0; i < h; i++)
 		{
 			temp = data[i].data[a];
@@ -722,6 +978,10 @@ int rank(mat<t, v, h> m)
 			}
 	return count;
 }
+
+mat<float, 4, 4> rotate_matrix(float angle, vec<float, 3> axis);
+mat<float, 4, 4> translate_matrix(vec<float, 3> direction);
+mat<float, 4, 4> scale_matrix(vec<float, 3> size);
 
 }
 
