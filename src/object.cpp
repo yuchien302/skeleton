@@ -6,7 +6,6 @@
  */
 
 #include "object.h"
-#include <assert.h>
 
 rigidhdl::rigidhdl()
 {
@@ -27,7 +26,6 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement position frame sampling
-		return positions[frame][pos];
 	}
 	else if (method == 1) // lerp
 	{
@@ -56,7 +54,6 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement orientation frame sampling
-		return orientations[frame][pos];
 	}
 	if (method == 1) // lerp
 	{
@@ -82,11 +79,6 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 void rigidhdl::draw(double pos, double fraction, double step, int position_interpolator, int orientation_interpolator)
 {
 	glPushMatrix();
-	assert(name.size() == positions.size());
-	assert(name.size() == center.size());
-	assert(name.size() == scale.size());
-	assert(name.size() == scale_orientation.size());
-
 	for (int i = 0; i < (int)name.size(); i++)
 	{
 		if (i < (int)positions.size())
