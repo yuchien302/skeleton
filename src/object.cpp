@@ -190,6 +190,13 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 * 			interpolator with a value between 0.0 and 1.0 where 1.0 is the next frame.
 	 */
 
+
+	double pos = 0.0;
+	double fraction = 0.0;
+	double step = 0.0;
+	if(start_time == animation_length) start_time = 0.0;
+
+
 	glPushMatrix();
 	glTranslatef(position[0], position[1], position[2]);
 	glRotatef(radtodeg(orientation[0]), 1.0, 0.0, 0.0);
@@ -203,12 +210,12 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 		if (material.find(rigid[i].material) != material.end())
 			material[rigid[i].material]->apply(lights);
 		else {
-			cout << rigid[i].material << endl;
 			whitehdl().apply(lights);
 		}
 
 		// The first three numbers here are pos, fraction, and step
-		rigid[i].draw(0.0, 0.0, 0.0, position_interpolator, orientation_interpolator);
+//		rigid[i].draw(0.0, 0.0, 0.0, position_interpolator, orientation_interpolator);
+		rigid[i].draw(pos, fraction, step, position_interpolator, orientation_interpolator);
 	}
 
 	glPopMatrix();
