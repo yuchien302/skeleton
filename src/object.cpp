@@ -202,8 +202,9 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	double pos = 0.0;
 	double fraction = 0.0;
 	double step = 0.0;
-	if(start_time == animation_length) start_time = 0.0;
-
+	if(start_time >= animation_length) start_time = 0.0;
+	start_time += 1;
+	pos = start_time * (minstep/animation_length);
 
 	glPushMatrix();
 	glTranslatef(position[0], position[1], position[2]);
