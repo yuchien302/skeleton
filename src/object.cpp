@@ -24,14 +24,18 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	else if (pos < positions[frame].begin()->first)
 		return positions[frame].begin()->second;
 
+	vec3f k0 = vec3f(0.0, 0.0, 0.0);
+	vec3f k1 = vec3f(0.0, 0.0, 0.0);
+
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement position frame sampling
-		return positions[frame][pos];
+		return k0;
 	}
 	else if (method == 1) // lerp
 	{
 		// TODO Assignment 5: use linear interpolation between position frames
+		return (k1-k0) + fraction * (k1-k0);
 	}
 	else if (method == 2) // hermite
 	{
