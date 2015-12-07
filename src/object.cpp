@@ -7,6 +7,7 @@
 
 #include "object.h"
 #include <assert.h>
+#include <ctime>
 
 rigidhdl::rigidhdl()
 {
@@ -27,7 +28,8 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement position frame sampling
-		return positions[frame][pos];
+		map<double, vec3f>::iterator it = positions[frame].lower_bound(pos)--;
+		return it -> second;
 	}
 	else if (method == 1) // lerp
 	{
@@ -56,7 +58,8 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement orientation frame sampling
-		return orientations[frame][pos];
+		map<double, vec4d>::iterator it = orientations[frame].lower_bound(pos)--;
+				return it -> second;
 	}
 	if (method == 1) // lerp
 	{
@@ -198,11 +201,30 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 * 			interpolator with a value between 0.0 and 1.0 where 1.0 is the next frame.
 	 */
 
+	//warning!!! remember to remove this line!
+	minstep = 1.0;
 
-	double pos = 0.0;
 	double fraction = 0.0;
 	double step = 0.0;
-	if(start_time == animation_length) start_time = 0.0;
+	struct timeval tp;
+	gettimeofday(&tp, NULL);
+	double seconds = tp.tv_sec + tp.tv_usec / 1e6;
+	double current_time = seconds;
+
+	if(start_time == 0){
+		start_time = current_time;
+	}
+
+	if (current_time - start_time >= animation_length) start_time += animation_length;
+	double delta_time = current_time - start_time;
+	cout<<"start: "<<start_time << ", current:"<<current_time<<endl;
+	cout<<"delta: "<<delta_time<<endl;
+	step = minstep;
+	double pos = floor(delta_time / minstep) ;
+	double frac = (delta_time / minstep) - pos;
+	pos = pos*minstep/animation_length;
+	cout <<"pos: " << pos << " frac: " << frac<< endl;
+	cout <<"stepsize:" << step<<endl;
 
 
 	glPushMatrix();
