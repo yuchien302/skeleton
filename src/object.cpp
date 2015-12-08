@@ -7,6 +7,7 @@
 
 #include "object.h"
 #include <assert.h>
+#include <ctime>
 
 rigidhdl::rigidhdl()
 {
@@ -19,13 +20,26 @@ rigidhdl::~rigidhdl()
 
 vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step, int method)
 {
-	if (frame >= positions.size() || positions[frame].size() == 0)
+	if (frame >= positions.size() || positions[frame].size() == 0){
 		return vec3f(0.0f, 0.0f, 0.0f);
-	else if (pos < positions[frame].begin()->first)
-		return positions[frame].begin()->second;
+	}
 
-	vec3f k0 = vec3f(0.0, 0.0, 0.0);
-	vec3f k1 = vec3f(0.0, 0.0, 0.0);
+	else if (pos <= positions[frame].begin()->first || positions[frame].size() == 1){
+		return positions[frame].begin()->second;
+	}
+
+	map<double, vec3f>::iterator it;
+
+	it = positions[frame].upper_bound(pos); it--;
+	vec3f k0 = it -> second;
+	double kt0 = it -> first;
+
+	it = positions[frame].upper_bound(pos+step); it--;
+	vec3f k1 = it -> second;
+	double kt1 = it -> first;
+
+	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
+
 
 	if (method == 0) // none
 	{
@@ -35,7 +49,7 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	else if (method == 1) // lerp
 	{
 		// TODO Assignment 5: use linear interpolation between position frames
-		return (k1-k0) + fraction * (k1-k0);
+		return k0 + ((float) fraction) * (k1-k0);
 	}
 	else if (method == 2) // hermite
 	{
@@ -46,25 +60,47 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 		// TODO Assignment 5: use catmull rom interpolation between position frames
 	}
 	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
-
 	return positions[frame].begin()->second;
 }
 
 vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double step, int method)
 {
-	if (frame >= orientations.size() || orientations[frame].size() == 0)
+
+	if (frame >= orientations.size() || orientations[frame].size() == 0){
 		return vec4d(0.0f, 0.0f, 1.0f, 0.0f);
-	else if (pos < orientations[frame].begin()->first)
+	}
+
+	else if (pos <= orientations[frame].begin()->first || orientations[frame].size() == 1){
 		return orientations[frame].begin()->second;
+	}
+
+//	cout << "all orientations::" << endl;
+//	for(map<double, vec4d>::iterator it = orientations[frame].begin(); it!= orientations[frame].end(); it++){
+//		cout << it -> first << " : " << it -> second << endl;
+//	}
+//	cout << "end orientations" << endl;
+
+	map<double, vec4d>::iterator it;
+
+	it = orientations[frame].upper_bound(pos); it--;
+	vec4d k0 = it -> second;
+	double kt0 = it -> first;
+
+	it = orientations[frame].upper_bound(pos+step); it--;
+	vec4d k1 = it -> second;
+	double kt1 = it -> first;
+
+	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
 
 	if (method == 0) // none
 	{
 		// TODO Assignment 5: implement orientation frame sampling
-		return orientations[frame][pos];
+		return k0;
 	}
 	if (method == 1) // lerp
 	{
 		// TODO Assignment 5: use linear interpolation between orientation frames
+		return k0 + fraction * (k1-k0);
 	}
 	else if (method == 2) // slerp
 	{
@@ -202,12 +238,27 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 * 			interpolator with a value between 0.0 and 1.0 where 1.0 is the next frame.
 	 */
 
+	//warning!!! remember to remove this line!
+	minstep = 1.0;
 
-	double pos = 0.0;
-	double fraction = 0.0;
+
 	double step = 0.0;
-	if(start_time == animation_length) start_time = 0.0;
+	struct timeval tp;
+	gettimeofday(&tp, NULL);
+	double seconds = tp.tv_sec + tp.tv_usec / 1e6;
+	double current_time = seconds;
 
+	if(start_time == 0){
+		start_time = current_time;
+	}
+
+	if (current_time - start_time >= animation_length) start_time += animation_length;
+	double delta_time = current_time - start_time;
+
+	step = minstep/animation_length;
+	double pos = floor(delta_time / minstep) ;
+	double fraction = (delta_time / minstep) - pos;
+	pos = pos * minstep/animation_length;
 
 	glPushMatrix();
 	glTranslatef(position[0], position[1], position[2]);
@@ -226,7 +277,6 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 		}
 
 		// The first three numbers here are pos, fraction, and step
-//		rigid[i].draw(0.0, 0.0, 0.0, position_interpolator, orientation_interpolator);
 		rigid[i].draw(pos, fraction, step, position_interpolator, orientation_interpolator);
 	}
 
