@@ -113,9 +113,28 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	vec4d k0 = it -> second;
 	double kt0 = it -> first;
 
+	// p-1
+	vec4d k_1;
+	if (pos == 0) {
+		k_1 = k0;
+	} else {
+		it = orientations[frame].upper_bound(pos - step); it--;
+		k_1 = it -> second;
+	}
+
 	it = orientations[frame].upper_bound(pos+step); it--;
 	vec4d k1 = it -> second;
 	double kt1 = it -> first;
+
+	//k+1
+	vec4d k2;
+	if (pos == 1) {
+		k2 = k1;
+	} else {
+		it = orientations[frame].upper_bound(pos + 2* step); it--;
+		k2 = it -> second;
+	}
+
 
 	if (method == 0) // none
 	{
@@ -134,10 +153,17 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	}
 	else if (method == 3) // squad
 	{
-		// TODO Assignment 5: use spherical quadratic interpolation between orientation frames
+		// DONE Assignment 5: use spherical quadratic interpolation between orientation frames
+		quatd q_1 = quatd(k_1);
 		quatd q0 = quatd(k0);
 		quatd q1 = quatd(k1);
-		double p = fraction;
+		quatd q2 = quatd(k2);
+
+		quatd a0 = q0 * exp( -0.25 * (log(conj(q0)*q1) + log(conj(q0)*q_1)) );
+		quatd a1 = q1 * exp( -0.25 * (log(conj(q1)*q2) + log(conj(q1)*q0)) );
+
+		return squad(q0, a0, a1, q1, fraction).axisangle();
+
 	}
 	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
 
@@ -268,7 +294,7 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 */
 
 	//warning!!! remember to remove this line!
-	//minstep = 1.0;
+//	minstep = 1.0;
 
 
 	double step = 0.0;
