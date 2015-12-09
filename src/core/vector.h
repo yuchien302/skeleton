@@ -1048,15 +1048,25 @@ vec<t, s> slerp(vec<t, s> v0, vec<t, s> v1, t p)
 template <class t, int s>
 vec<t, s> hermite(vec<t, s> v0, vec<t, s> v1, vec<t, s> m0, vec<t, s> m1, t p)
 {
-	// TODO Assignment 5: implement hermite cubic interpolation
-	return v0;
+	t h0 = 2*p*p*p - 3*p*p + 1;
+	t h1 = p*p*p - 2*p*p+ p;
+	t h2 = -2*p*p*p + 3*p*p;
+	t h3 = p*p*p - p*p;
+	vec<t, s> pos = h0 * v0 + h1 * m0 + h2 * v1 + h3 * m1;
+
+	return pos;
 }
 
 template <class t, int s>
-vec<t, s> catmullrom(vec<t, s> v0, vec<t, s> v1, vec<t, s> v2, vec<t, s> v3, t p, t a)
+vec<t, s> catmullrom(vec<t, s> v0, vec<t, s> v1, vec<t, s> v2, vec<t, s> v3, t p)
 {
-	// TODO Assignment 5: implement catmull rom interpolation
-	return v0;
+	t h0 = 2*p*p*p - 3*p*p + 1;
+		t h1 = p*p*p - 2*p*p+ p;
+		t h2 = -2*p*p*p + 3*p*p;
+		t h3 = p*p*p - p*p;
+		vec<t, s> pos = h0 * v0 + h1 * v1 + h2 * v2 + h3 * v3;
+
+		return pos;
 }
 
 }
