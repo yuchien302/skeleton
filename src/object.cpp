@@ -35,11 +35,39 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	vec3f k0 = it -> second;
 	double kt0 = it -> first;
 
+	// p-1
+	vec3f k_1;
+	double kt_1;
+	if (pos == 0){
+		k_1 = k0;
+		kt_1 = kt0;
+	}
+	else{
+		it = positions[frame].upper_bound(pos - step); it--;
+		k_1 = it -> second;
+	    kt_1 = it -> first;
+	}
+
+
 	it = positions[frame].upper_bound(pos+step); it--;
 	vec3f k1 = it -> second;
 	double kt1 = it -> first;
 
-//	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
+	//k+1
+	vec3f k2;
+	double kt2;
+	if (pos == 1){
+		k2 = k1;
+		kt2 = kt1;
+	}
+	else{
+		it = positions[frame].upper_bound(pos + 2* step); it--;
+		k2 = it -> second;
+		kt2 = it -> first;
+	}
+
+	vec3f T0 = 0.5f * (k1 - k_1);///(float)(kt1 - kt_1);
+	vec3f T1 = 0.5f * (k2 - k0); ///(float)(kt2 - kt0);
 
 
 	if (method == 0) // none
@@ -54,11 +82,15 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	}
 	else if (method == 2) // hermite
 	{
-		// TODO Assignment 5: use hermite interpolation between position frames
+		// DONE Assignment 5: use hermite interpolation between position frames
+		return hermite(k0, k1, T0,  T1, (float)fraction);
+
 	}
 	else if (method == 3) // catmull rom
 	{
-		// TODO Assignment 5: use catmull rom interpolation between position frames
+		// DONE Assignment 5: use catmull rom interpolation between position frames
+		return catmullrom(k0, T0, k1, T1, (float)fraction);
+
 	}
 	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
 	return positions[frame].begin()->second;
@@ -84,9 +116,6 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	it = orientations[frame].upper_bound(pos+step); it--;
 	vec4d k1 = it -> second;
 	double kt1 = it -> first;
-
-//	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
-//	cout << "k0: " << k0 << ",  " << pos << ", k1: " << k1 << ", " << pos + step <<  endl;
 
 	if (method == 0) // none
 	{
@@ -239,7 +268,7 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 */
 
 	//warning!!! remember to remove this line!
-	minstep = 1.0;
+	//minstep = 1.0;
 
 
 	double step = 0.0;
