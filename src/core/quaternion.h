@@ -291,8 +291,8 @@ quat<t> rotate_quat(quat<t> q0, quat<t> q1)
 template <class t, class t2>
 quat<t> lerp(quat<t> q0, quat<t> q1, t2 p)
 {
-	// TODO Assignment 5: implement linear interpolation
-	return q0;
+	// DONE Assignment 5: implement linear interpolation
+	return q0 + ((t) p) * (q1-q0);
 }
 
 template <class t, class t2>
