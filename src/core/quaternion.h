@@ -313,8 +313,8 @@ quat<t> slerp(quat<t> q0, quat<t> q1, t2 p)
 template <class t, class t2>
 quat<t> squad(quat<t> q0, quat<t> q1, quat<t> q2, quat<t> q3, t2 p)
 {
-	// TODO Assignment 5: implement spherical quadratic interpolation
-	return q0;
+	// DONE Assignment 5: implement spherical quadratic interpolation
+	return slerp(slerp(q0, q3, p), slerp(q1, q2, p), 2.0*p*(1.0-p));;
 }
 
 }
