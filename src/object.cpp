@@ -68,7 +68,7 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 
 	vec3f T0 = 0.5f * (k1 - k_1);///(float)(kt1 - kt_1);
 	vec3f T1 = 0.5f * (k2 - k0); ///(float)(kt2 - kt0);
-
+	//method = 4;
 
 	if (method == 0) // none
 	{
@@ -92,10 +92,39 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 		return catmullrom(k0, T0, k1, T1, (float)fraction);
 
 	}
+	else if (method == 4) // Cubic B-spline
+	{
+		//return get_B_coef(double t, double fraction * 4)
+		float h1 = get_B_coef(4, 3+fraction);
+		float h2 = get_B_coef(4, 2+fraction);
+		float h3 = get_B_coef(4, 1+fraction);
+		float h4 = get_B_coef(4, fraction);
+		//cout<< h1 << ", " << h2 << ", " << h3 << ", " << h4 << endl;
+		return k_1 * h1 + k0 * h2 + k1*h3 + k2*h4;
+
+	}
 	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
 	return positions[frame].begin()->second;
 }
 
+float rigidhdl::get_B_coef(double t, double i){
+	//cout << t << ", "<<  i << endl;
+	if (t >= i && t < (i+1)){
+		return pow((t-i), 3.0)/6;
+	}
+	else if (t >= (i+1) && t < (i+2)){
+		return (float)(-3*pow((t-i-1), 3.0) + 3*pow((t-i-1), 2.0) + 3 *(t-i-1) +1 )/6.0;
+	}
+	else if (t >= (i+2) && t < (i+3)){
+		return (3*pow((t-i-2), 3.0) - 6*pow((t-i-2), 2.0) + 4)/6;
+	}
+	else if (t >= (i+3) && t < (i+4)){
+		return (float)(pow((1-(t-i-3)), 3.0))/6;
+	}
+	else{
+		return 0.0;
+	}
+}
 vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double step, int method)
 {
 

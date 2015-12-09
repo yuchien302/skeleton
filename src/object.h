@@ -43,7 +43,7 @@ struct rigidhdl
 
 	vec3f get_position(int frame, double pos, double fraction, double step, int method);
 	vec4d get_orientation(int frame, double pos, double fraction, double step, int method);
-
+	float get_B_coef(double t, double i);
 	void draw(double pos, double fraction, double step, int position_interpolator=0, int orientation_interpolator=0);
 };
 
