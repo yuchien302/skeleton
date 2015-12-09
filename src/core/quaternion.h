@@ -298,8 +298,16 @@ quat<t> lerp(quat<t> q0, quat<t> q1, t2 p)
 template <class t, class t2>
 quat<t> slerp(quat<t> q0, quat<t> q1, t2 p)
 {
-	// TODO Assignment 5: implement spherical linear interpolation
-	return q0;
+	// DONE Assignment 5: implement spherical linear interpolation
+	double cos_omega = dot(q0, q1);
+	double sin_omega = sqrt(1 - cos_omega*cos_omega);
+	double omega = acos(cos_omega);
+	if(sin_omega < 0.0001){
+		return lerp(q0, q1, p);
+	}
+
+	return (sin((1.0-p)*omega) * q0 + sin((p)*omega) * q1) / sin_omega;
+
 }
 
 template <class t, class t2>
