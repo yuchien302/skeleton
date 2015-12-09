@@ -1027,8 +1027,8 @@ vec<t, 4> homogenize(vec<t, s> v, int offset = 0)
 template <class t, int s>
 vec<t, s> lerp(vec<t, s> v1, vec<t, s> v2, t p)
 {
-	// TODO Assignment 5: implement linear interpolation
-	return v1;
+	// DONE Assignment 5: implement linear interpolation
+	return v1 + ((t) p) * (v2-v1);;
 }
 
 /* slerp
