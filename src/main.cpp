@@ -975,6 +975,7 @@ void create_menu()
     glutAddMenuEntry(" LERP        ", 13);
     glutAddMenuEntry(" Hermite     ", 14);
     glutAddMenuEntry(" Catmull Rom ", 15);
+    glutAddMenuEntry(" Cubic B Spline ", 16);
 
     int rotation_interpolator_menu_id = glutCreateMenu(object_menu);
 	glutAddMenuEntry(" None  ", 20);
