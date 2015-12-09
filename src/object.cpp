@@ -8,6 +8,7 @@
 #include "object.h"
 #include <assert.h>
 #include <ctime>
+#include "math.h"
 
 rigidhdl::rigidhdl()
 {
@@ -38,18 +39,18 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	vec3f k1 = it -> second;
 	double kt1 = it -> first;
 
-	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
+//	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
 
 
 	if (method == 0) // none
 	{
-		// TODO Assignment 5: implement position frame sampling
+		// DONE Assignment 5: implement position frame sampling
 		return k0;
 	}
 	else if (method == 1) // lerp
 	{
-		// TODO Assignment 5: use linear interpolation between position frames
-		return k0 + ((float) fraction) * (k1-k0);
+		// DONE Assignment 5: use linear interpolation between position frames
+		return lerp(k0, k1, (float) fraction);
 	}
 	else if (method == 2) // hermite
 	{
@@ -74,12 +75,6 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 		return orientations[frame].begin()->second;
 	}
 
-//	cout << "all orientations::" << endl;
-//	for(map<double, vec4d>::iterator it = orientations[frame].begin(); it!= orientations[frame].end(); it++){
-//		cout << it -> first << " : " << it -> second << endl;
-//	}
-//	cout << "end orientations" << endl;
-
 	map<double, vec4d>::iterator it;
 
 	it = orientations[frame].upper_bound(pos); it--;
@@ -90,25 +85,30 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	vec4d k1 = it -> second;
 	double kt1 = it -> first;
 
-	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
+//	cout << "kt0: " << kt0 << ",  " << pos << ", kt1: " << kt1 << ", " << pos + step <<  endl;
+//	cout << "k0: " << k0 << ",  " << pos << ", k1: " << k1 << ", " << pos + step <<  endl;
 
 	if (method == 0) // none
 	{
-		// TODO Assignment 5: implement orientation frame sampling
+		// DONE Assignment 5: implement orientation frame sampling
 		return k0;
 	}
 	if (method == 1) // lerp
 	{
-		// TODO Assignment 5: use linear interpolation between orientation frames
-		return k0 + fraction * (k1-k0);
+		// DONE Assignment 5: use linear interpolation between orientation frames
+		return lerp(quatd(k0), quatd(k1), fraction).axisangle();
 	}
 	else if (method == 2) // slerp
 	{
-		// TODO Assignment 5: use spherical linear interpolation between orientation frames
+		// DONE Assignment 5: use spherical linear interpolation between orientation frames
+		return slerp(quatd(k0), quatd(k1), fraction).axisangle();
 	}
 	else if (method == 3) // squad
 	{
 		// TODO Assignment 5: use spherical quadratic interpolation between orientation frames
+		quatd q0 = quatd(k0);
+		quatd q1 = quatd(k1);
+		double p = fraction;
 	}
 	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
 
@@ -222,7 +222,7 @@ objecthdl::~objecthdl()
  */
 void objecthdl::draw(const vector<lighthdl*> &lights)
 {
-	/* TODO Assignment 5: get the current time and use that to calculate the pos and fraction values and to update
+	/* DONE Assignment 5: get the current time and use that to calculate the pos and fraction values and to update
 	 * the start_time.
 	 *
 	 * Here are the variables you'll need to work with. They are all member variables of objecthdl.

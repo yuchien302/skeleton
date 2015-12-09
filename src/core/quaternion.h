@@ -236,14 +236,14 @@ t mag(quat<t> q)
 	return sqrt(q.a*q.a + mag2(q.v));
 }
 
-template <class t>
-quat<t> sqrt(quat<t> q)
-{
-	t N = sqrt(q + mag(q));
-	t s2 = 1.41421356237;
-
-	return quat<t>(q.v/(s2*N), N/s2);
-}
+//template <class t>
+//quat<t> sqrt(quat<t> q)
+//{
+//	t N = sqrt(q + mag(q));
+//	t s2 = 1.41421356237;
+//
+//	return quat<t>(q.v/(s2*N), N/s2);
+//}
 
 template <class t>
 quat<t> norm(quat<t> q)
