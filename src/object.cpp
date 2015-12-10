@@ -18,6 +18,117 @@ rigidhdl::~rigidhdl()
 {
 
 }
+vector<double> rigidhdl::get_pos_keyframes(int frame, double pos, double step)
+{
+	map<double, vec3f> key_frames = positions[frame];
+	map<double, vec3f>::iterator it;
+
+	// k0
+	it = key_frames.upper_bound(pos); it--;
+	double k0 = it -> first;
+
+	// k-1
+	double k_1;
+	it = key_frames.upper_bound(pos - step);
+	if(key_frames.begin() -> first == k0 || it == key_frames.begin()){
+		k_1 = key_frames.rbegin() -> first;
+	} else {
+		it--;
+		k_1 = it -> first;
+		if(k_1 == k0){
+			it = key_frames.upper_bound(pos); it--; it--;
+			k_1 = it -> first;
+		}
+	}
+
+	// k1
+	it = key_frames.upper_bound(pos + step); it--;
+	double k1 = it -> first;
+	if (k0 == k1) {
+		if(key_frames.rbegin() -> first == k0){
+			k1 = key_frames.begin() -> first;
+		} else {
+			it++;
+			k1 = it -> first;
+		}
+	}
+
+	// k2
+	it = key_frames.upper_bound(pos + 2*step); it--;
+	double k2 = it -> first;
+	if (k1 == k2) {
+		if(key_frames.rbegin() -> first == k1){
+			k2 = key_frames.begin() -> first;
+		} else {
+			it++;
+			k2 = it -> first;
+		}
+	}
+
+	vector<double> keys;
+	keys.push_back(k_1);
+	keys.push_back(k0);
+	keys.push_back(k1);
+	keys.push_back(k2);
+
+	return keys;
+}
+
+vector<double> rigidhdl::get_ori_keyframes(int frame, double pos, double step)
+{
+	map<double, vec4d> key_frames = orientations[frame];
+	map<double, vec4d>::iterator it;
+
+	// k0
+	it = key_frames.upper_bound(pos); it--;
+	double k0 = it -> first;
+
+	// k-1
+	double k_1;
+	it = key_frames.upper_bound(pos - step);
+	if(key_frames.begin() -> first == k0 || it == key_frames.begin()){
+		k_1 = key_frames.rbegin() -> first;
+	} else {
+		it--;
+		k_1 = it -> first;
+		if(k_1 == k0){
+			it = key_frames.upper_bound(pos); it--; it--;
+			k_1 = it -> first;
+		}
+	}
+
+	// k1
+	it = key_frames.upper_bound(pos + step); it--;
+	double k1 = it -> first;
+	if (k0 == k1) {
+		if(key_frames.rbegin() -> first == k0){
+			k1 = key_frames.begin() -> first;
+		} else {
+			it = key_frames.upper_bound(pos);
+			k1 = it -> first;
+		}
+	}
+
+	// k2
+	it = key_frames.upper_bound(pos + 2*step); it--;
+	double k2 = it -> first;
+	if (k1 == k2) {
+		if(key_frames.rbegin() -> first == k1){
+			k2 = key_frames.begin() -> first;
+		} else {
+			it = key_frames.upper_bound(pos + step);
+			k2 = it -> first;
+		}
+	}
+
+	vector<double> keys;
+	keys.push_back(k_1);
+	keys.push_back(k0);
+	keys.push_back(k1);
+	keys.push_back(k2);
+
+	return keys;
+}
 
 vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step, int method)
 {
@@ -29,41 +140,12 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 		return positions[frame].begin()->second;
 	}
 
-	map<double, vec3f>::iterator it;
+	vector<double> keys = get_pos_keyframes(frame, pos, step);
+	vec3f k_1 = positions[frame][keys[0]];
+	vec3f k0 = positions[frame][keys[1]];
+	vec3f k1 = positions[frame][keys[2]];
+	vec3f k2 = positions[frame][keys[3]];
 
-	// k-1
-	it = positions[frame].upper_bound(pos - step); it--;
-	vec3f k_1 = it -> second;
-
-	// k0
-	it = positions[frame].upper_bound(pos); it--;
-	vec3f k0 = it -> second;
-	double kt0 = it -> first;
-
-	// k1
-	bool end = false;
-	it = positions[frame].upper_bound(pos+step); it--;
-	vec3f k1 = it -> second;
-	if (k1 == k0) {
-		it = positions[frame].upper_bound(0.0); it--;
-		k1 = it -> second;
-		end = true;
-	}
-
-	// k2
-	vec3f k2;
-	double kt2;
-	if (!end){
-		it = positions[frame].upper_bound(pos + 2* step); it--;
-	} else {
-		it = positions[frame].upper_bound(0 +  step); it--;
-	}
-	k2 = it -> second;
-
-	if (pos <= positions[frame].begin()->first){
-		k_1 = k0 = positions[frame].rbegin() -> second;
-		k2 =  k1 = positions[frame].begin() -> second;
-	}
 
 	vec3f T0 = 0.5f * (k1 - k_1); /// (float)(kt1 - kt_1);
 	vec3f T1 = 0.5f * (k2 - k0);  /// (float)(kt2 - kt0);
@@ -132,39 +214,11 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 		return orientations[frame].begin()->second;
 	}
 
-	map<double, vec4d>::iterator it;
-
-	// k-1
-	it = orientations[frame].upper_bound(pos - step); it--;
-	vec4d k_1 = it -> second;
-
-	// k0
-	it = orientations[frame].upper_bound(pos); it--;
-	vec4d k0 = it -> second;
-
-	//	k1
-	bool end = false;
-	it = orientations[frame].upper_bound(pos+step); it--;
-	vec4d k1 = it -> second;
-	if (k1 == k0) {
-		it = orientations[frame].upper_bound(0.0); it--;
-		k1 = it -> second;
-		end = true;
-	}
-
-	// k2
-	if (!end){
-		it = orientations[frame].upper_bound(pos + 2* step); it--;
-	} else {
-		it = orientations[frame].upper_bound(0 +  step); it--;
-	}
-	vec4d k2 = it -> second;
-
-	if (pos <= orientations[frame].begin()->first){
-		k_1 = k0 = orientations[frame].rbegin() -> second;
-		k2 =  k1 = orientations[frame].begin() -> second;
-	}
-
+	vector<double> keys = get_ori_keyframes(frame, pos, step);
+	vec4d k_1 = orientations[frame][keys[0]];
+	vec4d k0 = orientations[frame][keys[1]];
+	vec4d k1 = orientations[frame][keys[2]];
+	vec4d k2 = orientations[frame][keys[3]];
 
 	if (method == 0) // none
 	{
@@ -270,7 +324,7 @@ objecthdl::objecthdl()
 	bound = vec6f(1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f);
 	scale = 1.0;
 	start_time = 0.0f;
-	minstep = 0.5;
+	minstep = 0.01;
 	animation_length = 1.0;
 	position_interpolator = 0;
 	orientation_interpolator = 0;
