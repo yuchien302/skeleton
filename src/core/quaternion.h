@@ -302,7 +302,7 @@ quat<t> slerp(quat<t> q0, quat<t> q1, t2 p)
 	double cos_omega = dot(q0, q1);
 	double sin_omega = sqrt(1 - cos_omega*cos_omega);
 	double omega = acos(cos_omega);
-	if(sin_omega < 0.0001){
+	if(abs(sin_omega) < 0.0001){
 		return lerp(q0, q1, p);
 	}
 

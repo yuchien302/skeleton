@@ -765,6 +765,8 @@ void object_menu(int num)
 		scene.objects[scene.active_object]->position_interpolator = 2;
 	else if (num == 15 && scene.active_object_valid())
 		scene.objects[scene.active_object]->position_interpolator = 3;
+	else if (num == 16 && scene.active_object_valid())
+		scene.objects[scene.active_object]->position_interpolator = 4;
 	else if (num == 20 && scene.active_object_valid())
 		scene.objects[scene.active_object]->orientation_interpolator = 0;
 	else if (num == 21 && scene.active_object_valid())

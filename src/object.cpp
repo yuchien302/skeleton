@@ -27,24 +27,20 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	}
 	else if (positions[frame].size() == 1){
 		return positions[frame].begin()->second;
-
 	}
 
 	map<double, vec3f>::iterator it;
 
+	// k-1
+	it = positions[frame].upper_bound(pos - step); it--;
+	vec3f k_1 = it -> second;
+
+	// k0
 	it = positions[frame].upper_bound(pos); it--;
 	vec3f k0 = it -> second;
 	double kt0 = it -> first;
 
-	// k-1
-	vec3f k_1;
-	double kt_1;
-
-		it = positions[frame].upper_bound(pos - step); it--;
-		k_1 = it -> second;
-	    kt_1 = it -> first;
-
-
+	// k1
 	bool end = false;
 	it = positions[frame].upper_bound(pos+step); it--;
 	vec3f k1 = it -> second;
@@ -53,24 +49,20 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 		k1 = it -> second;
 		end = true;
 	}
-	double kt1 = it -> first;
 
-	// k+1
+	// k2
 	vec3f k2;
 	double kt2;
 	if (!end){
 		it = positions[frame].upper_bound(pos + 2* step); it--;
-	}
-	else{
+	} else {
 		it = positions[frame].upper_bound(0 +  step); it--;
 	}
 	k2 = it -> second;
-	kt2 = it -> first;
 
 	if (pos <= positions[frame].begin()->first){
-			k_1 = k0 = positions[frame].rbegin() -> second;
-			k2 =  k1 = positions[frame].begin() -> second;
-
+		k_1 = k0 = positions[frame].rbegin() -> second;
+		k2 =  k1 = positions[frame].begin() -> second;
 	}
 
 	vec3f T0 = 0.5f * (k1 - k_1); /// (float)(kt1 - kt_1);
@@ -102,14 +94,12 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	else if (method == 4) // Cubic B-spline
 	{
 		// DONE Assignment 5: try out any other interpolation methods that sound interesting to you
-
 		float h1 = get_B_coef(4, 3+fraction);
 		float h2 = get_B_coef(4, 2+fraction);
 		float h3 = get_B_coef(4, 1+fraction);
 		float h4 = get_B_coef(4, fraction);
 
 		return k_1 * h1 + k0 * h2 + k1*h3 + k2*h4;
-
 	}
 
 	return positions[frame].begin()->second;
@@ -135,41 +125,44 @@ float rigidhdl::get_B_coef(double t, double i){
 }
 vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double step, int method)
 {
-
 	if (frame >= orientations.size() || orientations[frame].size() == 0){
 		return vec4d(0.0f, 0.0f, 1.0f, 0.0f);
 	}
-
-	else if (pos <= orientations[frame].begin()->first || orientations[frame].size() == 1){
+	else if (orientations[frame].size() == 1){
 		return orientations[frame].begin()->second;
 	}
 
 	map<double, vec4d>::iterator it;
 
+	// k-1
+	it = orientations[frame].upper_bound(pos - step); it--;
+	vec4d k_1 = it -> second;
+
+	// k0
 	it = orientations[frame].upper_bound(pos); it--;
 	vec4d k0 = it -> second;
-	double kt0 = it -> first;
 
-	// k-1
-	vec4d k_1;
-	if (pos == 0) {
-		k_1 = k0;
-	} else {
-		it = orientations[frame].upper_bound(pos - step); it--;
-		k_1 = it -> second;
-	}
-
+	//	k1
+	bool end = false;
 	it = orientations[frame].upper_bound(pos+step); it--;
 	vec4d k1 = it -> second;
-	double kt1 = it -> first;
+	if (k1 == k0) {
+		it = orientations[frame].upper_bound(0.0); it--;
+		k1 = it -> second;
+		end = true;
+	}
 
-	// k+1
-	vec4d k2;
-	if (pos == 1) {
-		k2 = k1;
-	} else {
+	// k2
+	if (!end){
 		it = orientations[frame].upper_bound(pos + 2* step); it--;
-		k2 = it -> second;
+	} else {
+		it = orientations[frame].upper_bound(0 +  step); it--;
+	}
+	vec4d k2 = it -> second;
+
+	if (pos <= orientations[frame].begin()->first){
+		k_1 = k0 = orientations[frame].rbegin() -> second;
+		k2 =  k1 = orientations[frame].begin() -> second;
 	}
 
 
@@ -277,7 +270,7 @@ objecthdl::objecthdl()
 	bound = vec6f(1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f);
 	scale = 1.0;
 	start_time = 0.0f;
-	minstep = 0.02;
+	minstep = 0.5;
 	animation_length = 1.0;
 	position_interpolator = 0;
 	orientation_interpolator = 0;
@@ -359,8 +352,7 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
 	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
 	glScalef(scale, scale, scale);
-	cout << "pos: " << pos << ", frac:" << fraction<< endl;
-	cout << endl;
+
 	for (int i = 0; i < rigid.size(); i++)
 	{
 
