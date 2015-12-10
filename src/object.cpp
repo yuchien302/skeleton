@@ -35,7 +35,7 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	vec3f k0 = it -> second;
 	double kt0 = it -> first;
 
-	// p-1
+	// k-1
 	vec3f k_1;
 	double kt_1;
 	if (pos == 0){
@@ -53,7 +53,7 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	vec3f k1 = it -> second;
 	double kt1 = it -> first;
 
-	//k+1
+	// k+1
 	vec3f k2;
 	double kt2;
 	if (pos == 1){
@@ -66,9 +66,8 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 		kt2 = it -> first;
 	}
 
-	vec3f T0 = 0.5f * (k1 - k_1);///(float)(kt1 - kt_1);
-	vec3f T1 = 0.5f * (k2 - k0); ///(float)(kt2 - kt0);
-	//method = 4;
+	vec3f T0 = 0.5f * (k1 - k_1); /// (float)(kt1 - kt_1);
+	vec3f T1 = 0.5f * (k2 - k0);  /// (float)(kt2 - kt0);
 
 	if (method == 0) // none
 	{
@@ -94,21 +93,22 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	}
 	else if (method == 4) // Cubic B-spline
 	{
-		//return get_B_coef(double t, double fraction * 4)
+		// DONE Assignment 5: try out any other interpolation methods that sound interesting to you
+
 		float h1 = get_B_coef(4, 3+fraction);
 		float h2 = get_B_coef(4, 2+fraction);
 		float h3 = get_B_coef(4, 1+fraction);
 		float h4 = get_B_coef(4, fraction);
-		//cout<< h1 << ", " << h2 << ", " << h3 << ", " << h4 << endl;
+
 		return k_1 * h1 + k0 * h2 + k1*h3 + k2*h4;
 
 	}
-	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
+
 	return positions[frame].begin()->second;
 }
 
 float rigidhdl::get_B_coef(double t, double i){
-	//cout << t << ", "<<  i << endl;
+
 	if (t >= i && t < (i+1)){
 		return pow((t-i), 3.0)/6;
 	}
@@ -142,7 +142,7 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	vec4d k0 = it -> second;
 	double kt0 = it -> first;
 
-	// p-1
+	// k-1
 	vec4d k_1;
 	if (pos == 0) {
 		k_1 = k0;
@@ -155,7 +155,7 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 	vec4d k1 = it -> second;
 	double kt1 = it -> first;
 
-	//k+1
+	// k+1
 	vec4d k2;
 	if (pos == 1) {
 		k2 = k1;
@@ -192,9 +192,13 @@ vec4d rigidhdl::get_orientation(int frame, double pos, double fraction, double s
 		quatd a1 = q1 * exp( -0.25 * (log(conj(q1)*q2) + log(conj(q1)*q0)) );
 
 		return squad(q0, a0, a1, q1, fraction).axisangle();
-
 	}
-	// TODO Assignment 5: try out any other interpolation methods that sound interesting to you
+	else if (method == 4) // nlerp
+	{
+		// DONE Assignment 5: try out any other interpolation methods that sound interesting to you
+		return norm(lerp(quatd(k0), quatd(k1), fraction)).axisangle();
+	}
+
 
 	return orientations[frame].begin()->second;
 }
@@ -322,11 +326,6 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	 * 			interpolator with a value between 0.0 and 1.0 where 1.0 is the next frame.
 	 */
 
-	//warning!!! remember to remove this line!
-//	minstep = 1.0;
-
-
-	double step = 0.0;
 	struct timeval tp;
 	gettimeofday(&tp, NULL);
 	double seconds = tp.tv_sec + tp.tv_usec / 1e6;
@@ -339,10 +338,10 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	if (current_time - start_time >= animation_length) start_time += animation_length;
 	double delta_time = current_time - start_time;
 
-	step = minstep/animation_length;
+	double step = minstep/animation_length;
 	double pos = floor(delta_time / minstep) ;
 	double fraction = (delta_time / minstep) - pos;
-	pos = pos * minstep/animation_length;
+	pos = pos * minstep / animation_length;
 
 	glPushMatrix();
 	glTranslatef(position[0], position[1], position[2]);
@@ -360,7 +359,6 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 			whitehdl().apply(lights);
 		}
 
-		// The first three numbers here are pos, fraction, and step
 		rigid[i].draw(pos, fraction, step, position_interpolator, orientation_interpolator);
 	}
 

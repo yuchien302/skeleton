@@ -773,6 +773,8 @@ void object_menu(int num)
 		scene.objects[scene.active_object]->orientation_interpolator = 2;
 	else if (num == 23 && scene.active_object_valid())
 		scene.objects[scene.active_object]->orientation_interpolator = 3;
+	else if (num == 24 && scene.active_object_valid())
+		scene.objects[scene.active_object]->orientation_interpolator = 4;
 }
 
 void color_menu(int num)
@@ -982,6 +984,7 @@ void create_menu()
 	glutAddMenuEntry(" LERP  ", 21);
 	glutAddMenuEntry(" SLERP ", 22);
 	glutAddMenuEntry(" SQUAD ", 23);
+	glutAddMenuEntry(" NLERP ", 24);
 
     object_menu_id = glutCreateMenu(object_menu);
     glutAddSubMenu  (" Material            ", material_menu_id);
