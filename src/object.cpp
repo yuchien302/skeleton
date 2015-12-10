@@ -21,12 +21,13 @@ rigidhdl::~rigidhdl()
 
 vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step, int method)
 {
+
 	if (frame >= positions.size() || positions[frame].size() == 0){
 		return vec3f(0.0f, 0.0f, 0.0f);
 	}
-
-	else if (pos <= positions[frame].begin()->first || positions[frame].size() == 1){
+	else if (positions[frame].size() == 1){
 		return positions[frame].begin()->second;
+
 	}
 
 	map<double, vec3f>::iterator it;
@@ -38,36 +39,43 @@ vec3f rigidhdl::get_position(int frame, double pos, double fraction, double step
 	// k-1
 	vec3f k_1;
 	double kt_1;
-	if (pos == 0){
-		k_1 = k0;
-		kt_1 = kt0;
-	}
-	else{
+
 		it = positions[frame].upper_bound(pos - step); it--;
 		k_1 = it -> second;
 	    kt_1 = it -> first;
-	}
 
 
+	bool end = false;
 	it = positions[frame].upper_bound(pos+step); it--;
 	vec3f k1 = it -> second;
+	if (k1 == k0) {
+		it = positions[frame].upper_bound(0.0); it--;
+		k1 = it -> second;
+		end = true;
+	}
 	double kt1 = it -> first;
 
 	// k+1
 	vec3f k2;
 	double kt2;
-	if (pos == 1){
-		k2 = k1;
-		kt2 = kt1;
+	if (!end){
+		it = positions[frame].upper_bound(pos + 2* step); it--;
 	}
 	else{
-		it = positions[frame].upper_bound(pos + 2* step); it--;
-		k2 = it -> second;
-		kt2 = it -> first;
+		it = positions[frame].upper_bound(0 +  step); it--;
+	}
+	k2 = it -> second;
+	kt2 = it -> first;
+
+	if (pos <= positions[frame].begin()->first){
+			k_1 = k0 = positions[frame].rbegin() -> second;
+			k2 =  k1 = positions[frame].begin() -> second;
+
 	}
 
 	vec3f T0 = 0.5f * (k1 - k_1); /// (float)(kt1 - kt_1);
 	vec3f T1 = 0.5f * (k2 - k0);  /// (float)(kt2 - kt0);
+
 
 	if (method == 0) // none
 	{
@@ -269,7 +277,7 @@ objecthdl::objecthdl()
 	bound = vec6f(1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f, 1.0e6f, -1.0e6f);
 	scale = 1.0;
 	start_time = 0.0f;
-	minstep = 0.0;
+	minstep = 0.02;
 	animation_length = 1.0;
 	position_interpolator = 0;
 	orientation_interpolator = 0;
@@ -335,7 +343,9 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 		start_time = current_time;
 	}
 
-	if (current_time - start_time >= animation_length) start_time += animation_length;
+	if (current_time - start_time >= animation_length) {
+		start_time += animation_length;
+	}
 	double delta_time = current_time - start_time;
 
 	double step = minstep/animation_length;
@@ -349,7 +359,8 @@ void objecthdl::draw(const vector<lighthdl*> &lights)
 	glRotatef(radtodeg(orientation[1]), 0.0, 1.0, 0.0);
 	glRotatef(radtodeg(orientation[2]), 0.0, 0.0, 1.0);
 	glScalef(scale, scale, scale);
-
+	cout << "pos: " << pos << ", frac:" << fraction<< endl;
+	cout << endl;
 	for (int i = 0; i < rigid.size(); i++)
 	{
 

@@ -56,6 +56,7 @@ struct objecthdl
 	vector<rigidhdl> rigid;
 	map<string, materialhdl*> material;
 
+
 	vec3f position;
 	vec3f orientation;
 	float scale;
